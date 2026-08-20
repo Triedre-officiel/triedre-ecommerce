@@ -1,0 +1,63 @@
+/* ==========================================================================
+   TRIÈDRE — Section Hero
+   ========================================================================== */
+
+.hero {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--container-padding);
+}
+
+.hero-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.hero-text {
+  color: var(--color-text-secondary);
+  margin: var(--space-md) 0 var(--space-lg);
+}
+
+.hero-buttons {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+/* ---- Image ---- */
+.hero-image {
+  flex: 1;
+  max-width: 560px;
+}
+
+.hero-image img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: right top;
+  border-radius: var(--radius-md);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--space-xl) var(--container-padding);
+  }
+
+  .hero-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .hero-image {
+    max-width: 100%;
+  }
+
+  .hero-image img {
+    height: 400px;
+  }
+}

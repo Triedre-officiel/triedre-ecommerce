@@ -1,0 +1,258 @@
+/* ==========================================================================
+   TRIÈDRE — Fiche produit
+   ========================================================================== */
+
+.fil-ariane {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-md) var(--container-padding) 0;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.fil-ariane a {
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.fil-ariane a:hover {
+  color: var(--color-accent);
+}
+
+.fil-ariane span {
+  color: var(--color-text-primary);
+}
+
+.produit-detail {
+  display: flex;
+  gap: var(--space-xl);
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-lg) var(--container-padding) var(--space-2xl);
+  align-items: flex-start;
+}
+
+/* ---- Galerie ---- */
+.produit-galerie {
+  flex: 1.2;
+  min-width: 300px;
+  position: sticky;
+  top: var(--space-md);
+}
+
+.produit-image-principale {
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-bg-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.produit-image-principale img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.produit-miniatures {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.miniature {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2px solid transparent;
+  opacity: 0.6;
+  transition: opacity var(--transition-fast), border-color var(--transition-fast);
+}
+
+.miniature:hover {
+  opacity: 1;
+}
+
+.miniature.active {
+  opacity: 1;
+  border-color: var(--color-accent);
+}
+
+.miniature img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---- Informations produit ---- */
+.produit-info {
+  flex: 1;
+  min-width: 320px;
+}
+
+.produit-info h1 {
+  font-size: var(--font-size-h1);
+  margin: var(--space-xs) 0 var(--space-sm);
+}
+
+.produit-prix {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--color-accent);
+  margin-bottom: var(--space-md);
+}
+
+.produit-description {
+  margin-bottom: var(--space-lg);
+  line-height: 1.7;
+}
+
+/* ---- Options (couleur / taille) ---- */
+.produit-option {
+  margin-bottom: var(--space-lg);
+}
+
+.produit-option > label {
+  display: block;
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-sm);
+}
+
+.produit-option label span {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-regular);
+}
+
+.couleur-options {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.couleur-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.couleur-swatch:hover {
+  transform: scale(1.1);
+}
+
+.couleur-swatch.active {
+  border-color: var(--color-accent);
+}
+
+.taille-options {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.taille-btn {
+  min-width: 48px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-small);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.taille-btn:hover {
+  border-color: var(--color-accent);
+}
+
+.taille-btn.active {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-bg-primary);
+}
+
+.guide-tailles {
+  display: inline-block;
+  font-size: var(--font-size-small);
+  text-decoration: underline;
+  color: var(--color-text-secondary);
+}
+
+/* ---- Actions (quantité + panier) ---- */
+.produit-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.quantite-selecteur {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.quantite-moins,
+.quantite-plus {
+  width: 40px;
+  height: 48px;
+  font-size: 1.2rem;
+  color: var(--color-text-primary);
+  transition: background-color var(--transition-fast);
+}
+
+.quantite-moins:hover,
+.quantite-plus:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+.quantite-input {
+  width: 44px;
+  height: 48px;
+  text-align: center;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+.btn-ajouter-panier {
+  flex: 1;
+}
+
+/* ---- Détails accordéon ---- */
+.produit-details {
+  border-top: 1px solid var(--color-border);
+}
+
+.produit-details details {
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-sm) 0;
+}
+
+.produit-details summary {
+  cursor: pointer;
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-xs) 0;
+}
+
+.produit-details p {
+  margin-top: var(--space-sm);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .produit-detail {
+    flex-direction: column;
+  }
+
+  .produit-galerie {
+    position: static;
+    width: 100%;
+  }
+}

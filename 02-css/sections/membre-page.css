@@ -1,0 +1,129 @@
+/* ==========================================================================
+   TRIÈDRE — Page Espace Membre
+   ========================================================================== */
+
+.membre-page {
+  display: flex;
+  gap: var(--space-xl);
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--container-padding);
+  align-items: flex-start;
+}
+
+.membre-avantages {
+  flex: 1;
+  min-width: 280px;
+}
+
+.membre-avantages p:not(.section-eyebrow) {
+  margin: var(--space-md) 0 var(--space-lg);
+}
+
+.avantages-liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.avantages-liste li {
+  position: relative;
+  padding-left: var(--space-md);
+  color: var(--color-text-secondary);
+}
+
+.avantages-liste li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--color-accent);
+}
+
+/* ---- Formulaires ---- */
+.membre-formulaires {
+  flex: 1;
+  min-width: 320px;
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+}
+
+.onglets-membre {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.onglet-btn {
+  padding: var(--space-sm) 0;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-small);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: color var(--transition-fast);
+}
+
+.onglet-btn.active {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+.formulaire-membre {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.champ-groupe {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.champ-groupe label {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.champ-groupe input,
+.champ-groupe select,
+.champ-groupe textarea {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+.champ-groupe input:focus,
+.champ-groupe select:focus,
+.champ-groupe textarea:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.mdp-oublie {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+  align-self: flex-end;
+}
+
+.case-consentement {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .membre-page {
+    flex-direction: column;
+  }
+}

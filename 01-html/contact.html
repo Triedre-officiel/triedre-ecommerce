@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — TRIÈDRE</title>
+  <link rel="stylesheet" href="../02-css/style.css">
+</head>
+<body>
+
+  <div class="top-banner">
+    <p>Livraison gratuite au Canada dès 150$</p>
+  </div>
+
+  <header class="site-header">
+    <a href="index.html" class="logo">
+          <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+          <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
+    </a>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="marque.html">La Marque</a></li>
+        <li><a href="univers.html">Univers</a></li>
+        <li><a href="boutique.html">Boutique</a></li>
+        <li><a href="membre.html">Espace Membre</a></li>
+      </ul>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+    </button>
+    <div class="header-icons">
+      <button aria-label="Rechercher"><img src="../05-images/icons/icon-search.svg" alt=""></button>
+      <a href="membre.html" aria-label="Mon compte"><img src="../05-images/icons/icon-account.svg" alt=""></a>
+      <a href="panier.html" aria-label="Panier">
+        <img src="../05-images/icons/icon-cart.svg" alt="">
+        <span class="cart-count">0</span>
+      </a>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="contact-page">
+
+      <div class="contact-intro">
+        <p class="section-eyebrow">Contact</p>
+        <h1>Une question ? <span class="accent">Écris-nous.</span></h1>
+        <p>Notre équipe te répond généralement sous 24 à 48 heures ouvrables.</p>
+
+        <ul class="contact-infos">
+          <li>
+            <strong>Adresse</strong>
+            <span>Montréal, Québec, Canada</span>
+          </li>
+          <li>
+            <strong>Courriel</strong>
+            <span><a href="mailto:info@triedreathletic.com">info@triedreathletic.com</a></span>
+          </li>
+          <li>
+            <strong>Suivez-nous</strong>
+            <div class="social-links">
+              <a href="https://www.facebook.com/share/1KZvCWZQVM/" target="_blank" rel="noopener" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
+              <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" target="_blank" rel="noopener" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
+              <a href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4" target="_blank" rel="noopener" aria-label="TikTok"><img src="../05-images/icons/icon-tiktok.svg" alt=""></a>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <form class="contact-formulaire" id="formulaire-contact">
+        <div class="champ-groupe">
+          <label for="contact-nom">Nom complet</label>
+          <input type="text" id="contact-nom" required>
+        </div>
+        <div class="champ-groupe">
+          <label for="contact-email">Courriel</label>
+          <input type="email" id="contact-email" required>
+        </div>
+        <div class="champ-groupe">
+          <label for="contact-sujet">Sujet</label>
+          <select id="contact-sujet">
+            <option>Question générale</option>
+            <option>Suivi de commande</option>
+            <option>Retour ou échange</option>
+            <option>Partenariat</option>
+          </select>
+        </div>
+        <div class="champ-groupe">
+          <label for="contact-message">Message</label>
+          <textarea id="contact-message" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Envoyer le message</button>
+      </form>
+
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+      <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
+      <p>Corps. Mental. Confiance.<br>Un mode de vie. Une discipline.<br>Une seule direction.</p>
+      <div class="social-links">
+        <a href="https://www.facebook.com/share/1KZvCWZQVM/" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
+        <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
+        <a href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4" aria-label="TikTok"><img src="../05-images/icons/icon-tiktok.svg" alt=""></a>
+        <a href="#" aria-label="YouTube"><img src="../05-images/icons/icon-youtube.svg" alt=""></a>
+      </div>
+    </div>
+    <nav class="footer-nav">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="marque.html">La Marque</a></li>
+        <li><a href="univers.html">Univers</a></li>
+        <li><a href="boutique.html">Boutique</a></li>
+        <li><a href="membre.html">Espace Membre</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <nav class="footer-aide">
+      <h4>Aide</h4>
+      <ul>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="livraison.html">Livraison</a></li>
+        <li><a href="retours.html">Retours</a></li>
+        <li><a href="conditions.html">Conditions générales</a></li>
+        <li><a href="confidentialite.html">Politique de confidentialité</a></li>
+      </ul>
+    </nav>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p>Montréal, Québec, Canada</p>
+      <p><a href="mailto:info@triedreathletic.com">info@triedreathletic.com</a></p>
+    </div>
+    <p class="footer-copyright">© 2024 Trièdre Athletic. Tous droits réservés.</p>
+  </footer>
+
+  <script src="../03-js/panier.js"></script>
+  <script src="../03-js/recherche.js"></script>
+  <script src="../03-js/main.js"></script>
+  <script src="../03-js/navigation.js"></script>
+</body>
+</html>

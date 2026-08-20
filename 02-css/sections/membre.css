@@ -1,0 +1,42 @@
+/* ==========================================================================
+   TRIÈDRE — Section Espace Membre
+   ========================================================================== */
+
+.membre {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--container-padding);
+}
+
+.membre-image {
+  flex: 1;
+  min-width: 280px;
+}
+
+.membre-image img {
+  width: 100%;
+  height: auto;
+  max-height: 480px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+.membre-content {
+  flex: 1;
+  min-width: 280px;
+}
+
+.membre-content p:not(.section-eyebrow) {
+  margin: var(--space-md) 0 var(--space-lg);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .membre {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+}

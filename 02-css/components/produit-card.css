@@ -1,0 +1,54 @@
+/* ==========================================================================
+   TRIÈDRE — Grille de produits
+   ========================================================================== */
+
+.produits-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.produit-card {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: transform var(--transition-fast);
+}
+
+.produit-card:hover {
+  transform: translateY(-4px);
+}
+
+.produit-card img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.produit-card h3 {
+  font-size: var(--font-size-small);
+  text-transform: none;
+  padding: var(--space-sm) var(--space-sm) 0;
+}
+
+.produit-card .prix {
+  display: block;
+  color: var(--color-accent);
+  font-weight: var(--font-weight-medium);
+  padding: 0 var(--space-sm) var(--space-sm);
+}
+
+/* ---- Responsive ---- */
+@media (max-width:1100px) {
+  .produits-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .produits-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

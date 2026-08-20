@@ -1,0 +1,67 @@
+/* ==========================================================================
+   TRIÈDRE — Page Univers
+   ========================================================================== */
+
+.univers-hero {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--container-padding) var(--space-lg);
+  text-align: center;
+}
+
+.univers-hero h1 {
+  margin: var(--space-xs) 0 var(--space-md);
+}
+
+.univers-hero p:not(.section-eyebrow) {
+  color: var(--color-text-secondary);
+}
+
+/* ---- Philosophie ---- */
+.univers-philosophie {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-lg) var(--container-padding) var(--space-2xl);
+}
+
+.univers-philosophie-image {
+  flex: 1;
+  min-width: 280px;
+}
+
+.univers-philosophie-image img {
+  width: 100%;
+  max-height: 450px;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center 0%;
+  border-radius: var(--radius-md);
+}
+
+.univers-philosophie-content {
+  flex: 1;
+  min-width: 280px;
+}
+
+.univers-philosophie-content h2 {
+  margin: var(--space-xs) 0 var(--space-md);
+}
+
+.univers-philosophie-content p {
+  margin-bottom: var(--space-md);
+}
+
+.univers-philosophie-content .btn {
+  margin-top: var(--space-sm);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .univers-philosophie {
+    flex-direction: column;
+    text-align: center;
+  }
+}

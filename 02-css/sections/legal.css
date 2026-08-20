@@ -1,0 +1,36 @@
+/* ==========================================================================
+   TRIÈDRE — Pages de texte (légal / aide)
+   ========================================================================== */
+
+.page-texte {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--container-padding);
+}
+
+.page-texte h1 {
+  margin: var(--space-xs) 0 var(--space-md);
+}
+
+.page-texte-maj {
+  font-size: var(--font-size-small);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-lg);
+}
+
+.page-texte h2 {
+  font-size: var(--font-size-h3);
+  color: var(--color-accent);
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-sm);
+}
+
+.page-texte p {
+  line-height: 1.7;
+  margin-bottom: var(--space-sm);
+}
+
+.page-texte a {
+  color: var(--color-accent);
+  text-decoration: underline;
+}

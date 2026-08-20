@@ -1,0 +1,75 @@
+/* ==========================================================================
+   TRIÈDRE — Page Boutique
+   ========================================================================== */
+
+.boutique-header {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--container-padding) var(--space-lg);
+  text-align: center;
+}
+
+.boutique-header h1 {
+  margin: var(--space-xs) 0 var(--space-md);
+}
+
+.boutique-header p:not(.section-eyebrow) {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ---- Filtres ---- */
+.boutique-filtres {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding) var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.filtre-groupe {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filtre-groupe label {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.filtre-groupe select {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  min-width: 180px;
+}
+
+.filtre-groupe select:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ---- Grille ---- */
+.boutique-grille {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-lg) var(--container-padding) var(--space-2xl);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .boutique-filtres {
+    flex-direction: column;
+  }
+
+  .filtre-groupe select {
+    width: 100%;
+  }
+}

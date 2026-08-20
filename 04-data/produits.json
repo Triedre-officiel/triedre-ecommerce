@@ -1,0 +1,82 @@
+{
+  "produits": [
+    {
+      "id": "hoodie-performance",
+      "nom": "Hoodie Performance",
+      "categorie": "Apparel",
+      "prix": 89.00,
+      "description": "Un hoodie pensé pour l'entraînement et le quotidien. Coupe ample, matière douce et résistante, logo brodé discret. Trois piliers, une seule direction.",
+      "tailles": ["S", "M", "L", "XL"],
+      "couleurs": [
+        { "nom": "Noir", "hex": "#0D0D0D", "image": "produit-hoodie-noir.png" },
+        { "nom": "Taupe", "hex": "#8B7D6B", "image": "produit-hoodie-taupe.png" },
+        { "nom": "Sauge", "hex": "#9CAF88", "image": "produit-hoodie-sauge.png" }
+      ]
+    },
+    {
+      "id": "tshirt-athletic",
+      "nom": "T-shirt Athletic",
+      "categorie": "Apparel",
+      "prix": 49.00,
+      "description": "Un t-shirt technique et respirant, pensé pour l'entraînement comme pour le quotidien. Coupe ajustée, logo discret.",
+      "tailles": ["S", "M", "L", "XL"],
+      "couleurs": [
+        { "nom": "Noir", "hex": "#0D0D0D", "image": "produit-tshirt-noir.png" },
+        { "nom": "Taupe", "hex": "#8B7D6B", "image": "produit-tshirt-taupe.png" },
+        { "nom": "Sauge", "hex": "#9CAF88", "image": "produit-tshirt-sauge.png" }
+      ]
+    },
+    {
+      "id": "casquette-triedre",
+      "nom": "Casquette Trièdre",
+      "categorie": "Accessoires",
+      "prix": 39.00,
+      "description": "Casquette structurée avec logo brodé doré. Ajustable, style sobre et intemporel.",
+      "tailles": ["Taille unique"],
+      "couleurs": [
+        { "nom": "Noir", "hex": "#0D0D0D", "image": "produit-casquette-noir.png" },
+        { "nom": "Taupe", "hex": "#8B7D6B", "image": "produit-casquette-taupe.png" },
+        { "nom": "Sauge", "hex": "#9CAF88", "image": "produit-casquette-sauge.png" }
+      ]
+    },
+    {
+      "id": "brassiere-active",
+      "nom": "Brassière Active",
+      "categorie": "Apparel",
+      "prix": 45.00,
+      "description": "Maintien optimal pour l'entraînement intense. Matière extensible et respirante, dos nageur.",
+      "tailles": ["S", "M", "L", "XL"],
+      "couleurs": [
+        { "nom": "Noir", "hex": "#0D0D0D", "image": "produit-brassiere-noir.png" },
+        { "nom": "Taupe", "hex": "#8B7D6B", "image": "produit-brassiere-taupe.png" },
+        { "nom": "Sauge", "hex": "#9CAF88", "image": "produit-brassiere-sauge.png" }
+      ]
+    },
+    {
+      "id": "leggings-essentiel",
+      "nom": "Leggings Essentiel",
+      "categorie": "Apparel",
+      "prix": 69.00,
+      "description": "Leggings taille haute, matière seconde peau. Conçu pour bouger librement, à l'entraînement comme au quotidien.",
+      "tailles": ["S", "M", "L", "XL"],
+      "couleurs": [
+        { "nom": "Noir", "hex": "#0D0D0D", "image": "produit-leggings-noir.png" },
+        { "nom": "Taupe", "hex": "#8B7D6B", "image": "produit-leggings-taupe.png" },
+        { "nom": "Sauge", "hex": "#9CAF88", "image": "produit-leggings-sauge.png" }
+      ]
+    },
+    {
+      "id": "veste-legere",
+      "nom": "Veste Légère",
+      "categorie": "Apparel",
+      "prix": 79.00,
+      "description": "Veste zippée légère, parfaite pour les échauffements ou le quotidien. Matière douce, coupe ajustée.",
+      "tailles": ["S", "M", "L", "XL"],
+      "couleurs": [
+        { "nom": "Noir", "hex": "#0D0D0D", "image": "produit-veste-noir.png" },
+        { "nom": "Taupe", "hex": "#8B7D6B", "image": "produit-veste-taupe.png" },
+        { "nom": "Sauge", "hex": "#9CAF88", "image": "produit-veste-sauge.png" }
+      ]
+    }
+  ]
+}

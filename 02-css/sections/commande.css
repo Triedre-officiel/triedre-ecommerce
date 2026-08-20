@@ -1,0 +1,154 @@
+/* ==========================================================================
+   TRIÈDRE — Page Commande
+   ========================================================================== */
+
+.commande-page {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--container-padding);
+}
+
+.commande-page h1 {
+  margin: var(--space-xs) 0 var(--space-lg);
+}
+
+/* ---- Layout ---- */
+.commande-layout {
+  display: flex;
+  gap: var(--space-xl);
+  align-items: flex-start;
+}
+
+.commande-formulaire {
+  flex: 1.5;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+}
+
+.commande-formulaire h2 {
+  font-size: var(--font-size-h3);
+  margin-bottom: var(--space-xs);
+}
+
+.champ-ligne {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.champ-ligne .champ-groupe {
+  flex: 1;
+}
+
+.btn-confirmer-commande {
+  margin-top: var(--space-sm);
+}
+
+/* ---- Résumé ---- */
+.commande-resume {
+  flex: 1;
+  min-width: 280px;
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  position: sticky;
+  top: var(--space-md);
+}
+
+.commande-resume h2 {
+  font-size: var(--font-size-h3);
+  margin-bottom: var(--space-md);
+}
+
+.commande-articles-liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.commande-article-resume {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.commande-article-resume img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.commande-article-resume h4 {
+  font-size: var(--font-size-small);
+  text-transform: none;
+}
+
+.commande-article-resume p {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.commande-article-prix {
+  margin-left: auto;
+  font-size: var(--font-size-small);
+  color: var(--color-accent);
+  white-space: nowrap;
+}
+
+/* ---- Confirmation ---- */
+.commande-confirmation {
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--space-2xl) 0;
+}
+
+.confirmation-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  color: var(--color-bg-primary);
+  font-size: 1.75rem;
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-md);
+}
+
+.commande-confirmation h2 {
+  margin-bottom: var(--space-md);
+}
+
+.commande-confirmation p {
+  margin-bottom: var(--space-sm);
+}
+
+.commande-confirmation .btn {
+  margin-top: var(--space-md);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .commande-layout {
+    flex-direction: column;
+  }
+
+  .commande-resume {
+    width: 100%;
+    position: static;
+  }
+
+  .champ-ligne {
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+}

@@ -1,0 +1,114 @@
+/* ==========================================================================
+   TRIÈDRE — Navigation principale
+   ========================================================================== */
+
+.main-nav ul {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.main-nav a {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  padding-bottom: var(--space-xs);
+  border-bottom: 2px solid transparent;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.main-nav a:hover {
+  color: var(--color-accent);
+}
+
+.main-nav a.active {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+/* Sous-menu (ex : "Univers" avec une flèche déroulante) */
+.main-nav .has-submenu {
+  position: relative;
+}
+
+/* ---- Navigation mobile ---- */
+.nav-toggle {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .main-nav ul {
+    display: none; /* remplacé par un menu déroulant en JS pour le mobile */
+  }
+
+  .nav-toggle {
+    display: block;
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Menu hamburger mobile
+   ========================================================================== */
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 28px;
+  height: 24px;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-text-primary);
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+/* Transformation en croix quand le menu est ouvert */
+.nav-toggle.actif span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.nav-toggle.actif span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle.actif span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+@media (max-width: 900px) {
+  .site-header {
+    position: relative;
+  }
+
+  .nav-toggle {
+    display: flex;
+  }
+
+  .main-nav ul {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--color-bg-secondary);
+    border-top: 1px solid var(--color-border);
+    padding: var(--space-md) var(--container-padding);
+    gap: var(--space-md);
+    z-index: 200;
+  }
+
+  .main-nav ul.menu-ouvert {
+    display: flex;
+  }
+}
+

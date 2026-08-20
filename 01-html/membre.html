@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espace Membre — TRIÈDRE</title>
+  <link rel="stylesheet" href="../02-css/style.css">
+</head>
+<body>
+
+  <div class="top-banner">
+    <p>Livraison gratuite au Canada dès 150$</p>
+  </div>
+
+  <header class="site-header">
+    <a href="index.html" class="logo">
+          <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+          <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
+    </a>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="marque.html">La Marque</a></li>
+        <li><a href="univers.html">Univers</a></li>
+        <li><a href="boutique.html">Boutique</a></li>
+        <li><a href="membre.html" class="active">Espace Membre</a></li>
+      </ul>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+    </button>
+    <div class="header-icons">
+      <button aria-label="Rechercher"><img src="../05-images/icons/icon-search.svg" alt=""></button>
+      <a href="membre.html" aria-label="Mon compte"><img src="../05-images/icons/icon-account.svg" alt=""></a>
+      <a href="panier.html" aria-label="Panier">
+        <img src="../05-images/icons/icon-cart.svg" alt="">
+        <span class="cart-count">0</span>
+      </a>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="membre-page">
+
+      <!-- Avantages -->
+      <div class="membre-avantages">
+        <p class="section-eyebrow">Espace Membre</p>
+        <h1>Plus qu'un compte. <span class="accent">Une communauté.</span></h1>
+        <p>Rejoins l'espace membre TRIÈDRE et accède à du contenu exclusif, des programmes, des avantages et plus encore.</p>
+
+        <ul class="avantages-liste">
+          <li>Livraison prioritaire sur toutes tes commandes</li>
+          <li>Accès anticipé aux nouvelles collections</li>
+          <li>Programmes d'entraînement exclusifs</li>
+          <li>Offres réservées aux membres</li>
+        </ul>
+      </div>
+
+      <!-- Formulaires -->
+      <div class="membre-formulaires">
+        <div class="onglets-membre">
+          <button class="onglet-btn active" data-cible="connexion">Connexion</button>
+          <button class="onglet-btn" data-cible="inscription">Inscription</button>
+        </div>
+
+        <!-- Formulaire connexion -->
+        <form class="formulaire-membre" id="connexion" data-formulaire>
+          <div class="champ-groupe">
+            <label for="connexion-email">Courriel</label>
+            <input type="email" id="connexion-email" required>
+          </div>
+          <div class="champ-groupe">
+            <label for="connexion-mdp">Mot de passe</label>
+            <input type="password" id="connexion-mdp" required>
+          </div>
+          <a href="#" class="mdp-oublie">Mot de passe oublié ?</a>
+          <button type="submit" class="btn btn-primary">Se connecter</button>
+        </form>
+
+        <!-- Formulaire inscription -->
+        <form class="formulaire-membre" id="inscription" data-formulaire style="display: none;">
+          <div class="champ-groupe">
+            <label for="inscription-nom">Nom complet</label>
+            <input type="text" id="inscription-nom" required>
+          </div>
+          <div class="champ-groupe">
+            <label for="inscription-email">Courriel</label>
+            <input type="email" id="inscription-email" required>
+          </div>
+          <div class="champ-groupe">
+            <label for="inscription-mdp">Mot de passe</label>
+            <input type="password" id="inscription-mdp" required minlength="8">
+          </div>
+          <label class="case-consentement">
+            <input type="checkbox" required>
+            <span>J'accepte de recevoir les communications de TRIÈDRE</span>
+          </label>
+          <button type="submit" class="btn btn-primary">Créer mon compte</button>
+        </form>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <img src="../05-IMAGES/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+      <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
+      <p>Corps. Mental. Confiance.<br>Un mode de vie. Une discipline.<br>Une seule direction.</p>
+      <div class="social-links">
+        <a href="https://www.facebook.com/share/1KZvCWZQVM/" target="_blank" rel="noopener" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
+        <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" target="_blank" rel="noopener" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
+        <a href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4" target="_blank" rel="noopener" aria-label="TikTok"><img src="../05-images/icons/icon-tiktok.svg" alt=""></a>
+        <a href="#" target="_blank" rel="noopener" aria-label="YouTube"><img src="../05-images/icons/icon-youtube.svg" alt=""></a>
+      </div>
+    </div>
+    <nav class="footer-nav">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="marque.html">La Marque</a></li>
+        <li><a href="univers.html">Univers</a></li>
+        <li><a href="boutique.html">Boutique</a></li>
+        <li><a href="membre.html">Espace Membre</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <nav class="footer-aide">
+      <h4>Aide</h4>
+      <ul>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="livraison.html">Livraison</a></li>
+        <li><a href="retours.html">Retours</a></li>
+        <li><a href="conditions.html">Conditions générales</a></li>
+        <li><a href="confidentialite.html">Politique de confidentialité</a></li>
+      </ul>
+    </nav>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p>Montréal, Québec, Canada</p>
+      <p><a href="mailto:info@triedreathletic.com">info@triedreathletic.com</a></p>
+    </div>
+    <p class="footer-copyright">© 2024 Trièdre Athletic. Tous droits réservés.</p>
+  </footer>
+
+  <script src="../03-js/panier.js"></script>
+  <script src="../03-js/recherche.js"></script>
+  <script src="../03-js/main.js"></script>
+  <script src="../03-js/navigation.js"></script>
+</body>
+</html>

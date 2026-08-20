@@ -1,0 +1,82 @@
+/* ==========================================================================
+   TRIÈDRE — Page FAQ
+   ========================================================================== */
+
+.faq-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--container-padding);
+}
+
+.faq-page h1 {
+  margin: var(--space-xs) 0 var(--space-2xl);
+}
+
+.faq-categorie {
+  margin-bottom: var(--space-2xl);
+}
+
+.faq-categorie h2 {
+  font-size: var(--font-size-h3);
+  color: var(--color-accent);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.faq-categorie details {
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-sm) 0;
+}
+
+.faq-categorie summary {
+  cursor: pointer;
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-xs) 0;
+}
+
+.faq-categorie p {
+  margin-top: var(--space-sm);
+  line-height: 1.7;
+}
+/* ==========================================================================
+   TRIÈDRE — Page FAQ
+   ========================================================================== */
+
+.faq-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--container-padding);
+}
+
+.faq-page h1 {
+  margin: var(--space-xs) 0 var(--space-2xl);
+}
+
+.faq-categorie {
+  margin-bottom: var(--space-2xl);
+}
+
+.faq-categorie h2 {
+  font-size: var(--font-size-h3);
+  color: var(--color-accent);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.faq-categorie details {
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-sm) 0;
+}
+
+.faq-categorie summary {
+  cursor: pointer;
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-xs) 0;
+}
+
+.faq-categorie p {
+  margin-top: var(--space-sm);
+  line-height: 1.7;
+}

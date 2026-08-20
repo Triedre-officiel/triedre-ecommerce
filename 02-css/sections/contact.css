@@ -1,0 +1,60 @@
+/* ==========================================================================
+   TRIÈDRE — Page Contact
+   ========================================================================== */
+
+.contact-page {
+  display: flex;
+  gap: var(--space-xl);
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--container-padding);
+  align-items: flex-start;
+}
+
+.contact-intro {
+  flex: 1;
+  min-width: 280px;
+}
+
+.contact-intro p:not(.section-eyebrow) {
+  margin: var(--space-md) 0 var(--space-lg);
+}
+
+.contact-infos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.contact-infos strong {
+  display: block;
+  font-size: var(--font-size-small);
+  color: var(--color-accent);
+  margin-bottom: 4px;
+}
+
+.contact-infos span {
+  color: var(--color-text-secondary);
+}
+
+.contact-formulaire {
+  flex: 1;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+}
+
+.contact-formulaire textarea {
+  resize: vertical;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .contact-page {
+    flex-direction: column;
+  }
+}

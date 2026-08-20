@@ -1,0 +1,51 @@
+/* ==========================================================================
+   TRIÈDRE — Bandeau avantages
+   ========================================================================== */
+
+.advantages {
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-lg) 0;
+}
+
+.advantages ul {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+.advantages li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.advantages img {
+  width: 32px;
+  height: 32px;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+.advantages strong {
+  display: block;
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+}
+
+.advantages span {
+  display: block;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 700px) {
+  .advantages ul {
+    justify-content: center;
+  }
+}

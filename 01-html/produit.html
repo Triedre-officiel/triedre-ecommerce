@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">Produit — TRIÈDRE</title>
+  <link rel="stylesheet" href="../02-css/style.css">
+</head>
+<body>
+
+  <!-- Bandeau annonce -->
+  <div class="top-banner">
+    <p>Livraison gratuite au Canada dès 150$</p>
+  </div>
+
+  <!-- En-tête / Navigation -->
+  <header class="site-header">
+    <a href="index.html" class="logo">
+          <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+          <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
+    </a>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="marque.html">La Marque</a></li>
+        <li><a href="univers.html">Univers</a></li>
+        <li><a href="boutique.html" class="active">Boutique</a></li>
+        <li><a href="membre.html">Espace Membre</a></li>
+      </ul>
+    </nav>
+    
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+    </button>
+    <div class="header-icons">
+      <button aria-label="Rechercher"><img src="../05-images/icons/icon-search.svg" alt=""></button>
+      <a href="membre.html" aria-label="Mon compte"><img src="../05-images/icons/icon-account.svg" alt=""></a>
+      <a href="panier.html" aria-label="Panier">
+        <img src="../05-images/icons/icon-cart.svg" alt="">
+        <span class="cart-count">0</span>
+      </a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Fil d'ariane -->
+    <nav class="fil-ariane">
+      <a href="index.html">Accueil</a> /
+      <a href="boutique.html">Boutique</a> /
+      <span id="breadcrumb-produit">Produit</span>
+    </nav>
+
+    <!-- Fiche produit -->
+    <section class="produit-detail">
+
+      <!-- Galerie -->
+      <div class="produit-galerie">
+        <div class="produit-image-principale">
+          <img id="image-principale" src="" alt="">
+        </div>
+        <ul class="produit-miniatures" id="miniatures-liste">
+          <!-- Généré dynamiquement par produits.js -->
+        </ul>
+      </div>
+
+      <!-- Informations -->
+      <div class="produit-info">
+        <p class="section-eyebrow" id="produit-categorie">Apparel</p>
+        <h1 id="produit-nom">Chargement...</h1>
+        <p class="produit-prix" id="produit-prix"></p>
+
+        <p class="produit-description" id="produit-description"></p>
+
+        <!-- Sélecteur couleur -->
+        <div class="produit-option" id="bloc-couleur">
+          <label>Couleur : <span id="couleur-selectionnee"></span></label>
+          <ul class="couleur-options" id="couleur-options-liste">
+            <!-- Généré dynamiquement par produits.js -->
+          </ul>
+        </div>
+
+        <!-- Sélecteur taille -->
+        <div class="produit-option">
+          <label>Taille</label>
+          <ul class="taille-options" id="taille-options-liste">
+            <!-- Généré dynamiquement par produits.js -->
+          </ul>
+          <a href="#" class="guide-tailles">Guide des tailles</a>
+        </div>
+
+        <!-- Quantité + ajout panier -->
+        <div class="produit-actions">
+          <div class="quantite-selecteur">
+            <button class="quantite-moins" aria-label="Diminuer la quantité">−</button>
+            <input type="number" class="quantite-input" value="1" min="1" aria-label="Quantité">
+            <button class="quantite-plus" aria-label="Augmenter la quantité">+</button>
+          </div>
+          <button class="btn btn-primary btn-ajouter-panier">Ajouter au panier</button>
+        </div>
+
+        <!-- Détails additionnels -->
+        <div class="produit-details">
+          <details>
+            <summary>Composition & entretien</summary>
+            <p>80% coton, 20% polyester. Lavage à froid, séchage à basse température.</p>
+          </details>
+          <details>
+            <summary>Livraison & retours</summary>
+            <p>Livraison gratuite au Canada dès 150$. Retours gratuits sous 30 jours.</p>
+          </details>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Pied de page -->
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+      <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
+      <p>Corps. Mental. Confiance.<br>Un mode de vie. Une discipline.<br>Une seule direction.</p>
+      <div class="social-links">
+        <a href="https://www.facebook.com/share/1KZvCWZQVM/" target="_blank" rel="noopener" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
+        <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" target="_blank" rel="noopener" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
+        <a href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4" target="_blank" rel="noopener" aria-label="TikTok"><img src="../05-images/icons/icon-tiktok.svg" alt=""></a>
+        <a href="#" target="_blank" rel="noopener" aria-label="YouTube"><img src="../05-images/icons/icon-youtube.svg" alt=""></a>
+      </div>
+    </div>
+
+    <nav class="footer-nav">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="marque.html">La Marque</a></li>
+        <li><a href="univers.html">Univers</a></li>
+        <li><a href="boutique.html">Boutique</a></li>
+        <li><a href="membre.html">Espace Membre</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-aide">
+      <h4>Aide</h4>
+      <ul>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="livraison.html">Livraison</a></li>
+        <li><a href="retours.html">Retours</a></li>
+        <li><a href="conditions.html">Conditions générales</a></li>
+        <li><a href="confidentialite.html">Politique de confidentialité</a></li>
+      </ul>
+    </nav>
+
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p>Montréal, Québec, Canada</p>
+      <p><a href="mailto:info@triedreathletic.com">info@triedreathletic.com</a></p>
+    </div>
+
+    <p class="footer-copyright">© 2024 Trièdre Athletic. Tous droits réservés.</p>
+  </footer>
+
+  <script src="../03-js/panier.js"></script>
+  <script src="../03-js/recherche.js"></script>
+    <script src="../03-js/produits.js"></script>
+    <script src="../03-js/main.js"></script>
+    <script src="../03-js/navigation.js"></script>
+</body>
+</html>

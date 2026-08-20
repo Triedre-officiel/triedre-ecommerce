@@ -1,0 +1,211 @@
+/* ==========================================================================
+   TRIÈDRE — Page Panier
+   ========================================================================== */
+
+.panier-page {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--container-padding);
+}
+
+.panier-page h1 {
+  margin: var(--space-xs) 0 var(--space-lg);
+}
+
+/* ---- État vide ---- */
+.panier-vide {
+  text-align: center;
+  padding: var(--space-2xl) 0;
+}
+
+.panier-vide p {
+  margin-bottom: var(--space-md);
+}
+
+/* ---- Layout principal ---- */
+.panier-header-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--space-md);
+}
+
+.btn-vider-panier {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+  transition: color var(--transition-fast);
+}
+
+.btn-vider-panier:hover {
+  color: var(--color-accent);
+}
+
+.panier-layout {
+  display: flex;
+  gap: var(--space-xl);
+  align-items: flex-start;
+}
+
+.panier-articles {
+  flex: 2;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* ---- Ligne d'article ---- */
+.panier-article {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  align-items: center;
+}
+
+.panier-article img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.panier-article-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.panier-article-info h3 {
+  font-size: var(--font-size-body);
+  text-transform: none;
+  margin-bottom: 4px;
+}
+
+.panier-article-details {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.panier-article-prix {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-medium);
+  margin-top: 4px;
+}
+
+.panier-article-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-sm);
+}
+
+.panier-quantite {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.panier-quantite button {
+  width: 32px;
+  height: 32px;
+  color: var(--color-text-primary);
+  transition: background-color var(--transition-fast);
+}
+
+.panier-quantite button:hover {
+  background-color: var(--color-bg-primary);
+}
+
+.panier-quantite span {
+  width: 32px;
+  text-align: center;
+  font-size: var(--font-size-small);
+}
+
+.panier-supprimer {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+}
+
+.panier-supprimer:hover {
+  color: var(--color-accent);
+}
+
+/* ---- Résumé de commande ---- */
+.panier-resume {
+  flex: 1;
+  min-width: 280px;
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  position: sticky;
+  top: var(--space-md);
+}
+
+.panier-resume h2 {
+  font-size: var(--font-size-h3);
+  margin-bottom: var(--space-md);
+}
+
+.panier-ligne-resume {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.panier-total {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  color: var(--color-text-primary);
+  padding-top: var(--space-md);
+  margin-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.panier-total .accent {
+  color: var(--color-accent);
+}
+
+.btn-commander {
+  width: 100%;
+  margin-top: var(--space-lg);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .panier-layout {
+    flex-direction: column;
+  }
+
+  .panier-article {
+    flex-wrap: wrap;
+  }
+
+  .panier-resume {
+    width: 100%;
+    position: static;
+  }
+}
+
+@media (max-width: 500px) {
+  .panier-article {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .panier-article-actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+}

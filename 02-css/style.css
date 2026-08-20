@@ -1,0 +1,39 @@
+/* ==========================================================================
+   TRIÈDRE — Feuille de style principale
+   Ce fichier importe toutes les autres feuilles, dans l'ordre où
+   elles doivent être chargées. C'est le SEUL fichier lié dans le HTML.
+   ========================================================================== */
+
+/* ---- 1. Polices externes ---- */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+/* ---- 2. Base (fondations du projet) ---- */
+@import url('base/reset.css');
+@import url('base/variables.css');
+@import url('base/typography.css');
+
+/* ---- 3. Composants réutilisables ---- */
+@import url('components/navigation.css');
+@import url('components/header.css');
+@import url('components/footer.css');
+@import url('components/produit-card.css');
+/* Prochainement : composants/buttons.css, composants/footer.css, composants/produit-card.css */
+
+/* ---- 4. Sections spécifiques à la page d'accueil ---- */
+@import url('sections/hero.css');
+@import url('sections/univers.css');
+@import url('sections/produits.css');
+@import url('sections/membre.css');
+@import url('sections/avantages.css');
+@import url('sections/boutique.css');
+@import url('sections/produit.css');
+@import url('sections/marque.css');
+@import url('sections/membre-page.css');
+@import url('sections/contact.css');
+@import url('sections/faq.css');
+@import url('sections/panier-page.css');
+@import url('sections/legal.css');
+@import url('components/recherche.css');
+@import url('sections/membre-page.css');
+@import url('sections/commande.css');
+@import url('sections/univers-page.css');
