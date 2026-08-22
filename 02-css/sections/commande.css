@@ -136,6 +136,33 @@
   margin-top: var(--space-md);
 }
 
+.commande-resume-colonne {
+  flex: 1;
+  min-width: 280px;
+}
+
+.commande-resume {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  position: sticky;
+  top: var(--space-md);
+}
+
+.retour-panier {
+  display: flex;
+  justify-content: flex-end;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+  margin-bottom: var(--space-sm);
+  transition: color var(--transition-fast);
+}
+
+.retour-panier :hover {
+  color: var(--color-accent);
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
   .commande-layout {

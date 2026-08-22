@@ -4,78 +4,219 @@
       "id": "hoodie-performance",
       "nom": "Hoodie Performance",
       "categorie": "Apparel",
-      "prix": 89.00,
+      "prix": 49.0,
       "description": "Un hoodie pensé pour l'entraînement et le quotidien. Coupe ample, matière douce et résistante, logo brodé discret. Trois piliers, une seule direction.",
-      "tailles": ["S", "M", "L", "XL"],
+      "tailles": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "vuesCommunes": [
+        "produit-hoodie-face.png",
+        "produit-hoodie-dos.png",
+        "produit-hoodie-gauche.png",
+        "produit-hoodie-droite.png",
+        "produit-hoodie-isometrique.png"
+      ],
       "couleurs": [
-        { "nom": "Noir", "hex": "#0D0D0D", "image": "produit-hoodie-noir.png" },
-        { "nom": "Taupe", "hex": "#8B7D6B", "image": "produit-hoodie-taupe.png" },
-        { "nom": "Sauge", "hex": "#9CAF88", "image": "produit-hoodie-sauge.png" }
+        {
+          "nom": "Noir",
+          "hex": "#0D0D0D",
+          "photoFace": "produit-hoodie-noir-face.png"
+        },
+        {
+          "nom": "Taupe",
+          "hex": "#8B7D6B",
+          "photoFace": "produit-hoodie-taupe-face.png"
+        },
+        {
+          "nom": "Sauge",
+          "hex": "#9CAF88",
+          "photoFace": "produit-hoodie-sauge-face.png"
+        }
       ]
     },
     {
       "id": "tshirt-athletic",
       "nom": "T-shirt Athletic",
       "categorie": "Apparel",
-      "prix": 49.00,
+      "prix": 29.0,
       "description": "Un t-shirt technique et respirant, pensé pour l'entraînement comme pour le quotidien. Coupe ajustée, logo discret.",
-      "tailles": ["S", "M", "L", "XL"],
+      "tailles": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "vuesCommunes": [
+        "produit-tshirt-face.png",
+        "produit-tshirt-dos.png",
+        "produit-tshirt-gauche.png",
+        "produit-tshirt-droite.png",
+        "produit-tshirt-isometrique.png"
+      ],
       "couleurs": [
-        { "nom": "Noir", "hex": "#0D0D0D", "image": "produit-tshirt-noir.png" },
-        { "nom": "Taupe", "hex": "#8B7D6B", "image": "produit-tshirt-taupe.png" },
-        { "nom": "Sauge", "hex": "#9CAF88", "image": "produit-tshirt-sauge.png" }
+        {
+          "nom": "Noir",
+          "hex": "#0D0D0D",
+          "photoFace": "produit-tshirt-noir-face.png"
+        },
+        {
+          "nom": "Taupe",
+          "hex": "#8B7D6B",
+          "photoFace": "produit-tshirt-taupe-face.png"
+        },
+        {
+          "nom": "Sauge",
+          "hex": "#9CAF88",
+          "photoFace": "produit-tshirt-sauge-face.png"
+        }
       ]
     },
     {
       "id": "casquette-triedre",
       "nom": "Casquette Trièdre",
       "categorie": "Accessoires",
-      "prix": 39.00,
+      "prix": 35.0,
       "description": "Casquette structurée avec logo brodé doré. Ajustable, style sobre et intemporel.",
-      "tailles": ["Taille unique"],
+      "tailles": [
+        "Taille unique"
+      ],
+      "vuesCommunes": [
+        "produit-casquette-face.png",
+        "produit-casquette-dos.png",
+        "produit-casquette-gauche.png",
+        "produit-casquette-droite.png",
+        "produit-casquette-isometrique.png"
+      ],
       "couleurs": [
-        { "nom": "Noir", "hex": "#0D0D0D", "image": "produit-casquette-noir.png" },
-        { "nom": "Taupe", "hex": "#8B7D6B", "image": "produit-casquette-taupe.png" },
-        { "nom": "Sauge", "hex": "#9CAF88", "image": "produit-casquette-sauge.png" }
+        {
+          "nom": "Noir",
+          "hex": "#0D0D0D",
+          "photoFace": "produit-casquette-noir-face.png"
+        },
+        {
+          "nom": "Taupe",
+          "hex": "#8B7D6B",
+          "photoFace": "produit-casquette-taupe-face.png"
+        },
+        {
+          "nom": "Sauge",
+          "hex": "#9CAF88",
+          "photoFace": "produit-casquette-sauge-face.png"
+        }
       ]
     },
     {
       "id": "brassiere-active",
       "nom": "Brassière Active",
       "categorie": "Apparel",
-      "prix": 45.00,
+      "prix": 40.0,
       "description": "Maintien optimal pour l'entraînement intense. Matière extensible et respirante, dos nageur.",
-      "tailles": ["S", "M", "L", "XL"],
+      "tailles": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "vuesCommunes": [
+        "produit-brassiere-face.png",
+        "produit-brassiere-dos.png",
+        "produit-brassiere-gauche.png",
+        "produit-brassiere-droite.png",
+        "produit-brassiere-isometrique.png"
+      ],
       "couleurs": [
-        { "nom": "Noir", "hex": "#0D0D0D", "image": "produit-brassiere-noir.png" },
-        { "nom": "Taupe", "hex": "#8B7D6B", "image": "produit-brassiere-taupe.png" },
-        { "nom": "Sauge", "hex": "#9CAF88", "image": "produit-brassiere-sauge.png" }
+        {
+          "nom": "Noir",
+          "hex": "#0D0D0D",
+          "photoFace": "produit-brassiere-noir-face.png"
+        },
+        {
+          "nom": "Taupe",
+          "hex": "#8B7D6B",
+          "photoFace": "produit-brassiere-taupe-face.png"
+        },
+        {
+          "nom": "Sauge",
+          "hex": "#9CAF88",
+          "photoFace": "produit-brassiere-sauge-face.png"
+        }
       ]
     },
     {
       "id": "leggings-essentiel",
       "nom": "Leggings Essentiel",
       "categorie": "Apparel",
-      "prix": 69.00,
+      "prix": 59.0,
       "description": "Leggings taille haute, matière seconde peau. Conçu pour bouger librement, à l'entraînement comme au quotidien.",
-      "tailles": ["S", "M", "L", "XL"],
+      "tailles": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "vuesCommunes": [
+        "produit-leggings-face.png",
+        "produit-leggings-dos.png",
+        "produit-leggings-gauche.png",
+        "produit-leggings-droite.png",
+        "produit-leggings-isometrique.png"
+      ],
       "couleurs": [
-        { "nom": "Noir", "hex": "#0D0D0D", "image": "produit-leggings-noir.png" },
-        { "nom": "Taupe", "hex": "#8B7D6B", "image": "produit-leggings-taupe.png" },
-        { "nom": "Sauge", "hex": "#9CAF88", "image": "produit-leggings-sauge.png" }
+        {
+          "nom": "Noir",
+          "hex": "#0D0D0D",
+          "photoFace": "produit-leggings-noir-face.png"
+        },
+        {
+          "nom": "Taupe",
+          "hex": "#8B7D6B",
+          "photoFace": "produit-leggings-taupe-face.png"
+        },
+        {
+          "nom": "Sauge",
+          "hex": "#9CAF88",
+          "photoFace": "produit-leggings-sauge-face.png"
+        }
       ]
     },
     {
       "id": "veste-legere",
       "nom": "Veste Légère",
       "categorie": "Apparel",
-      "prix": 79.00,
+      "prix": 69.0,
       "description": "Veste zippée légère, parfaite pour les échauffements ou le quotidien. Matière douce, coupe ajustée.",
-      "tailles": ["S", "M", "L", "XL"],
+      "tailles": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "vuesCommunes": [
+        "produit-veste-face.png",
+        "produit-veste-dos.png",
+        "produit-veste-gauche.png",
+        "produit-veste-droite.png",
+        "produit-veste-isometrique.png"
+      ],
       "couleurs": [
-        { "nom": "Noir", "hex": "#0D0D0D", "image": "produit-veste-noir.png" },
-        { "nom": "Taupe", "hex": "#8B7D6B", "image": "produit-veste-taupe.png" },
-        { "nom": "Sauge", "hex": "#9CAF88", "image": "produit-veste-sauge.png" }
+        {
+          "nom": "Noir",
+          "hex": "#0D0D0D",
+          "photoFace": "produit-veste-noir-face.png"
+        },
+        {
+          "nom": "Taupe",
+          "hex": "#8B7D6B",
+          "photoFace": "produit-veste-taupe-face.png"
+        },
+        {
+          "nom": "Sauge",
+          "hex": "#9CAF88",
+          "photoFace": "produit-veste-sauge-face.png"
+        }
       ]
     }
   ]

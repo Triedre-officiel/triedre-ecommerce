@@ -15,10 +15,11 @@
 
   <!-- En-tête / Navigation -->
   <header class="site-header">
-    <a href="index.html" class="logo">
-          <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
-          <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
-    </a>
+    <div class="logo">
+      <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+      <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
+    </div>
+
     <nav class="main-nav">
       <ul>
         <li><a href="index.html">Accueil</a></li>
@@ -28,17 +29,14 @@
         <li><a href="membre.html">Espace Membre</a></li>
       </ul>
     </nav>
-    
-    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
-            <span></span><span></span><span></span>
-    </button>
+
     <div class="header-icons">
       <button aria-label="Rechercher"><img src="../05-images/icons/icon-search.svg" alt=""></button>
-      <a href="membre.html" aria-label="Mon compte"><img src="../05-images/icons/icon-account.svg" alt=""></a>
+      <a href="membre.html" aria-label="Mon compte"> <img src="../05-images/icons/icon-account.svg" alt=""></a>
       <a href="panier.html" aria-label="Panier">
         <img src="../05-images/icons/icon-cart.svg" alt="">
         <span class="cart-count">0</span>
-      </a>
+      </button>
     </div>
   </header>
 
@@ -57,7 +55,9 @@
       <!-- Galerie -->
       <div class="produit-galerie">
         <div class="produit-image-principale">
+          <button class="galerie-fleche galerie-fleche-gauche" aria-label="Photo précédente">‹</button>
           <img id="image-principale" src="" alt="">
+          <button class="galerie-fleche galerie-fleche-droite" aria-label="Photo suivante">›</button>
         </div>
         <ul class="produit-miniatures" id="miniatures-liste">
           <!-- Généré dynamiquement par produits.js -->
@@ -123,10 +123,10 @@
       <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
       <p>Corps. Mental. Confiance.<br>Un mode de vie. Une discipline.<br>Une seule direction.</p>
       <div class="social-links">
-        <a href="https://www.facebook.com/share/1KZvCWZQVM/" target="_blank" rel="noopener" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
-        <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" target="_blank" rel="noopener" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
-        <a href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4" target="_blank" rel="noopener" aria-label="TikTok"><img src="../05-images/icons/icon-tiktok.svg" alt=""></a>
-        <a href="#" target="_blank" rel="noopener" aria-label="YouTube"><img src="../05-images/icons/icon-youtube.svg" alt=""></a>
+        <a href="https://www.facebook.com/share/1KZvCWZQVM/" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
+        <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
+        <a href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4" aria-label="TikTok"><img src="../05-images/icons/icon-tiktok.svg" alt=""></a>
+        <a href="#" aria-label="YouTube"><img src="../05-images/icons/icon-youtube.svg" alt=""></a>
       </div>
     </div>
 
@@ -164,8 +164,7 @@
 
   <script src="../03-js/panier.js"></script>
   <script src="../03-js/recherche.js"></script>
-    <script src="../03-js/produits.js"></script>
-    <script src="../03-js/main.js"></script>
-    <script src="../03-js/navigation.js"></script>
+  <script src="../03-js/produits.js"></script>
+  <script src="../03-js/main.js"></script>
 </body>
 </html>

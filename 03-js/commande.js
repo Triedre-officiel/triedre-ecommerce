@@ -81,12 +81,13 @@ document.addEventListener('DOMContentLoaded', function () {
           '<button type="submit" class="btn btn-primary btn-confirmer-commande">Confirmer la commande</button>' +
         '</form>' +
 
-        '<div class="commande-resume">' +
+        '<div class="commande-resume-colonne">' +
+          '<a href="panier.html" class="retour-panier"> Retour au panier</a>'+
+          '<div class="commande-resume">'+
           '<h2>Résumé</h2>' +
           '<div class="commande-articles-liste">' + articlesHTML + '</div>' +
           '<div class="panier-total"><span>Total</span><span class="accent">' + total + ' $</span></div>' +
         '</div>' +
-
       '</div>';
 
     const formulaire = document.getElementById('formulaire-commande');
