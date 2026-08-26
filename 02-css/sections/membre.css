@@ -8,7 +8,7 @@
   gap: var(--space-xl);
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: var(--space-2xl) var(--container-padding);
+  padding: var(--space-xs) var(--container-padding);
 }
 
 .membre-image {
@@ -16,10 +16,15 @@
   min-width: 280px;
 }
 
-.membre-image img {
+.membre-image {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.membre-video {
   width: 100%;
-  height: auto;
-  max-height: 480px;
+  height: 100%;
   object-fit: cover;
   border-radius: var(--radius-md);
 }

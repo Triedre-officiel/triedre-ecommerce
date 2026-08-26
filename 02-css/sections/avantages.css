@@ -46,6 +46,31 @@
 /* ---- Responsive ---- */
 @media (max-width: 700px) {
   .advantages ul {
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-lg);
+    var(--space-md)
+  }
+
+  .advantages li {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 420) {
+  .advantages ul {
+    gap: var(--space-md);
+    var(--space-sm)
+  }
+
+  .advantages img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .advantages strong,
+  .advantages span {
+    font-size: 0.8rem;
   }
 }

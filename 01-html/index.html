@@ -16,8 +16,8 @@
   <!-- En-tête / Navigation -->
   <header class="site-header">
     <a href="index.html" class="logo">
-          <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
-          <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
+      <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+      <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
     </a>
 
     <nav class="main-nav">
@@ -29,12 +29,22 @@
         <li><a href="membre.html">Espace Membre</a></li>
       </ul>
     </nav>
+
     <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
-            <span></span><span></span><span></span>
+      <span></span>
+      <span></span>
+      <span></span>
     </button>
+
     <div class="header-icons">
-      <button aria-label="Rechercher"><img src="../05-images/icons/icon-search.svg" alt=""></button>
-      <a href="membre.html" aria-label="Mon compte"><img src="../05-images/icons/icon-account.svg" alt=""></a>
+      <button aria-label="Rechercher">
+        <img src="../05-images/icons/icon-search.svg" alt="">
+      </button>
+
+      <a href="membre.html" aria-label="Mon compte">
+        <img src="../05-images/icons/icon-account.svg" alt="">
+      </a>
+
       <a href="panier.html" aria-label="Panier">
         <img src="../05-images/icons/icon-cart.svg" alt="">
         <span class="cart-count">0</span>
@@ -45,22 +55,39 @@
   <main>
 
     <!-- Section Hero -->
-    <section class="hero">
-      <div class="hero-content">
-        <p class="hero-eyebrow">Trièdre Athletic</p>
-        <h1>Corps.<br>Mental.<br><span class="accent">Confiance.</span></h1>
+    <section class="hero-video">
+      <video
+        class="hero-video-bg"
+        autoplay
+        muted
+        loop
+        playsinline
+        poster="../05-images/hero/hero-athlete.png"
+      >
+        <source src="../05-images/hero/hero-video.mp4" type="video/mp4">
+      </video>
+
+      <div class="hero-video-overlay"></div>
+
+      <div class="hero-video-content">
+        <p class="hero-eyebrow">Triedre Athletic</p>
+
+        <h1>
+          Corps.<br>
+          Mental.<br>
+          <span class="accent">Confiance.</span>
+        </h1>
+
         <p class="hero-text">
           Un mode de vie.<br>
           Trois piliers. Une seule direction.<br>
           Deviens la meilleure version de toi-même.
         </p>
+
         <div class="hero-buttons">
           <a href="univers.html" class="btn btn-primary">Découvrir Athletic</a>
           <a href="boutique.html" class="btn btn-secondary">Voir la boutique</a>
         </div>
-      </div>
-      <div class="hero-image">
-        <img src="../05-images/hero/hero-athlete.png" alt="Athlète portant un hoodie TRIÈDRE">
       </div>
     </section>
 
@@ -74,6 +101,7 @@
             <span>Partout au Canada</span>
           </div>
         </li>
+
         <li>
           <img src="../05-images/icons/icon-secure.svg" alt="">
           <div>
@@ -81,6 +109,7 @@
             <span>100% sécurisé</span>
           </div>
         </li>
+
         <li>
           <img src="../05-images/icons/icon-return.svg" alt="">
           <div>
@@ -88,6 +117,7 @@
             <span>30 jours</span>
           </div>
         </li>
+
         <li>
           <img src="../05-images/icons/icon-quality.svg" alt="">
           <div>
@@ -100,130 +130,256 @@
 
     <!-- Section Univers -->
     <section class="univers">
+
       <div class="univers-text">
         <p class="section-eyebrow">L'univers Trièdre</p>
-        <h2>Un univers.<br><span class="accent">Une vision.</span></h2>
+
+        <h2>
+          Un univers. <span class="accent">Une vision.</span>
+        </h2>
+
         <p>
           TRIÈDRE rassemble ceux qui cherchent plus qu'un entraînement.
           Un état d'esprit. Un mode de vie.
           L'univers <strong>ATHLETIC</strong> est le premier chapitre.
           D'autres univers verront le jour.
         </p>
-        <a href="univers.html" class="btn btn-primary">Découvrir l'univers</a>
+
+        <a href="univers.html" class="btn btn-primary">
+          Découvrir l'univers
+        </a>
       </div>
 
       <div class="univers-cards">
+
         <a href="univers.html" class="univers-card univers-card-active">
-          <img src="../05-images/univers/univers-athletic.png" alt="Univers Athletic">
-          <h3>Athletic</h3>
-          <span class="badge">Actif</span>
+          <img
+            src="../05-images/univers/univers-athletic.png"
+            alt="Univers Athletic"
+          >
+
+          <div class="univers-card-label">
+            <h3>Athletic</h3>
+            <span class="badge">Actif</span>
+          </div>
         </a>
+
         <a href="contact.html" class="univers-card">
-          <img src="../05-images/autres-univers/autres-univers.png" alt="Autres univers TRIÈDRE">
-          <h3>Autres univers</h3>
-          <span class="badge">À venir</span>
+          <img
+            src="../05-images/autres-univers/autres-univers.png"
+            alt="Autres univers TRIÈDRE"
+          >
+
+          <div class="univers-card-label">
+            <h3>Autres univers</h3>
+            <span class="badge">À venir</span>
+          </div>
         </a>
+
         <a href="membre.html" class="univers-card">
-          <img src="../05-images/communaute/rejoins-le-mouvement.png" alt="Rejoins le mouvement TRIÈDRE">
-          <h3>Rejoins le mouvement</h3>
-          <span class="badge">Rejoins-nous</span>
+          <img
+            src="../05-images/communaute/rejoins-le-mouvement.png"
+            alt="Rejoins le mouvement TRIÈDRE"
+          >
+
+          <div class="univers-card-label">
+            <h3>Rejoins le mouvement</h3>
+            <span class="badge">Rejoins-nous</span>
+          </div>
         </a>
+
       </div>
     </section>
 
     <!-- Section Produits -->
     <section class="produits">
+
       <div class="produits-intro">
         <p class="section-eyebrow">Apparel</p>
-        <h2>Conçu pour<br><span class="accent">performer.</span></h2>
+
+        <h2>
+          Conçu pour <span
+          class="accent">performer.</span>
+        </h2>
+
         <p>
           Des vêtements pensés pour l'entraînement.
           Créés pour le quotidien.
           Un style sobre. Une qualité exceptionnelle.
         </p>
-        <a href="boutique.html" class="btn btn-primary">Voir la boutique</a>
+
+        <a href="boutique.html" class="btn btn-primary">
+          Voir la boutique
+        </a>
       </div>
 
       <ul class="produits-grid">
+
         <li class="produit-card">
           <a href="produit.html?id=hoodie-performance">
-            <img src="../05-images/produits/produit-hoodie-noir-face.png" alt="Hoodie Performance TRIÈDRE">
+            <img
+              src="../05-images/produits/produit-hoodie-noir-face.png"
+              alt="Hoodie Performance TRIÈDRE"
+            >
             <h3>Hoodie Performance</h3>
             <span class="prix">49,00 $</span>
           </a>
         </li>
+
         <li class="produit-card">
           <a href="produit.html?id=tshirt-athletic">
-            <img src="../05-images/produits/produit-tshirt-sauge-face.png" alt="T-shirt Athletic TRIÈDRE">
+            <img
+              src="../05-images/produits/produit-tshirt-sauge-face.png"
+              alt="T-shirt Athletic TRIÈDRE"
+            >
             <h3>T-shirt Athletic</h3>
             <span class="prix">29,00 $</span>
           </a>
         </li>
+
         <li class="produit-card">
           <a href="produit.html?id=casquette-triedre">
-            <img src="../05-images/produits/produit-casquette-noir-face.png" alt="Casquette TRIÈDRE">
+            <img
+              src="../05-images/produits/produit-casquette-noir-face.png"
+              alt="Casquette TRIÈDRE"
+            >
             <h3>Casquette Trièdre</h3>
             <span class="prix">35,00 $</span>
           </a>
         </li>
+
         <li class="produit-card">
           <a href="produit.html?id=brassiere-active">
-            <img src="../05-images/produits/produit-brassiere-taupe-face.png" alt="Brassière Active TRIÈDRE">
+            <img
+              src="../05-images/produits/produit-brassiere-taupe-face.png"
+              alt="Brassière Active TRIÈDRE"
+            >
             <h3>Brassière Active</h3>
             <span class="prix">40,00 $</span>
           </a>
         </li>
+
         <li class="produit-card">
           <a href="produit.html?id=leggings-essentiel">
-            <img src="../05-images/produits/produit-leggings-taupe-face.png" alt="Leggings Essentiel TRIÈDRE">
+            <img
+              src="../05-images/produits/produit-leggings-taupe-face.png"
+              alt="Leggings Essentiel TRIÈDRE"
+            >
             <h3>Leggings Essentiel</h3>
             <span class="prix">59,00 $</span>
           </a>
         </li>
+
         <li class="produit-card">
           <a href="produit.html?id=veste-legere">
-            <img src="../05-images/produits/produit-veste-sauge-face.png" alt="Veste légère TRIÈDRE">
+            <img
+              src="../05-images/produits/produit-veste-sauge-face.png"
+              alt="Veste légère TRIÈDRE"
+            >
             <h3>Veste légère</h3>
             <span class="prix">69,00 $</span>
           </a>
         </li>
+
       </ul>
     </section>
 
     <!-- Section Espace Membre -->
     <section class="membre">
+
       <div class="membre-image">
-        <img src="../05-images/membre/membre-hoodie-nuit.png" alt="Personne portant un hoodie TRIÈDRE de dos, la nuit">
+        <video 
+          class="membre-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          poster="../05-images/membre/membre-hoodie-nuit.png"
+          >
+          <source src="../05-images/membre/membre-video.mp4" type="video/mp4">
+        </video>
       </div>
+
       <div class="membre-content">
         <p class="section-eyebrow">Espace Membre</p>
-        <h2>Plus qu'un compte.<br><span class="accent">Une communauté.</span></h2>
+
+        <h2>
+          Plus qu'un compte.<br>
+          <span class="accent">Une communauté.</span>
+        </h2>
+
         <p>
           Rejoins l'espace membre TRIÈDRE et accède à du contenu exclusif,
           des programmes, des avantages et plus encore.
         </p>
-        <a href="inscription.html" class="btn btn-primary">Créer un compte</a>
+
+        <a href="inscription.html" class="btn btn-primary">
+          Créer un compte
+        </a>
       </div>
+
     </section>
 
   </main>
 
   <!-- Pied de page -->
   <footer class="site-footer">
+
     <div class="footer-brand">
       <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
-      <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
-      <p>Corps. Mental. Confiance.<br>Un mode de vie. Une discipline.<br>Une seule direction.</p>
+
+      <span class="logo-text">
+        TRIÈDRE <small>Deviens Plus.</small>
+      </span>
+
+      <p>
+        Corps. Mental. Confiance.<br>
+        Un mode de vie. Une discipline.<br>
+        Une seule direction.
+      </p>
+
       <div class="social-links">
-        <a href="https://www.facebook.com/share/1KZvCWZQVM/" target="_blank" rel="noopener" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
-        <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" target="_blank" rel="noopener" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
-        <a href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4" target="_blank" rel="noopener" aria-label="TikTok"><img src="../05-images/icons/icon-tiktok.svg" alt=""></a>
-        <a href="#" target="_blank" rel="noopener" aria-label="YouTube"><img src="../05-images/icons/icon-youtube.svg" alt=""></a>
+        <a
+          href="https://www.facebook.com/share/1KZvCWZQVM/"
+          target="_blank"
+          rel="noopener"
+          aria-label="Facebook"
+        >
+          <img src="../05-images/icons/icon-facebook.svg" alt="">
+        </a>
+
+        <a
+          href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5"
+          target="_blank"
+          rel="noopener"
+          aria-label="Instagram"
+        >
+          <img src="../05-images/icons/icon-instagram.svg" alt="">
+        </a>
+
+        <a
+          href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4"
+          target="_blank"
+          rel="noopener"
+          aria-label="TikTok"
+        >
+          <img src="../05-images/icons/icon-tiktok.svg" alt="">
+        </a>
+
+        <a
+          href="#"
+          target="_blank"
+          rel="noopener"
+          aria-label="YouTube"
+        >
+          <img src="../05-images/icons/icon-youtube.svg" alt="">
+        </a>
       </div>
     </div>
 
     <nav class="footer-nav">
       <h4>Navigation</h4>
+
       <ul>
         <li><a href="index.html">Accueil</a></li>
         <li><a href="marque.html">La Marque</a></li>
@@ -236,6 +392,7 @@
 
     <nav class="footer-aide">
       <h4>Aide</h4>
+
       <ul>
         <li><a href="faq.html">FAQ</a></li>
         <li><a href="livraison.html">Livraison</a></li>
@@ -248,15 +405,24 @@
     <div class="footer-contact">
       <h4>Contact</h4>
       <p>Montréal, Québec, Canada</p>
-      <p><a href="mailto:info@triedreathletic.com">info@triedreathletic.com</a></p>
+
+      <p>
+        <a href="mailto:info@triedreathletic.com">
+          info@triedreathletic.com
+        </a>
+      </p>
     </div>
 
-    <p class="footer-copyright">© 2024 Trièdre Athletic. Tous droits réservés.</p>
+    <p class="footer-copyright">
+      © 2024 Trièdre Athletic. Tous droits réservés.
+    </p>
+
   </footer>
 
   <script src="../03-js/panier.js"></script>
   <script src="../03-js/recherche.js"></script>
-    <script src="../03-js/main.js"></script>
-    <script src="../03-js/navigation.js"></script>
+  <script src="../03-js/main.js"></script>
+  <script src="../03-js/navigation.js"></script>
+
 </body>
 </html>

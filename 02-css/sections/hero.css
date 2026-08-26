@@ -1,63 +1,92 @@
 /* ==========================================================================
-   TRIÈDRE — Section Hero
+   TRIÈDRE — Hero vidéo plein écran
    ========================================================================== */
 
-.hero {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xl);
+.hero-video {
+  position: relative;
+  width: 100%;
+  height: 85vh;
+  min-height: 500px;
+  overflow: hidden;
+}
+
+.hero-video-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 0%;
+  z-index: 0;
+}
+
+.hero-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(13, 13, 13, 0.85) 0%,
+    rgba(13, 13, 13, 0.55) 45%,
+    rgba(13, 13, 13, 0.25) 100%
+  );
+  z-index: 1;
+}
+
+.hero-video-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: var(--space-2xl) var(--container-padding);
+  padding: 0 var(--container-padding);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.hero-content {
-  flex: 1;
-  min-width: 0;
+.hero-video-content .hero-eyebrow {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-small);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-xs);
 }
 
-.hero-text {
+.hero-video-content h1 {
+  color: var(--color-text-primary);
+  max-width: 600px;
+}
+
+.hero-video-content .hero-text {
   color: var(--color-text-secondary);
   margin: var(--space-md) 0 var(--space-lg);
+  max-width: 460px;
 }
 
-.hero-buttons {
+.hero-video-content .hero-buttons {
   display: flex;
   gap: var(--space-sm);
-}
-
-/* ---- Image ---- */
-.hero-image {
-  flex: 1;
-  max-width: 560px;
-}
-
-.hero-image img {
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  object-position: right top;
-  border-radius: var(--radius-md);
+  flex-wrap: wrap;
 }
 
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
-  .hero {
-    flex-direction: column;
+  .hero-video {
+    height: 90vh;
+  }
+
+  .hero-video-content {
     text-align: center;
-    padding: var(--space-xl) var(--container-padding);
+    align-items: center;
   }
 
-  .hero-buttons {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .hero-image {
+  .hero-video-content h1,
+  .hero-video-content .hero-text {
     max-width: 100%;
   }
 
-  .hero-image img {
-    height: 400px;
+  .hero-video-overlay {
+    background: rgba(13, 13, 13, 0.65);
   }
 }

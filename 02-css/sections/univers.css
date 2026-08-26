@@ -3,111 +3,151 @@
    ========================================================================== */
 
 .univers {
-  display: flex;
-  gap: var(--space-xl);
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: var(--space-2xl) var(--container-padding);
-  align-items: center;
+  padding: var(--space-xl) var(--container-padding);
 }
 
-.univers-text {
-  flex: 1;
-  min-width: 280px;
+.univers-intro {
+  max-width: 900px;
+  margin: 0 auto var(--space-xl);
+  text-align: center;
 }
 
-.univers-text p:not(.section-eyebrow) {
-  margin: var(--space-md) 0 var(--space-lg);
+.univers-intro h2 {
+  white-space: nowrap;
 }
 
+.univers-intro p:not(.section-eyebrow) {
+  margin-top: var(--space-md);
+  color: var(--color-text-secondary);
+}
+
+/* ---- Trois blocs alignés horizontalement, texte au-dessus ---- */
 .univers-cards {
-  flex: 1.2;
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
-  gap: var(--space-sm);
-  min-width: 320px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
 }
 
 .univers-card {
-  position: relative;
-  background-color: var(--color-bg-tertiary);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  min-height: 280px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: var(--space-sm);
+  gap: var(--space-sm);
 }
 
-.univers-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-.univers-card:not(.univers-card-active) img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-.univers-card h3 {
-  position: relative;
-  z-index: 1;
-  font-size: var(--font-size-small);
+.univers-text {
+  max-width: 900px;
+  margin: 0 auto var(--space-xl);
   text-align: center;
 }
 
-.univers-card-active {
-  justify-content: flex-end;
+.univers-text h2 {
+  margin: var(--space-xs) 0 var(--space-md);
+  white-space: nowrap;
 }
 
-.univers-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.95) 20%, rgba(0,0,0,0.4) 55%, transparent 85%);
-  z-index: 0;
+.univers-text > p:not(.section-eyebrow) {
+  max-width: 850px;
+  margin: 0 auto var(--space-md);
+  color: var(--color-text-secondary);
+}
+
+.univers-text .btn {
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.univers-card-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: var(--space-sm);
+  white-space: nowrap;
+}
+
+.univers-card-label h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-h4);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-primary);
+}
+
+.univers-card-titre {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-h4);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.univers-card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: var(--space-sm);
+  flex-wrap: nowrap;
 }
 
 .univers-card .badge {
-  position: relative;
-  z-index: 1;
-  display: block;
-  text-align: center;
+  display: inline-block;
+  width: fit-content;
   font-size: 0.75rem;
   color: var(--color-accent);
   text-transform: uppercase;
   letter-spacing: var(--letter-spacing-wide);
-  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.univers-card-media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-bg-tertiary);
+}
+
+.univers-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform var(--transition-slow);
+}
+
+.univers-card:hover .univers-card-media img {
+  transform: scale(1.05);
 }
 
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
-  .univers {
-    flex-direction: column;
-  }
-
-  .univers-cards {
-    grid-template-columns: 1fr 1fr 1fr;
-    width: 100%;
-  }
-
-  .univers-card {
-    min-height: 200px;
-  }
-}
-
-@media (max-width: 600px) {
   .univers-cards {
     grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+
+  .univers-card-media {
+    aspect-ratio: 16 / 10;
+  }
+
+  .univers-card-header {
+    flex-wrap: wrap;
+  }
+
+  .univers-card-titre,
+  .univers-card .badge {
+    white-space: normal;
+  }
+
+  .univers-text h2 {
+    white-space: normal;
+  }
+
+  .univers-card-label {
+    flex-wrap: wrap;
+    white-space: normal;
   }
 }

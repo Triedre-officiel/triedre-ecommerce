@@ -5,12 +5,18 @@
 .univers-hero {
   max-width: 720px;
   margin: 0 auto;
-  padding: var(--space-2xl) var(--container-padding) var(--space-lg);
+  padding: var(--space-2xl) var(--container-padding) var(--space-xl);
   text-align: center;
 }
 
 .univers-hero h1 {
   margin: var(--space-xs) 0 var(--space-md);
+  white-space: nowrap;
+}
+
+.univers-hero .accent {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .univers-hero p:not(.section-eyebrow) {
@@ -20,11 +26,11 @@
 /* ---- Philosophie ---- */
 .univers-philosophie {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-xl);
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: var(--space-lg) var(--container-padding) var(--space-2xl);
+  padding: var(--space-xl) var(--container-padding) var(--space-2xl);
 }
 
 .univers-philosophie-image {
@@ -34,10 +40,9 @@
 
 .univers-philosophie-image img {
   width: 100%;
-  max-height: 450px;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 3 / 4;
   object-fit: cover;
-  object-position: center 0%;
+  object-position: center 15%;
   border-radius: var(--radius-md);
 }
 
@@ -55,11 +60,17 @@
 }
 
 .univers-philosophie-content .btn {
-  margin-top: var(--space-sm);
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-lg);
 }
 
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
+  .univers-hero h1 {
+    white-space: normal;
+    line-height: 1.1;
+  }
+
   .univers-philosophie {
     flex-direction: column;
     text-align: center;
