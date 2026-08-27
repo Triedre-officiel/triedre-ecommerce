@@ -1,0 +1,52 @@
+/* ==========================================================================
+   TRIÈDRE — Promos et badges sur les cartes produits
+   ========================================================================== */
+
+.produit-card {
+  position: relative;
+}
+
+.prix-original {
+  text-decoration: line-through;
+  color: var(--color-text-secondary);
+  margin-right: var(--space-xs);
+  font-size: 0.85em;
+}
+
+.prix-actuel {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-bold);
+}
+
+.badge-promo {
+  display: inline-block;
+  margin-left: var(--space-xs);
+  padding: 2px 8px;
+  background-color: var(--color-accent);
+  color: var(--color-bg-primary);
+  font-size: 0.7rem;
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--radius-sm);
+}
+
+.badge-produit {
+  position: absolute;
+  top: var(--space-sm);
+  left: var(--space-sm);
+  padding: 4px 10px;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  border-radius: var(--radius-sm);
+  z-index: 2;
+}
+
+.badge-rupture {
+  background-color: var(--color-text-secondary);
+}
+
+.produit-rupture img {
+  opacity: 0.5;
+}
