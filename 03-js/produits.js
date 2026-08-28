@@ -46,13 +46,14 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('produit-prix').textContent = produit.prix.toFixed(2) + ' $';
     document.getElementById('produit-description').textContent = produit.description;
 
-    // ---- Message de stock ----
     const stockMessage = document.getElementById('produit-stock');
     const boutonAjouterPanier = document.querySelector('.btn-ajouter-panier');
+
     if (stockMessage) {
       if (produit.stock === 0) {
         stockMessage.textContent = 'Rupture de stock';
         stockMessage.className = 'stock-message stock-rupture';
+
         if (boutonAjouterPanier) {
           boutonAjouterPanier.disabled = true;
           boutonAjouterPanier.textContent = 'Rupture de stock';
@@ -70,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
     vueActuelle = 0;
 
     const imagePrincipale = document.getElementById('image-principale');
+
     if (listeVues.length > 0) {
       imagePrincipale.src = cheminImages + listeVues[0];
       imagePrincipale.alt = produit.nom;
@@ -79,14 +81,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const listeMiniatures = document.getElementById('miniatures-liste');
     listeMiniatures.innerHTML = '';
+
     listeVues.forEach(function (vue, index) {
       const li = document.createElement('li');
       const bouton = document.createElement('button');
       bouton.className = 'miniature' + (index === 0 ? ' active' : '');
       bouton.setAttribute('data-index', index);
+
       const img = document.createElement('img');
       img.src = cheminImages + vue;
       img.alt = produit.nom;
+
       bouton.appendChild(img);
       li.appendChild(bouton);
       listeMiniatures.appendChild(li);
@@ -100,14 +105,17 @@ document.addEventListener('DOMContentLoaded', function () {
       blocCouleur.style.display = 'none';
     } else {
       blocCouleur.style.display = '';
+
       produit.couleurs.forEach(function (couleur, index) {
         const li = document.createElement('li');
         const bouton = document.createElement('button');
+
         bouton.className = 'couleur-swatch' + (index === 0 ? ' active' : '');
         bouton.setAttribute('data-couleur', couleur.nom);
         bouton.setAttribute('data-photo', cheminImages + couleur.photoFace);
         bouton.setAttribute('aria-label', couleur.nom);
         bouton.style.backgroundColor = couleur.hex;
+
         li.appendChild(bouton);
         listeCouleurs.appendChild(li);
       });
@@ -115,12 +123,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const listeTailles = document.getElementById('taille-options-liste');
     listeTailles.innerHTML = '';
+
     produit.tailles.forEach(function (taille) {
       const li = document.createElement('li');
       const bouton = document.createElement('button');
+
       bouton.className = 'taille-btn';
       if (produit.tailles.length === 1) bouton.classList.add('active');
       bouton.textContent = taille;
+
       li.appendChild(bouton);
       listeTailles.appendChild(li);
     });
@@ -130,9 +141,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function afficherVue(index) {
     if (listeVues.length === 0) return;
+
     vueActuelle = (index + listeVues.length) % listeVues.length;
+
     const imagePrincipale = document.getElementById('image-principale');
     imagePrincipale.src = cheminImages + listeVues[vueActuelle];
+
     document.querySelectorAll('.miniature').forEach(function (m) {
       m.classList.toggle('active', parseInt(m.getAttribute('data-index'), 10) === vueActuelle);
     });
@@ -146,23 +160,37 @@ document.addEventListener('DOMContentLoaded', function () {
       listeMiniatures.addEventListener('click', function (e) {
         const bouton = e.target.closest('.miniature');
         if (!bouton) return;
+
         afficherVue(parseInt(bouton.getAttribute('data-index'), 10));
       });
     }
 
     const flecheGauche = document.querySelector('.galerie-fleche-gauche');
     const flecheDroite = document.querySelector('.galerie-fleche-droite');
-    if (flecheGauche) flecheGauche.addEventListener('click', function () { afficherVue(vueActuelle - 1); });
-    if (flecheDroite) flecheDroite.addEventListener('click', function () { afficherVue(vueActuelle + 1); });
+
+    if (flecheGauche) {
+      flecheGauche.addEventListener('click', function () {
+        afficherVue(vueActuelle - 1);
+      });
+    }
+
+    if (flecheDroite) {
+      flecheDroite.addEventListener('click', function () {
+        afficherVue(vueActuelle + 1);
+      });
+    }
 
     if (imagePrincipale) {
       let positionDepart = 0;
+
       imagePrincipale.addEventListener('touchstart', function (e) {
         positionDepart = e.touches[0].clientX;
       });
+
       imagePrincipale.addEventListener('touchend', function (e) {
         const positionFin = e.changedTouches[0].clientX;
         const difference = positionFin - positionDepart;
+
         if (difference > 50) afficherVue(vueActuelle - 1);
         if (difference < -50) afficherVue(vueActuelle + 1);
       });
@@ -173,11 +201,15 @@ document.addEventListener('DOMContentLoaded', function () {
       listeCouleurs.addEventListener('click', function (e) {
         const bouton = e.target.closest('.couleur-swatch');
         if (!bouton) return;
+
         imagePrincipale.src = bouton.getAttribute('data-photo');
-        document.getElementById('couleur-selectionnee').textContent = bouton.getAttribute('data-couleur');
+        document.getElementById('couleur-selectionnee').textContent =
+          bouton.getAttribute('data-couleur');
+
         document.querySelectorAll('.couleur-swatch').forEach(function (el) {
           el.classList.toggle('active', el === bouton);
         });
+
         document.querySelectorAll('.miniature').forEach(function (m) {
           m.classList.remove('active');
         });
@@ -189,7 +221,11 @@ document.addEventListener('DOMContentLoaded', function () {
       listeTailles.addEventListener('click', function (e) {
         const bouton = e.target.closest('.taille-btn');
         if (!bouton) return;
-        document.querySelectorAll('.taille-btn').forEach(function (b) { b.classList.remove('active'); });
+
+        document.querySelectorAll('.taille-btn').forEach(function (b) {
+          b.classList.remove('active');
+        });
+
         bouton.classList.add('active');
       });
     }
@@ -197,12 +233,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const quantiteInput = document.querySelector('.quantite-input');
     const boutonMoins = document.querySelector('.quantite-moins');
     const boutonPlus = document.querySelector('.quantite-plus');
+
     if (boutonMoins && quantiteInput) {
       boutonMoins.addEventListener('click', function () {
         const valeur = parseInt(quantiteInput.value, 10);
         if (valeur > 1) quantiteInput.value = valeur - 1;
       });
     }
+
     if (boutonPlus && quantiteInput) {
       boutonPlus.addEventListener('click', function () {
         quantiteInput.value = parseInt(quantiteInput.value, 10) + 1;
@@ -210,9 +248,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const boutonAjouter = document.querySelector('.btn-ajouter-panier');
+
     if (boutonAjouter) {
       boutonAjouter.addEventListener('click', function () {
         const tailleSelectionnee = document.querySelector('.taille-btn.active');
+
         if (!tailleSelectionnee) {
           alert('Merci de sélectionner une taille avant d\'ajouter au panier.');
           return;
@@ -247,11 +287,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const memeCategorie = tousLesProduits.filter(function (p) {
       return p.id !== produitActuel.id && p.categorie === produitActuel.categorie;
     });
+
     const autres = tousLesProduits.filter(function (p) {
       return p.id !== produitActuel.id && p.categorie !== produitActuel.categorie;
     });
 
     const suggestions = memeCategorie.concat(autres).slice(0, 4);
+
     if (suggestions.length === 0) {
       const section = document.querySelector('.produits-similaires');
       if (section) section.style.display = 'none';
@@ -259,6 +301,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     conteneur.innerHTML = '';
+
     suggestions.forEach(function (p) {
       const li = document.createElement('li');
       li.className = 'produit-card';
@@ -277,9 +320,14 @@ document.addEventListener('DOMContentLoaded', function () {
       spanPrix.className = 'prix';
 
       const prixFormate = p.prix.toFixed(2).replace('.', ',') + ' $';
+
       if (p.prixOriginal && p.prixOriginal > p.prix) {
-        const pourcentage = Math.round(((p.prixOriginal - p.prix) / p.prixOriginal) * 100);
-        const prixOriginalFormate = p.prixOriginal.toFixed(2).replace('.', ',') + ' $';
+        const pourcentage =
+          Math.round(((p.prixOriginal - p.prix) / p.prixOriginal) * 100);
+
+        const prixOriginalFormate =
+          p.prixOriginal.toFixed(2).replace('.', ',') + ' $';
+
         spanPrix.innerHTML =
           '<span class="prix-original">' + prixOriginalFormate + '</span>' +
           '<span class="prix-actuel">' + prixFormate + '</span>' +
@@ -307,9 +355,11 @@ document.addEventListener('DOMContentLoaded', function () {
   function genererEtoiles(note) {
     const noteArrondie = Math.round(note);
     let html = '<span class="etoiles">';
+
     for (let i = 1; i <= 5; i++) {
       html += i <= noteArrondie ? '★' : '☆';
     }
+
     html += '</span>';
     return html;
   }
@@ -322,28 +372,37 @@ document.addEventListener('DOMContentLoaded', function () {
   function sauvegarderAvisLocal(idProduit, avis) {
     const avisExistants = getAvisLocaux(idProduit);
     avisExistants.unshift(avis);
-    localStorage.setItem('triedre_avis_' + idProduit, JSON.stringify(avisExistants));
+
+    localStorage.setItem(
+      'triedre_avis_' + idProduit,
+      JSON.stringify(avisExistants)
+    );
   }
 
   function afficherAvis(produit) {
     const conteneurResume = document.getElementById('avis-resume');
     const conteneurListe = document.getElementById('avis-liste');
+
     if (!conteneurResume || !conteneurListe) return;
 
     const avisStatiques = produit.avis || [];
     const avisLocaux = getAvisLocaux(produit.id);
-    const tousLesAvis = avisLocaux.concat(avisStatiques);
 
     function rafraichir() {
       const liste = avisLocaux.concat(avisStatiques);
 
       if (liste.length === 0) {
-        conteneurResume.innerHTML = '<p class="avis-aucun">Aucun avis pour l\'instant — sois le premier à en laisser un !</p>';
+        conteneurResume.innerHTML =
+          '<p class="avis-aucun">Aucun avis pour l\'instant — sois le premier à en laisser un !</p>';
+
         conteneurListe.innerHTML = '';
         return;
       }
 
-      const moyenne = liste.reduce(function (total, a) { return total + a.note; }, 0) / liste.length;
+      const moyenne =
+        liste.reduce(function (total, a) {
+          return total + a.note;
+        }, 0) / liste.length;
 
       conteneurResume.innerHTML =
         genererEtoiles(moyenne) +
@@ -351,41 +410,51 @@ document.addEventListener('DOMContentLoaded', function () {
         '<span class="avis-nombre">(' + liste.length + ' avis)</span>';
 
       conteneurListe.innerHTML = '';
+
       liste.forEach(function (avis) {
         const li = document.createElement('li');
         li.className = 'avis-item';
+
         li.innerHTML =
           '<div class="avis-item-header">' +
             '<strong>' + avis.auteur + '</strong>' +
             genererEtoiles(avis.note) +
           '</div>' +
           '<p>' + avis.commentaire + '</p>';
+
         conteneurListe.appendChild(li);
       });
     }
 
     rafraichir();
 
-    // ---- Sélecteur d'étoiles interactif ----
-    const boutonsEtoiles = document.querySelectorAll('#avis-etoiles-input button');
+    const boutonsEtoiles =
+      document.querySelectorAll('#avis-etoiles-input button');
+
     const inputNote = document.getElementById('avis-note');
+
     boutonsEtoiles.forEach(function (bouton) {
       bouton.addEventListener('click', function () {
         const note = parseInt(bouton.getAttribute('data-note'), 10);
         inputNote.value = note;
+
         boutonsEtoiles.forEach(function (b) {
-          b.classList.toggle('selectionnee', parseInt(b.getAttribute('data-note'), 10) <= note);
+          b.classList.toggle(
+            'selectionnee',
+            parseInt(b.getAttribute('data-note'), 10) <= note
+          );
         });
       });
     });
 
-    // ---- Soumission du formulaire ----
     const formulaireAvis = document.getElementById('formulaire-avis');
+
     if (formulaireAvis) {
       formulaireAvis.addEventListener('submit', function (e) {
         e.preventDefault();
 
         const note = parseInt(inputNote.value, 10);
+
         if (note === 0) {
           afficherToast('Merci de sélectionner une note avant de publier.');
           return;
@@ -403,10 +472,61 @@ document.addEventListener('DOMContentLoaded', function () {
 
         formulaireAvis.reset();
         inputNote.value = 0;
-        boutonsEtoiles.forEach(function (b) { b.classList.remove('selectionnee'); });
+
+        boutonsEtoiles.forEach(function (b) {
+          b.classList.remove('selectionnee');
+        });
+
         afficherToast('Merci pour ton avis ✓');
       });
     }
   }
+
+  // ==========================================================================
+  // Favoris — ouverture de la fenêtre de connexion
+  // ==========================================================================
+
+  const boutonFavori = document.querySelector('.btn-favori');
+  const favorisModal = document.getElementById('favoris-modal');
+  const boutonsFermerFavoris = document.querySelectorAll('[data-fermer-favoris]');
+
+  function ouvrirModalFavoris() {
+    if (!favorisModal) return;
+
+    favorisModal.hidden = false;
+    document.body.style.overflow = 'hidden';
+
+    const boutonFermer =
+      favorisModal.querySelector('.favoris-modal-fermer');
+
+    if (boutonFermer) {
+      boutonFermer.focus();
+    }
+  }
+
+  function fermerModalFavoris() {
+    if (!favorisModal) return;
+
+    favorisModal.hidden = true;
+    document.body.style.overflow = '';
+
+    if (boutonFavori) {
+      boutonFavori.focus();
+    }
+  }
+
+  if (boutonFavori) {
+    boutonFavori.addEventListener('click', ouvrirModalFavoris);
+  }
+
+  boutonsFermerFavoris.forEach(function (element) {
+    element.addEventListener('click', fermerModalFavoris);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && favorisModal && !favorisModal.hidden) {
+      fermerModalFavoris();
+    }
+  });
 
 });
