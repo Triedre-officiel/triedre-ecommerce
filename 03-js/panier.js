@@ -59,6 +59,32 @@ function mettreAJourCompteur() {
   });
 }
 
+// ---- Notification discrète (toast), utilisable sur toutes les pages ----
+function afficherToast(message) {
+  let conteneurToast = document.getElementById('toast-conteneur');
+  if (!conteneurToast) {
+    conteneurToast = document.createElement('div');
+    conteneurToast.id = 'toast-conteneur';
+    document.body.appendChild(conteneurToast);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  conteneurToast.appendChild(toast);
+
+  requestAnimationFrame(function () {
+    toast.classList.add('toast-visible');
+  });
+
+  setTimeout(function () {
+    toast.classList.remove('toast-visible');
+    setTimeout(function () {
+      toast.remove();
+    }, 300);
+  }, 3000);
+}
+
 // ---- Affichage complet de la page panier.html ----
 function afficherPagePanier() {
   const conteneur = document.getElementById('panier-contenu');

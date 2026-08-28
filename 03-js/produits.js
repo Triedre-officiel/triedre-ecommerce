@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function () {
           quantite: quantite
         });
 
-        alert(nom + ' ajouté au panier !');
+        afficherToast(nom + ' ajouté au panier ✓');
       });
     }
   }

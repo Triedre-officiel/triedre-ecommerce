@@ -1,5 +1,8 @@
 {
+      "promoFin": "2026-08-31T00:00:00",
+
   "produits": [
+
     {
       "id": "hoodie-performance",
       "nom": "Hoodie Performance",
@@ -44,6 +47,7 @@
       "nom": "T-shirt Athletic",
       "categorie": "Apparel",
       "prix": 28.99,
+      "badge": "",
       "description": "Un t-shirt technique et respirant, pensé pour l'entraînement comme pour le quotidien. Coupe ajustée, logo discret.",
       "tailles": [
         "S",
@@ -117,6 +121,7 @@
       "nom": "Brassière Active",
       "categorie": "Apparel",
       "prix": 39.99,
+      "badge": "",
       "description": "Maintien optimal pour l'entraînement intense. Matière extensible et respirante, dos nageur.",
       "tailles": [
         "S",
@@ -154,6 +159,7 @@
       "nom": "Leggings Essentiel",
       "categorie": "Apparel",
       "prix": 58.99,
+      "badge": "",
       "description": "Leggings taille haute, matière seconde peau. Conçu pour bouger librement, à l'entraînement comme au quotidien.",
       "tailles": [
         "S",
@@ -191,6 +197,7 @@
       "nom": "Veste Légère",
       "categorie": "Apparel",
       "prix": 68.99,
+      "badge": "Nouveau",
       "description": "Veste zippée légère, parfaite pour les échauffements ou le quotidien. Matière douce, coupe ajustée.",
       "tailles": [
         "S",
