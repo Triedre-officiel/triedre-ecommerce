@@ -125,5 +125,16 @@
 @media (max-width: 900px) {
   .membre-page {
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  .membre-avantages,
+  .membre-formulaires {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .membre-formulaires {
+    box-sizing: border-box;
   }
 }

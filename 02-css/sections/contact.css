@@ -56,5 +56,16 @@
 @media (max-width: 900px) {
   .contact-page {
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  .contact-intro,
+  .contact-formulaire {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .contact-formulaire {
+    box-sizing: border-box;
   }
 }
