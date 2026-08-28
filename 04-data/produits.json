@@ -10,7 +10,21 @@
       "prix": 48.99,
       "prixOriginal": 69.99,
       "badge": "Solde",
+      "stock": "3",
       "description": "Un hoodie pensé pour l'entraînement et le quotidien. Coupe ample, matière douce et résistante, logo brodé discret. Trois piliers, une seule direction.",
+      "avis": [
+          { 
+            "auteur": "Marc-Antoine", 
+            "note": 5, 
+            "commentaire": "Excellente qualité, exactement ce que je cherchais pour l'entrainement et le lifetyle." 
+          },
+          { 
+            "auteur": "Sophie L.", 
+            "note": 4, 
+            "commentaire": "Très confortable, taille un peu grand." 
+          }
+      ],
+
       "tailles": [
         "S",
         "M",
@@ -48,6 +62,7 @@
       "categorie": "Apparel",
       "prix": 28.99,
       "badge": "",
+      "stock": "",
       "description": "Un t-shirt technique et respirant, pensé pour l'entraînement comme pour le quotidien. Coupe ajustée, logo discret.",
       "tailles": [
         "S",
@@ -87,6 +102,7 @@
       "prix": 34.99,
       "prixOriginal": 49.99,
       "badge": "Solde",
+      "stock": "0",
       "description": "Casquette structurée avec logo brodé doré. Ajustable, style sobre et intemporel.",
       "tailles": [
         "Taille unique"
@@ -122,6 +138,7 @@
       "categorie": "Apparel",
       "prix": 39.99,
       "badge": "",
+      "stock": "",
       "description": "Maintien optimal pour l'entraînement intense. Matière extensible et respirante, dos nageur.",
       "tailles": [
         "S",
@@ -160,6 +177,7 @@
       "categorie": "Apparel",
       "prix": 58.99,
       "badge": "",
+      "stock": "",
       "description": "Leggings taille haute, matière seconde peau. Conçu pour bouger librement, à l'entraînement comme au quotidien.",
       "tailles": [
         "S",
@@ -198,6 +216,7 @@
       "categorie": "Apparel",
       "prix": 68.99,
       "badge": "Nouveau",
+      "stock": "",
       "description": "Veste zippée légère, parfaite pour les échauffements ou le quotidien. Matière douce, coupe ajustée.",
       "tailles": [
         "S",

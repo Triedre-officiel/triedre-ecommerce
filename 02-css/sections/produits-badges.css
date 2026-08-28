@@ -4,6 +4,20 @@
 
 .produit-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.produit-card > a {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.produit-card .prix {
+  display: block;
+  min-height: 2.4em;
 }
 
 .prix-original {
@@ -49,4 +63,29 @@
 
 .produit-rupture img {
   opacity: 0.5;
+}
+
+.stock-limite {
+  display: block;
+  min-height: 1.2em;
+  margin-top: auto;
+  padding-top: 4px;
+  font-size: 0.75rem;
+  color: #d94f3d;
+  font-weight: var(--font-weight-medium);
+}
+
+.stock-message {
+  font-size: var(--font-size-small);
+  margin-bottom: var(--space-md);
+}
+
+.stock-limite-texte {
+  color: #d94f3d;
+  font-weight: var(--font-weight-medium);
+}
+
+.stock-rupture {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
 }

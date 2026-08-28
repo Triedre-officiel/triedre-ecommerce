@@ -1,5 +1,5 @@
 // ==========================================================================
-// TRIÈDRE — Synchronisation des prix + promos/badges depuis produits.json
+// TRIÈDRE — Synchronisation des prix + promos/badges/stock depuis produits.json
 // À charger sur toute page contenant des cartes .produit-card
 // ==========================================================================
 
@@ -40,22 +40,30 @@ document.addEventListener('DOMContentLoaded', function () {
           spanPrix.textContent = prixFormate;
         }
 
-        // ---- Badge texte libre (Nouveau, Rupture de stock, etc.) ----
-        if (produit.badge && !produit.prixOriginal) {
+        // ---- Badge texte libre (Nouveau, Solde, etc.) ----
+        if (produit.badge) {
           const badge = document.createElement('span');
           badge.className = 'badge-produit';
           badge.textContent = produit.badge;
           lien.appendChild(badge);
         }
 
-        // ---- Rupture de stock ----
-        if (produit.enStock === false) {
-          lien.classList.add('produit-rupture');
-          const badgeRupture = document.createElement('span');
-          badgeRupture.className = 'badge-produit badge-rupture';
-          badgeRupture.textContent = 'Rupture de stock';
-          lien.appendChild(badgeRupture);
+        // ---- Stock (élément toujours créé pour un alignement constant) ----
+        const stockLimite = document.createElement('span');
+        stockLimite.className = 'stock-limite';
+
+        if (produit.stock !== undefined) {
+          if (produit.stock === 0) {
+            lien.classList.add('produit-rupture');
+            const badgeRupture = document.createElement('span');
+            badgeRupture.className = 'badge-produit badge-rupture';
+            badgeRupture.textContent = 'Rupture de stock';
+            lien.appendChild(badgeRupture);
+          } else if (produit.stock <= 5) {
+            stockLimite.textContent = 'Plus que ' + produit.stock + ' en stock';
+          }
         }
+        lien.appendChild(stockLimite);
       });
     })
     .catch(function (erreur) {

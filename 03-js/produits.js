@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       afficherProduit(produit);
+      afficherProduitsSimilaires(donnees.produits, produit);
+      afficherAvis(produit);
     })
     .catch(function (erreur) {
       console.error(erreur);
@@ -43,6 +45,26 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('produit-nom').textContent = produit.nom;
     document.getElementById('produit-prix').textContent = produit.prix.toFixed(2) + ' $';
     document.getElementById('produit-description').textContent = produit.description;
+
+    // ---- Message de stock ----
+    const stockMessage = document.getElementById('produit-stock');
+    const boutonAjouterPanier = document.querySelector('.btn-ajouter-panier');
+    if (stockMessage) {
+      if (produit.stock === 0) {
+        stockMessage.textContent = 'Rupture de stock';
+        stockMessage.className = 'stock-message stock-rupture';
+        if (boutonAjouterPanier) {
+          boutonAjouterPanier.disabled = true;
+          boutonAjouterPanier.textContent = 'Rupture de stock';
+        }
+      } else if (produit.stock !== undefined && produit.stock <= 5) {
+        stockMessage.textContent = 'Plus que ' + produit.stock + ' en stock — dépêche-toi !';
+        stockMessage.className = 'stock-message stock-limite-texte';
+      } else {
+        stockMessage.textContent = '';
+        stockMessage.className = 'stock-message';
+      }
+    }
 
     listeVues = produit.vuesCommunes || [];
     vueActuelle = 0;
@@ -213,7 +235,176 @@ document.addEventListener('DOMContentLoaded', function () {
           quantite: quantite
         });
 
-        afficherToast(nom + ' ajouté au panier ✓');
+        alert(nom + ' ajouté au panier !');
+      });
+    }
+  }
+
+  function afficherProduitsSimilaires(tousLesProduits, produitActuel) {
+    const conteneur = document.getElementById('produits-similaires-liste');
+    if (!conteneur) return;
+
+    const memeCategorie = tousLesProduits.filter(function (p) {
+      return p.id !== produitActuel.id && p.categorie === produitActuel.categorie;
+    });
+    const autres = tousLesProduits.filter(function (p) {
+      return p.id !== produitActuel.id && p.categorie !== produitActuel.categorie;
+    });
+
+    const suggestions = memeCategorie.concat(autres).slice(0, 4);
+    if (suggestions.length === 0) {
+      const section = document.querySelector('.produits-similaires');
+      if (section) section.style.display = 'none';
+      return;
+    }
+
+    conteneur.innerHTML = '';
+    suggestions.forEach(function (p) {
+      const li = document.createElement('li');
+      li.className = 'produit-card';
+
+      const lien = document.createElement('a');
+      lien.href = 'produit.html?id=' + p.id;
+
+      const img = document.createElement('img');
+      img.src = cheminImages + p.couleurs[0].photoFace;
+      img.alt = p.nom;
+
+      const titre = document.createElement('h3');
+      titre.textContent = p.nom;
+
+      const spanPrix = document.createElement('span');
+      spanPrix.className = 'prix';
+
+      const prixFormate = p.prix.toFixed(2).replace('.', ',') + ' $';
+      if (p.prixOriginal && p.prixOriginal > p.prix) {
+        const pourcentage = Math.round(((p.prixOriginal - p.prix) / p.prixOriginal) * 100);
+        const prixOriginalFormate = p.prixOriginal.toFixed(2).replace('.', ',') + ' $';
+        spanPrix.innerHTML =
+          '<span class="prix-original">' + prixOriginalFormate + '</span>' +
+          '<span class="prix-actuel">' + prixFormate + '</span>' +
+          '<span class="badge-promo">-' + pourcentage + '%</span>';
+      } else {
+        spanPrix.textContent = prixFormate;
+      }
+
+      lien.appendChild(img);
+      lien.appendChild(titre);
+      lien.appendChild(spanPrix);
+
+      if (p.badge) {
+        const badge = document.createElement('span');
+        badge.className = 'badge-produit';
+        badge.textContent = p.badge;
+        lien.appendChild(badge);
+      }
+
+      li.appendChild(lien);
+      conteneur.appendChild(li);
+    });
+  }
+
+  function genererEtoiles(note) {
+    const noteArrondie = Math.round(note);
+    let html = '<span class="etoiles">';
+    for (let i = 1; i <= 5; i++) {
+      html += i <= noteArrondie ? '★' : '☆';
+    }
+    html += '</span>';
+    return html;
+  }
+
+  function getAvisLocaux(idProduit) {
+    const donnees = localStorage.getItem('triedre_avis_' + idProduit);
+    return donnees ? JSON.parse(donnees) : [];
+  }
+
+  function sauvegarderAvisLocal(idProduit, avis) {
+    const avisExistants = getAvisLocaux(idProduit);
+    avisExistants.unshift(avis);
+    localStorage.setItem('triedre_avis_' + idProduit, JSON.stringify(avisExistants));
+  }
+
+  function afficherAvis(produit) {
+    const conteneurResume = document.getElementById('avis-resume');
+    const conteneurListe = document.getElementById('avis-liste');
+    if (!conteneurResume || !conteneurListe) return;
+
+    const avisStatiques = produit.avis || [];
+    const avisLocaux = getAvisLocaux(produit.id);
+    const tousLesAvis = avisLocaux.concat(avisStatiques);
+
+    function rafraichir() {
+      const liste = avisLocaux.concat(avisStatiques);
+
+      if (liste.length === 0) {
+        conteneurResume.innerHTML = '<p class="avis-aucun">Aucun avis pour l\'instant — sois le premier à en laisser un !</p>';
+        conteneurListe.innerHTML = '';
+        return;
+      }
+
+      const moyenne = liste.reduce(function (total, a) { return total + a.note; }, 0) / liste.length;
+
+      conteneurResume.innerHTML =
+        genererEtoiles(moyenne) +
+        '<span class="avis-moyenne">' + moyenne.toFixed(1) + ' / 5</span>' +
+        '<span class="avis-nombre">(' + liste.length + ' avis)</span>';
+
+      conteneurListe.innerHTML = '';
+      liste.forEach(function (avis) {
+        const li = document.createElement('li');
+        li.className = 'avis-item';
+        li.innerHTML =
+          '<div class="avis-item-header">' +
+            '<strong>' + avis.auteur + '</strong>' +
+            genererEtoiles(avis.note) +
+          '</div>' +
+          '<p>' + avis.commentaire + '</p>';
+        conteneurListe.appendChild(li);
+      });
+    }
+
+    rafraichir();
+
+    // ---- Sélecteur d'étoiles interactif ----
+    const boutonsEtoiles = document.querySelectorAll('#avis-etoiles-input button');
+    const inputNote = document.getElementById('avis-note');
+    boutonsEtoiles.forEach(function (bouton) {
+      bouton.addEventListener('click', function () {
+        const note = parseInt(bouton.getAttribute('data-note'), 10);
+        inputNote.value = note;
+        boutonsEtoiles.forEach(function (b) {
+          b.classList.toggle('selectionnee', parseInt(b.getAttribute('data-note'), 10) <= note);
+        });
+      });
+    });
+
+    // ---- Soumission du formulaire ----
+    const formulaireAvis = document.getElementById('formulaire-avis');
+    if (formulaireAvis) {
+      formulaireAvis.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const note = parseInt(inputNote.value, 10);
+        if (note === 0) {
+          afficherToast('Merci de sélectionner une note avant de publier.');
+          return;
+        }
+
+        const nouvelAvis = {
+          auteur: document.getElementById('avis-nom').value,
+          note: note,
+          commentaire: document.getElementById('avis-commentaire').value
+        };
+
+        sauvegarderAvisLocal(produit.id, nouvelAvis);
+        avisLocaux.unshift(nouvelAvis);
+        rafraichir();
+
+        formulaireAvis.reset();
+        inputNote.value = 0;
+        boutonsEtoiles.forEach(function (b) { b.classList.remove('selectionnee'); });
+        afficherToast('Merci pour ton avis ✓');
       });
     }
   }

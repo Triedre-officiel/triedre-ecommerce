@@ -16,8 +16,8 @@
   <!-- En-tête / Navigation -->
   <header class="site-header">
     <a href="index.html" class="logo">
-          <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
-          <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
+      <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+      <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
     </a>
 
     <nav class="main-nav">
@@ -32,7 +32,7 @@
 
     <div class="header-icons">
       <button aria-label="Rechercher"><img src="../05-images/icons/icon-search.svg" alt=""></button>
-      <a href="membre.html" aria-label="Mon compte"> <img src="../05-images/icons/icon-account.svg" alt=""></a>
+      <a href="membre.html" aria-label="Mon compte"><img src="../05-images/icons/icon-account.svg" alt=""></a>
       <a href="panier.html" aria-label="Panier">
         <img src="../05-images/icons/icon-cart.svg" alt="">
         <span class="cart-count">0</span>
@@ -41,18 +41,13 @@
   </header>
 
   <main>
-
-    <!-- Fil d'ariane -->
     <nav class="fil-ariane">
       <a href="index.html">Accueil</a> /
       <a href="boutique.html">Boutique</a> /
       <span id="breadcrumb-produit">Produit</span>
     </nav>
 
-    <!-- Fiche produit -->
     <section class="produit-detail">
-
-      <!-- Galerie -->
       <div class="produit-galerie">
         <div class="produit-image-principale">
           <button class="galerie-fleche galerie-fleche-gauche" aria-label="Photo précédente">‹</button>
@@ -64,15 +59,13 @@
         </ul>
       </div>
 
-      <!-- Informations -->
       <div class="produit-info">
         <p class="section-eyebrow" id="produit-categorie">Apparel</p>
         <h1 id="produit-nom">Chargement...</h1>
         <p class="produit-prix" id="produit-prix"></p>
-
         <p class="produit-description" id="produit-description"></p>
+        <p class="stock-message" id="produit-stock"></p>
 
-        <!-- Sélecteur couleur -->
         <div class="produit-option" id="bloc-couleur">
           <label>Couleur : <span id="couleur-selectionnee"></span></label>
           <ul class="couleur-options" id="couleur-options-liste">
@@ -80,7 +73,6 @@
           </ul>
         </div>
 
-        <!-- Sélecteur taille -->
         <div class="produit-option">
           <label>Taille</label>
           <ul class="taille-options" id="taille-options-liste">
@@ -89,7 +81,6 @@
           <a href="#" class="guide-tailles">Guide des tailles</a>
         </div>
 
-        <!-- Quantité + ajout panier -->
         <div class="produit-actions">
           <div class="quantite-selecteur">
             <button class="quantite-moins" aria-label="Diminuer la quantité">−</button>
@@ -99,7 +90,11 @@
           <button class="btn btn-primary btn-ajouter-panier">Ajouter au panier</button>
         </div>
 
-        <!-- Détails additionnels -->
+        <button class="btn-favori" type="button" aria-label="Ajouter aux favoris" aria-pressed="false">
+          <span class="btn-favori-texte">Ajouter aux favoris</span>
+          <span class="btn-favori-icone" aria-hidden="true">♡</span>
+        </button>
+
         <div class="produit-details">
           <details>
             <summary>Composition & entretien</summary>
@@ -111,12 +106,81 @@
           </details>
         </div>
       </div>
-
     </section>
 
+    <!-- Produits similaires + Avis clients -->
+    <div class="produit-suite">
+
+      <section class="produits-similaires">
+        <h2>Tu pourrais aussi aimer</h2>
+        <ul class="produits-grid produits-similaires-grid" id="produits-similaires-liste">
+        </ul>
+      </section>
+
+      <section class="produit-avis">
+        <h2>Avis clients</h2>
+        <div class="avis-resume" id="avis-resume"></div>
+        <ul class="avis-liste" id="avis-liste"></ul>
+
+        <div class="avis-formulaire-bloc">
+          <h3>Laisser un avis</h3>
+          <form id="formulaire-avis">
+            <div class="champ-groupe">
+              <label for="avis-nom">Ton nom</label>
+              <input type="text" id="avis-nom" required>
+            </div>
+
+            <div class="champ-groupe">
+              <label>Ta note</label>
+              <div class="avis-etoiles-input" id="avis-etoiles-input">
+                <button type="button" data-note="1">★</button>
+                <button type="button" data-note="2">★</button>
+                <button type="button" data-note="3">★</button>
+                <button type="button" data-note="4">★</button>
+                <button type="button" data-note="5">★</button>
+              </div>
+              <input type="hidden" id="avis-note" value="0">
+            </div>
+
+            <div class="champ-groupe">
+              <label for="avis-commentaire">Ton commentaire</label>
+              <textarea id="avis-commentaire" rows="3" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Publier mon avis</button>
+          </form>
+        </div>
+      </section>
+
+    </div>
   </main>
 
-  <!-- Pied de page -->
+  <!-- Fenêtre de connexion pour les favoris -->
+  <div class="favoris-modal" id="favoris-modal" hidden>
+    <div class="favoris-modal-overlay" data-fermer-favoris></div>
+
+    <section class="favoris-modal-contenu"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="favoris-modal-titre">
+      <button class="favoris-modal-fermer"
+              type="button"
+              aria-label="Fermer"
+              data-fermer-favoris>×</button>
+
+      <p class="section-eyebrow">Espace membre</p>
+      <h2 id="favoris-modal-titre">Enregistre tes favoris.</h2>
+      <p class="favoris-modal-texte">
+        Connecte-toi ou crée ton compte TRIÈDRE pour retrouver les produits que tu aimes.
+      </p>
+
+      <div class="favoris-modal-actions">
+        <a href="membre.html?onglet=connexion" class="btn btn-primary">Se connecter</a>
+        <a href="membre.html?onglet=inscription" class="btn favoris-modal-inscription">Créer un compte</a>
+      </div>
+    </section>
+  </div>
+
   <footer class="site-footer">
     <div class="footer-brand">
       <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
@@ -168,6 +232,6 @@
   <script src="../03-js/produits.js"></script>
   <script src="../03-js/main.js"></script>
   <script src="../03-js/banniere-promo.js"></script>
-  
+
 </body>
 </html>

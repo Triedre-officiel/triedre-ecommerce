@@ -28,7 +28,7 @@
   gap: var(--space-xl);
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: var(--space-lg) var(--container-padding) var(--space-2xl);
+  padding: var(--space-lg) var(--container-padding) var(--space-sm);
   align-items: flex-start;
 }
 
@@ -54,19 +54,21 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background-color: rgba(13, 13, 13, 0.6);
+  background-color: rgba(13, 13, 13, 0.35);
   color: var(--color-text-primary);
-  font-size: 1.5rem;
+  font-size: 1rem;
   line-height: 1;
   z-index: 10;
-  transition: background-color var(--transition-fast);
+  transition: background-color var(--transition-fast), opacity var(--transition-fast);
+  opacity: 0.85;
 }
 
 .galerie-fleche:hover {
-  background-color: rgba(201, 162, 39, 0.9);
+  background-color: rgba(201, 162, 39, 0.75);
+  opacity: 1;
 }
 
 .galerie-fleche-gauche {
@@ -86,12 +88,25 @@
 
 .produit-miniatures {
   display: flex;
+  flex-wrap: nowrap;
   gap: var(--space-sm);
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 4px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.produit-miniatures::-webkit-scrollbar {
+  display: none;
 }
 
 .miniature {
   width: 72px;
   height: 72px;
+  flex: 0 0 72px;
   border-radius: var(--radius-sm);
   overflow: hidden;
   border: 2px solid transparent;
@@ -260,8 +275,134 @@
   font-family: var(--font-body);
 }
 
-.btn-ajouter-panier {
+.btn.btn-primary.btn-ajouter-panier {
   flex: 1;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* ---- Favoris ---- */
+.btn-favori {
+  width: 100%;
+  min-height: 56px;
+  margin-bottom: var(--space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background-color: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.btn-favori:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btn-favori.is-active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background-color: rgba(201, 162, 39, 0.08);
+}
+
+/* ---- Modale favoris / connexion ---- */
+.favoris-modal[hidden] {
+  display: none;
+}
+
+.favoris-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+}
+
+.favoris-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.68);
+  backdrop-filter: blur(3px);
+}
+
+.favoris-modal-contenu {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 520px);
+  padding: var(--space-xl);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.favoris-modal-fermer {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  color: var(--color-text-primary);
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.favoris-modal-contenu h2 {
+  margin: var(--space-xs) 0 var(--space-sm);
+}
+
+.favoris-modal-texte {
+  margin-bottom: var(--space-lg);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.favoris-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.favoris-modal-actions .btn {
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.favoris-modal-inscription {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--color-text-primary);
 }
 
 /* ---- Détails accordéon ---- */
@@ -284,6 +425,26 @@
   margin-top: var(--space-sm);
 }
 
+/* ---- Suite de la fiche produit ---- */
+.produit-suite {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--container-padding) var(--space-xs);
+}
+
+/* ---- Avis clients ---- */
+.produit-avis {
+  width: 100%;
+  margin-bottom: var(--space-2xl);
+}
+
+/* ---- Produits similaires ---- */
+.produits-similaires {
+  width: 100%;
+  margin-bottom: var(--space-xs);
+  padding: 0;
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
   .produit-detail {
@@ -293,5 +454,31 @@
   .produit-galerie {
     position: static;
     width: 100%;
+    min-width: 0;
+  }
+
+  .produit-info {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .miniature {
+    flex: 0 0 64px;
+    width: 64px;
+    height: 64px;
+  }
+}
+
+@media (max-width: 600px) {
+  .favoris-modal {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .favoris-modal-contenu {
+    width: 100%;
+    max-width: none;
+    padding: var(--space-xl) var(--container-padding);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
   }
 }

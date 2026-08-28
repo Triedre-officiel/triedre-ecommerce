@@ -1,0 +1,30 @@
+/* ==========================================================================
+   TRIÈDRE — Produits similaires (fiche produit)
+   ========================================================================== */
+
+.produits-similaires {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--container-padding) var(--space-2xl);
+  border-top: 1px solid var(--color-border);
+}
+
+.produits-similaires h2 {
+  margin-bottom: var(--space-lg);
+}
+
+.produits-similaires-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 900px) {
+  .produits-similaires-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .produits-similaires-grid {
+    grid-template-columns: 1fr;
+  }
+}

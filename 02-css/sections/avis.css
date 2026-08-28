@@ -1,0 +1,105 @@
+/* ==========================================================================
+   TRIÈDRE — Avis clients
+   ========================================================================== */
+
+.produit-avis {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--container-padding);
+  border-top: 1px solid var(--color-border);
+}
+
+.produit-avis h2 {
+  margin-bottom: var(--space-lg);
+}
+
+.avis-resume {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.etoiles {
+  color: var(--color-accent);
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+}
+
+.avis-moyenne {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+}
+
+.avis-nombre {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+}
+
+.avis-aucun {
+  color: var(--color-text-secondary);
+}
+
+.avis-liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.avis-item {
+  padding: var(--space-md);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.avis-item-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.avis-item-header .etoiles {
+  font-size: 0.9rem;
+}
+
+.avis-formulaire-bloc {
+  max-width: 480px;
+}
+
+.avis-formulaire-bloc h3 {
+  margin-bottom: var(--space-md);
+  font-size: var(--font-size-h4);
+}
+
+#formulaire-avis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.avis-etoiles-input {
+  display: flex;
+  gap: 4px;
+}
+
+.avis-etoiles-input button {
+  font-size: 1.6rem;
+  color: var(--color-border);
+  transition: color var(--transition-fast);
+}
+
+.avis-etoiles-input button.selectionnee {
+  color: var(--color-accent);
+}
+
+#formulaire-avis textarea {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  resize: vertical;
+}
