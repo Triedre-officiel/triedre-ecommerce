@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
       li.className = 'produit-card';
 
       const lien = document.createElement('a');
-      lien.href = 'produit.html?id=' + p.id;
+      lien.href = 'produit?id=' + p.id;
 
       const img = document.createElement('img');
       img.src = cheminImages + p.couleurs[0].photoFace;

@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
       conteneur.innerHTML =
         '<div class="panier-vide">' +
         '<p>Ton panier est vide — impossible de passer commande.</p>' +
-        '<a href="boutique.html" class="btn btn-primary">Voir la boutique</a>' +
+        '<a href="boutique" class="btn btn-primary">Voir la boutique</a>' +
         '</div>';
       return;
     }
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '</form>' +
 
         '<div class="commande-resume-colonne">' +
-          '<a href="panier.html" class="retour-panier"> Retour au panier</a>'+
+          '<a href="panier" class="retour-panier"> Retour au panier</a>'+
           '<div class="commande-resume">'+
           '<h2>Résumé</h2>' +
           '<div class="commande-articles-liste">' + articlesHTML + '</div>' +
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '<h2>Merci pour ta commande !</h2>' +
         '<p>Ta commande <strong>#' + numeroCommande + '</strong> a bien été enregistrée.</p>' +
         '<p>Un courriel de confirmation te sera envoyé sous peu avec les détails de livraison.</p>' +
-        '<a href="index.html" class="btn btn-primary">Retour à l\'accueil</a>' +
+        '<a href="index" class="btn btn-primary">Retour à l\'accueil</a>' +
       '</div>';
 
     viderPanier();

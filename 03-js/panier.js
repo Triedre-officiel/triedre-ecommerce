@@ -85,7 +85,7 @@ function afficherToast(message) {
   }, 3000);
 }
 
-// ---- Affichage complet de la page panier.html ----
+// ---- Affichage complet de la page panier ----
 function afficherPagePanier() {
   const conteneur = document.getElementById('panier-contenu');
   if (!conteneur) return;
@@ -96,7 +96,7 @@ function afficherPagePanier() {
     conteneur.innerHTML =
       '<div class="panier-vide">' +
       '<p>Ton panier est vide pour l\'instant.</p>' +
-      '<a href="boutique.html" class="btn btn-primary">Voir la boutique</a>' +
+      '<a href="boutique" class="btn btn-primary">Voir la boutique</a>' +
       '</div>';
     return;
   }
@@ -143,7 +143,7 @@ function afficherPagePanier() {
   const boutonCommander = conteneur.querySelector('.btn-commander');
   if (boutonCommander) {
     boutonCommander.addEventListener('click', function () {
-      window.location.href = 'commande.html';
+      window.location.href = 'commande';
     });
   }
 

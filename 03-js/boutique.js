@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const selectTri = document.getElementById('filtre-tri');
   const grille = document.querySelector('.produits-grid');
 
-  // Cette page ne s'exécute que si on est sur boutique.html
+  // Cette page ne s'exécute que si on est sur boutique
   if (!selectCategorie || !grille) return;
 
   // On garde une copie de tous les articles d'origine (avant tout filtrage)

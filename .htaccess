@@ -3,9 +3,11 @@ RewriteEngine On
 # Accueil
 RewriteRule ^$ 01-html/index.html [L]
 
-# Si le fichier ou dossier demandé n'existe pas réellement à la racine...
+# Pages sans extension .html
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^/.]+)$ 01-html/$1.html [L,QSA]
 
-# ...sers-le depuis 01-html à la place
-RewriteRule ^(.*)$ 01-html/$1 [L,QSA]
+# Compatibilité avec les anciennes URL en .html
+RewriteCond %{THE_REQUEST} \s/+([^/]+)\.html[\s?] [NC]
+RewriteRule ^([^/]+)\.html$ /$1 [R=301,L]

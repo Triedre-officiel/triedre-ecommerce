@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const texteComplet = produit.nom + '. ' + produit.prix.toFixed(2) + ' $';
       const li = document.createElement('li');
       const lien = document.createElement('a');
-      lien.href = 'produit.html?id=' + produit.id;
+      lien.href = 'produit?id=' + produit.id;
       lien.textContent = texteComplet;
       li.appendChild(lien);
       listeResultats.appendChild(li);

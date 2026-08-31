@@ -5,7 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  const cartes = document.querySelectorAll('.produit-card a[href*="produit.html?id="]');
+  const cartes = document.querySelectorAll('.produit-card a[href*="produit?id="]');
   if (cartes.length === 0) return;
 
   fetch('../04-data/produits.json')
