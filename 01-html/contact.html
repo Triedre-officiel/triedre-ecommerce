@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
+  <meta name="robots" content="noindex, nofollow">
   <title>Contact — TRIÈDRE</title>
   <link rel="stylesheet" href="../02-css/style.css">
 </head>
@@ -15,9 +15,10 @@
 
   <header class="site-header">
     <a href="./" class="logo">
-          <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
-          <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
+      <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+      <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
     </a>
+
     <nav class="main-nav">
       <ul>
         <li><a href="./">Accueil</a></li>
@@ -27,9 +28,11 @@
         <li><a href="membre">Espace Membre</a></li>
       </ul>
     </nav>
+
     <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
-            <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
     </button>
+
     <div class="header-icons">
       <button aria-label="Rechercher"><img src="../05-images/icons/icon-search.svg" alt=""></button>
       <a href="membre" aria-label="Mon compte"><img src="../05-images/icons/icon-account.svg" alt=""></a>
@@ -41,23 +44,15 @@
   </header>
 
   <main>
-
     <section class="contact-page">
-
       <div class="contact-intro">
         <p class="section-eyebrow">Contact</p>
         <h1>Une question ? <span class="accent">Écris-nous.</span></h1>
         <p>Notre équipe te répond généralement sous 24 à 48 heures ouvrables.</p>
 
         <ul class="contact-infos">
-          <li>
-            <strong>Adresse</strong>
-            <span>Montréal, Québec, Canada</span>
-          </li>
-          <li>
-            <strong>Courriel</strong>
-            <span><a href="mailto:info@triedreathletic.com">info@triedreathletic.com</a></span>
-          </li>
+          <li><strong>Adresse</strong><span>Montréal, Québec, Canada</span></li>
+          <li><strong>Courriel</strong><span><a href="mailto:info@triedreofficiel.com">info@triedreofficiel.com</a></span></li>
           <li>
             <strong>Suivez-nous</strong>
             <div class="social-links">
@@ -69,33 +64,40 @@
         </ul>
       </div>
 
-      <form class="contact-formulaire" id="formulaire-contact">
+      <form class="contact-formulaire" id="formulaire-contact" action="../08-php/contact-send.php" method="POST">
         <div class="champ-groupe">
           <label for="contact-nom">Nom complet</label>
-          <input type="text" id="contact-nom" required>
+          <input type="text" id="contact-nom" name="nom" maxlength="120" autocomplete="name" required>
         </div>
+
         <div class="champ-groupe">
           <label for="contact-email">Courriel</label>
-          <input type="email" id="contact-email" required>
+          <input type="email" id="contact-email" name="email" maxlength="190" autocomplete="email" required>
         </div>
+
         <div class="champ-groupe">
           <label for="contact-sujet">Sujet</label>
-          <select id="contact-sujet">
-            <option>Question générale</option>
-            <option>Suivi de commande</option>
-            <option>Retour ou échange</option>
-            <option>Partenariat</option>
+          <select id="contact-sujet" name="sujet" required>
+            <option value="Question générale">Question générale</option>
+            <option value="Suivi de commande">Suivi de commande</option>
+            <option value="Retour ou échange">Retour ou échange</option>
+            <option value="Partenariat">Partenariat</option>
           </select>
         </div>
+
         <div class="champ-groupe">
           <label for="contact-message">Message</label>
-          <textarea id="contact-message" rows="5" required></textarea>
+          <textarea id="contact-message" name="message" rows="5" maxlength="5000" required></textarea>
         </div>
+
+        <div class="contact-honeypot" aria-hidden="true">
+          <label for="contact-site">Site web</label>
+          <input type="text" id="contact-site" name="site_web" tabindex="-1" autocomplete="off">
+        </div>
+
         <button type="submit" class="btn btn-primary">Envoyer le message</button>
       </form>
-
     </section>
-
   </main>
 
   <footer class="site-footer">
@@ -104,16 +106,17 @@
       <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
       <p>Corps. Mental. Confiance.<br>Un mode de vie. Une discipline.<br>Une seule direction.</p>
       <div class="social-links">
-        <a href="https://www.facebook.com/share/1KZvCWZQVM/" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
-        <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
-        <a href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4" aria-label="TikTok"><img src="../05-images/icons/icon-tiktok.svg" alt=""></a>
+        <a href="https://www.facebook.com/share/1KZvCWZQVM/" target="_blank" rel="noopener" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
+        <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" target="_blank" rel="noopener" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
+        <a href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4" target="_blank" rel="noopener" aria-label="TikTok"><img src="../05-images/icons/icon-tiktok.svg" alt=""></a>
         <a href="#" aria-label="YouTube"><img src="../05-images/icons/icon-youtube.svg" alt=""></a>
       </div>
     </div>
+
     <nav class="footer-nav">
       <h4>Navigation</h4>
       <ul>
-        <li><a href="index">Accueil</a></li>
+        <li><a href="./">Accueil</a></li>
         <li><a href="marque">La Marque</a></li>
         <li><a href="univers">Univers</a></li>
         <li><a href="boutique">Boutique</a></li>
@@ -121,6 +124,7 @@
         <li><a href="contact">Contact</a></li>
       </ul>
     </nav>
+
     <nav class="footer-aide">
       <h4>Aide</h4>
       <ul>
@@ -131,11 +135,13 @@
         <li><a href="confidentialite">Politique de confidentialité</a></li>
       </ul>
     </nav>
+
     <div class="footer-contact">
       <h4>Contact</h4>
       <p>Montréal, Québec, Canada</p>
-      <p><a href="mailto:info@triedreathletic.com">info@triedreathletic.com</a></p>
+      <p><a href="mailto:info@triedreofficiel.com">info@triedreofficiel.com</a></p>
     </div>
+
     <p class="footer-copyright">© 2026 Trièdre Athletic. Tous droits réservés.</p>
   </footer>
 
@@ -144,6 +150,5 @@
   <script src="../03-js/main.js"></script>
   <script src="../03-js/navigation.js"></script>
   <script src="../03-js/banniere-promo.js"></script>
-  
 </body>
 </html>

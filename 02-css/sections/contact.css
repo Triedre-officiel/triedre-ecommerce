@@ -52,6 +52,15 @@
   resize: vertical;
 }
 
+.contact-honeypot {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+}
+
+
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
   .contact-page {
