@@ -1,0 +1,18 @@
+RewriteEngine On
+
+# Accueil propre
+RewriteRule ^$ 01-html/index.html [L]
+
+# Pages HTML propres
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^/]+\.html)$ 01-html/$1 [L]
+
+# Si quelqu'un ouvre encore /01-html/index.html,
+# redirection vers le domaine propre
+RewriteCond %{THE_REQUEST} \s/+01-html/index\.html[\s?] [NC]
+RewriteRule ^01-html/index\.html$ / [R=301,L]
+
+# Nettoyage des autres pages /01-html/...
+RewriteCond %{THE_REQUEST} \s/+01-html/([^?\s]+\.html) [NC]
+RewriteRule ^01-html/(.+\.html)$ /$1 [R=301,L]
