@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  document.querySelectorAll('[data-formulaire], #formulaire-contact').forEach(function (formulaire) {
+  document.querySelectorAll('[data-formulaire]').forEach(function (formulaire) {
     formulaire.addEventListener('submit', function (e) {
       e.preventDefault();
       alert('Formulaire envoyé ! (connexion à un vrai serveur à venir)');
