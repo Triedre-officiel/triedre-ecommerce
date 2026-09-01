@@ -20,11 +20,8 @@ function ajouterAuPanier(article) {
            item.taille === article.taille;
   });
 
-  if (existant) {
-    existant.quantite += article.quantite;
-  } else {
-    panier.push(article);
-  }
+  if (existant) existant.quantite += article.quantite;
+  else panier.push(article);
 
   sauvegarderPanier(panier);
 }
@@ -40,15 +37,13 @@ function viderPanier() {
 }
 
 function nombreArticlesPanier() {
-  const panier = getPanier();
-  return panier.reduce(function (total, item) {
+  return getPanier().reduce(function (total, item) {
     return total + item.quantite;
   }, 0);
 }
 
 function totalPanier() {
-  const panier = getPanier();
-  return panier.reduce(function (total, item) {
+  return getPanier().reduce(function (total, item) {
     return total + (item.prix * item.quantite);
   }, 0);
 }
@@ -56,15 +51,10 @@ function totalPanier() {
 function mettreAJourCompteur() {
   const badges = document.querySelectorAll('.cart-count');
   const total = nombreArticlesPanier();
-
   badges.forEach(function (badge) {
     badge.textContent = total;
   });
 }
-
-// ==========================================================================
-// Notifications TRIÈDRE — toast premium global
-// ==========================================================================
 
 function afficherToast(message, type) {
   const typeToast = type || 'succes';
@@ -87,12 +77,10 @@ function afficherToast(message, type) {
 
   const toast = document.createElement('div');
   toast.className = 'toast toast-' + typeToast;
-  toast.setAttribute('role', 'status');
 
   const icone = document.createElement('span');
   icone.className = 'toast-icone';
-  icone.setAttribute('aria-hidden', 'true');
-  icone.textContent = icones[typeToast] || icones.info;
+  icone.textContent = icones[typeToast] || 'i';
 
   const texte = document.createElement('p');
   texte.className = 'toast-message';
@@ -113,9 +101,7 @@ function afficherToast(message, type) {
     toast.classList.remove('toast-visible');
     setTimeout(function () {
       toast.remove();
-      if (conteneurToast && conteneurToast.children.length === 0) {
-        conteneurToast.remove();
-      }
+      if (conteneurToast.children.length === 0) conteneurToast.remove();
     }, 250);
   }
 
@@ -127,10 +113,6 @@ function afficherToast(message, type) {
 
   setTimeout(retirerToast, 3800);
 }
-
-// ==========================================================================
-// Confirmation TRIÈDRE — modal premium global
-// ==========================================================================
 
 function demanderConfirmation(options) {
   const parametres = options || {};
@@ -151,12 +133,8 @@ function demanderConfirmation(options) {
         '<h2 id="confirmation-titre">' + (parametres.titre || 'Confirmation') + '</h2>' +
         '<p>' + (parametres.message || 'Souhaites-tu continuer ?') + '</p>' +
         '<div class="confirmation-actions">' +
-          '<button class="btn confirmation-annuler" type="button">' +
-            (parametres.annuler || 'Annuler') +
-          '</button>' +
-          '<button class="btn btn-primary confirmation-confirmer" type="button">' +
-            (parametres.confirmer || 'Confirmer') +
-          '</button>' +
+          '<button class="btn confirmation-annuler" type="button">' + (parametres.annuler || 'Annuler') + '</button>' +
+          '<button class="btn btn-primary confirmation-confirmer" type="button">' + (parametres.confirmer || 'Confirmer') + '</button>' +
         '</div>' +
       '</section>';
 
@@ -172,7 +150,6 @@ function demanderConfirmation(options) {
       document.body.classList.remove('modal-ouverte');
       document.removeEventListener('keydown', gererClavier);
       modal.classList.remove('is-visible');
-
       setTimeout(function () {
         modal.remove();
         resolve(resultat);
@@ -183,22 +160,10 @@ function demanderConfirmation(options) {
       if (e.key === 'Escape') fermer(false);
     }
 
-    boutonConfirmer.addEventListener('click', function () {
-      fermer(true);
-    });
-
-    boutonAnnuler.addEventListener('click', function () {
-      fermer(false);
-    });
-
-    boutonFermer.addEventListener('click', function () {
-      fermer(false);
-    });
-
-    overlay.addEventListener('click', function () {
-      fermer(false);
-    });
-
+    boutonConfirmer.addEventListener('click', function () { fermer(true); });
+    boutonAnnuler.addEventListener('click', function () { fermer(false); });
+    boutonFermer.addEventListener('click', function () { fermer(false); });
+    overlay.addEventListener('click', function () { fermer(false); });
     document.addEventListener('keydown', gererClavier);
 
     requestAnimationFrame(function () {
@@ -208,7 +173,6 @@ function demanderConfirmation(options) {
   });
 }
 
-// ---- Affichage complet de la page panier ----
 function afficherPagePanier() {
   const conteneur = document.getElementById('panier-contenu');
   if (!conteneur) return;
@@ -218,8 +182,8 @@ function afficherPagePanier() {
   if (panier.length === 0) {
     conteneur.innerHTML =
       '<div class="panier-vide">' +
-      '<p>Ton panier est vide pour l\'instant.</p>' +
-      '<a href="boutique" class="btn btn-primary">Voir la boutique</a>' +
+        '<p>Ton panier est vide pour l\'instant.</p>' +
+        '<a href="boutique" class="btn btn-primary">Voir la boutique</a>' +
       '</div>';
     return;
   }
@@ -255,7 +219,12 @@ function afficherPagePanier() {
       '<button class="btn-vider-panier">Vider le panier</button>' +
     '</div>' +
     '<div class="panier-layout">' +
-      '<div class="panier-articles">' + articlesHTML + '</div>' +
+      '<div class="panier-articles">' +
+        articlesHTML +
+        '<div class="panier-continuer-zone">' +
+          '<a href="boutique" class="panier-continuer-achats">← Continuer mes achats</a>' +
+        '</div>' +
+      '</div>' +
       '<div class="panier-resume">' +
         '<h2>Résumé</h2>' +
         '<div class="panier-ligne-resume"><span>Sous-total</span><span>' + total + ' $</span></div>' +
@@ -291,7 +260,6 @@ function afficherPagePanier() {
   }
 }
 
-// ---- Interactions du panier ----
 function initialiserInteractionsPanier() {
   const conteneur = document.getElementById('panier-contenu');
   if (!conteneur) return;
@@ -318,10 +286,20 @@ function initialiserInteractionsPanier() {
     }
 
     if (e.target.classList.contains('panier-supprimer')) {
-      const nomArticle = panierActuel[index].nom;
-      supprimerDuPanier(index);
-      afficherPagePanier();
-      afficherToast(nomArticle + ' retiré du panier.', 'info');
+      const article = panierActuel[index];
+
+      demanderConfirmation({
+        titre: 'Retirer ce produit ?',
+        message: 'Es-tu sûr de vouloir retirer « ' + article.nom + ' » de ton panier ?',
+        confirmer: 'Retirer',
+        annuler: 'Annuler'
+      }).then(function (confirmation) {
+        if (!confirmation) return;
+
+        supprimerDuPanier(index);
+        afficherPagePanier();
+        afficherToast(article.nom + ' retiré du panier.', 'info');
+      });
     }
   });
 }
@@ -341,14 +319,10 @@ document.addEventListener('DOMContentLoaded', function () {
   if (onglets.length > 0) {
     onglets.forEach(function (onglet) {
       onglet.addEventListener('click', function () {
-        onglets.forEach(function (o) {
-          o.classList.remove('active');
-        });
-
+        onglets.forEach(function (o) { o.classList.remove('active'); });
         onglet.classList.add('active');
 
         const cible = onglet.getAttribute('data-cible');
-
         document.querySelectorAll('[data-formulaire]').forEach(function (formulaire) {
           formulaire.style.display = formulaire.id === cible ? 'flex' : 'none';
         });
