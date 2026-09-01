@@ -31,14 +31,14 @@
 @import url('sections/membre-page.css');
 @import url('sections/contact.css');
 @import url('sections/faq.css');
-@import url('sections/panier-page.css?v=2');
+@import url('sections/panier-page.css?v=3');
 @import url('sections/legal.css');
 @import url('components/recherche.css');
 @import url('sections/membre-page.css');
 @import url('sections/commande.css');
 @import url('sections/univers-page.css');
 @import url('sections/produits-badges.css');
-@import url('components/toast.css?v=2');
+@import url('components/toast.css?v=3');
 @import url('sections/produits-hover.css');
 @import url('sections/produits-similaires.css');
 @import url('sections/avis.css');
