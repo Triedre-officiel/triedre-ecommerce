@@ -1,5 +1,9 @@
 RewriteEngine On
 
+# Forcer la version www
+RewriteCond %{HTTP_HOST} ^triedreofficiel\.com$ [NC]
+RewriteRule ^(.*)$ https://www.triedreofficiel.com/$1 [R=301,L]
+
 # Accueil
 RewriteRule ^$ 01-html/index.html [L]
 
