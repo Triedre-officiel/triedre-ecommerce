@@ -51,10 +51,15 @@ function totalPanier() {
 function mettreAJourCompteur() {
   const badges = document.querySelectorAll('.cart-count');
   const total = nombreArticlesPanier();
+
   badges.forEach(function (badge) {
     badge.textContent = total;
   });
 }
+
+// ==========================================================================
+// Notifications premium
+// ==========================================================================
 
 function afficherToast(message, type) {
   const typeToast = type || 'succes';
@@ -99,9 +104,12 @@ function afficherToast(message, type) {
 
   function retirerToast() {
     toast.classList.remove('toast-visible');
+
     setTimeout(function () {
       toast.remove();
-      if (conteneurToast.children.length === 0) conteneurToast.remove();
+      if (conteneurToast.children.length === 0) {
+        conteneurToast.remove();
+      }
     }, 250);
   }
 
@@ -178,6 +186,10 @@ function demanderConfirmation(options) {
   });
 }
 
+// ==========================================================================
+// Affichage du panier
+// ==========================================================================
+
 function afficherPagePanier() {
   const conteneur = document.getElementById('panier-contenu');
   if (!conteneur) return;
@@ -220,13 +232,21 @@ function afficherPagePanier() {
   const total = totalPanier().toFixed(2);
 
   conteneur.innerHTML =
-    '<div class="panier-header-actions">' +
-      '<button class="btn-vider-panier">Vider le panier</button>' +
-    '</div>' +
     '<div class="panier-layout">' +
-      '<div class="panier-articles">' + articlesHTML + '</div>' +
+
+      '<div class="panier-articles-colonne">' +
+        '<div class="panier-colonne-action panier-colonne-action-gauche">' +
+          '<a href="boutique" class="panier-continuer-achats">Continuer mes achats</a>' +
+        '</div>' +
+        '<div class="panier-articles">' +
+          articlesHTML +
+        '</div>' +
+      '</div>' +
+
       '<div class="panier-resume-colonne">' +
-        '<a href="boutique" class="panier-continuer-achats">← Continuer mes achats</a>' +
+        '<div class="panier-colonne-action panier-colonne-action-droite">' +
+          '<button class="btn-vider-panier" type="button">Vider le panier</button>' +
+        '</div>' +
         '<div class="panier-resume">' +
           '<h2>Résumé</h2>' +
           '<div class="panier-ligne-resume"><span>Sous-total</span><span>' + total + ' $</span></div>' +
@@ -235,9 +255,11 @@ function afficherPagePanier() {
           '<button class="btn btn-primary btn-commander">Passer à la commande</button>' +
         '</div>' +
       '</div>' +
+
     '</div>';
 
   const boutonCommander = conteneur.querySelector('.btn-commander');
+
   if (boutonCommander) {
     boutonCommander.addEventListener('click', function () {
       window.location.href = 'commande';
@@ -245,6 +267,7 @@ function afficherPagePanier() {
   }
 
   const boutonVider = conteneur.querySelector('.btn-vider-panier');
+
   if (boutonVider) {
     boutonVider.addEventListener('click', function () {
       demanderConfirmation({
@@ -254,6 +277,7 @@ function afficherPagePanier() {
         annuler: 'Annuler'
       }).then(function (confirmation) {
         if (!confirmation) return;
+
         viderPanier();
         afficherPagePanier();
         afficherToast('Ton panier a été vidé.', 'succes');
@@ -261,6 +285,10 @@ function afficherPagePanier() {
     });
   }
 }
+
+// ==========================================================================
+// Interactions du panier
+// ==========================================================================
 
 function initialiserInteractionsPanier() {
   const conteneur = document.getElementById('panier-contenu');
@@ -306,27 +334,38 @@ function initialiserInteractionsPanier() {
   });
 }
 
+// ==========================================================================
+// Initialisation
+// ==========================================================================
+
 document.addEventListener('DOMContentLoaded', function () {
   mettreAJourCompteur();
   afficherPagePanier();
   initialiserInteractionsPanier();
 
   const copyrightElement = document.querySelector('.footer-copyright');
+
   if (copyrightElement) {
     copyrightElement.textContent =
       copyrightElement.textContent.replace(/\d{4}/, new Date().getFullYear());
   }
 
   const onglets = document.querySelectorAll('.onglet-btn');
+
   if (onglets.length > 0) {
     onglets.forEach(function (onglet) {
       onglet.addEventListener('click', function () {
-        onglets.forEach(function (o) { o.classList.remove('active'); });
+        onglets.forEach(function (o) {
+          o.classList.remove('active');
+        });
+
         onglet.classList.add('active');
 
         const cible = onglet.getAttribute('data-cible');
+
         document.querySelectorAll('[data-formulaire]').forEach(function (formulaire) {
-          formulaire.style.display = formulaire.id === cible ? 'flex' : 'none';
+          formulaire.style.display =
+            formulaire.id === cible ? 'flex' : 'none';
         });
       });
     });
