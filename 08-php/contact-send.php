@@ -15,7 +15,7 @@ $message = trim((string)($_POST['message'] ?? ''));
 $honeypot = trim((string)($_POST['site_web'] ?? ''));
 
 if ($honeypot !== '') {
-    header('Location: ../01-html/contact?statut=envoye');
+    header('Location: /contact?statut=envoye');
     exit;
 }
 
@@ -27,7 +27,7 @@ if (
     !in_array($sujet, $sujets, true) ||
     $message === ''
 ) {
-    header('Location: ../01-html/contact?statut=invalide');
+    header('Location: /contact?statut=invalide');
     exit;
 }
 
@@ -64,7 +64,7 @@ $socket = @stream_socket_client($host . ':' . $port, $errno, $errstr, 20);
 
 if (!$socket) {
     error_log("TRIEDRE SMTP connexion: $errno $errstr");
-    header('Location: ../01-html/contact?statut=erreur');
+    header('Location: /contact?statut=erreur');
     exit;
 }
 
@@ -108,12 +108,12 @@ try {
     smtpCommand($socket, 'QUIT', [221]);
 
     fclose($socket);
-    header('Location: ../01-html/contact?statut=envoye');
+    header('Location: /contact?statut=envoye');
     exit;
 
 } catch (Throwable $e) {
     error_log('TRIEDRE SMTP: ' . $e->getMessage());
     if (is_resource($socket)) fclose($socket);
-    header('Location: ../01-html/contact?statut=erreur');
+    header('Location: /contact?statut=erreur');
     exit;
 }
