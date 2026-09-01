@@ -110,7 +110,7 @@
   padding: var(--space-2xl) 0;
 }
 
-.confirmation-icone {
+.commande-confirmation-icone {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -141,14 +141,6 @@
   min-width: 280px;
 }
 
-.commande-resume {
-  background-color: var(--color-bg-secondary);
-  border-radius: var(--radius-md);
-  padding: var(--space-lg);
-  position: sticky;
-  top: var(--space-md);
-}
-
 .retour-panier {
   display: flex;
   justify-content: flex-end;
@@ -159,7 +151,7 @@
   transition: color var(--transition-fast);
 }
 
-.retour-panier :hover {
+.retour-panier:hover {
   color: var(--color-accent);
 }
 

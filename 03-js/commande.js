@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
           '<div class="commande-articles-liste">' + articlesHTML + '</div>' +
           '<div class="panier-total"><span>Total</span><span class="accent">' + total + ' $</span></div>' +
         '</div>' +
+        '</div>' +
       '</div>';
 
     const formulaire = document.getElementById('formulaire-commande');
@@ -102,11 +103,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     conteneur.innerHTML =
       '<div class="commande-confirmation">' +
-        '<p class="confirmation-icone">✓</p>' +
+        '<p class="commande-confirmation-icone">✓</p>' +
         '<h2>Merci pour ta commande !</h2>' +
         '<p>Ta commande <strong>#' + numeroCommande + '</strong> a bien été enregistrée.</p>' +
         '<p>Un courriel de confirmation te sera envoyé sous peu avec les détails de livraison.</p>' +
-        '<a href="index" class="btn btn-primary">Retour à l\'accueil</a>' +
+        '<a href="./" class="btn btn-primary">Retour à l\'accueil</a>' +
       '</div>';
 
     viderPanier();

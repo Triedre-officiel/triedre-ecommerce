@@ -123,33 +123,38 @@ function demanderConfirmation(options) {
 
     const modal = document.createElement('div');
     modal.id = 'triedre-confirmation';
-    modal.className = 'confirmation-modal';
+    modal.className = 'triedre-confirmation-modal';
 
     modal.innerHTML =
-      '<div class="confirmation-overlay"></div>' +
-      '<section class="confirmation-contenu" role="dialog" aria-modal="true" aria-labelledby="confirmation-titre">' +
-        '<button class="confirmation-fermer" type="button" aria-label="Fermer">×</button>' +
-        '<div class="confirmation-icone" aria-hidden="true">!</div>' +
-        '<h2 id="confirmation-titre">' + (parametres.titre || 'Confirmation') + '</h2>' +
+      '<div class="triedre-confirmation-overlay"></div>' +
+      '<section class="triedre-confirmation-contenu" role="dialog" aria-modal="true" aria-labelledby="triedre-confirmation-titre">' +
+        '<button class="triedre-confirmation-fermer" type="button" aria-label="Fermer">×</button>' +
+        '<div class="triedre-confirmation-icone" aria-hidden="true">!</div>' +
+        '<h2 id="triedre-confirmation-titre">' + (parametres.titre || 'Confirmation') + '</h2>' +
         '<p>' + (parametres.message || 'Souhaites-tu continuer ?') + '</p>' +
-        '<div class="confirmation-actions">' +
-          '<button class="btn confirmation-annuler" type="button">' + (parametres.annuler || 'Annuler') + '</button>' +
-          '<button class="btn btn-primary confirmation-confirmer" type="button">' + (parametres.confirmer || 'Confirmer') + '</button>' +
+        '<div class="triedre-confirmation-actions">' +
+          '<button class="btn triedre-confirmation-annuler" type="button">' +
+            (parametres.annuler || 'Annuler') +
+          '</button>' +
+          '<button class="btn btn-primary triedre-confirmation-confirmer" type="button">' +
+            (parametres.confirmer || 'Confirmer') +
+          '</button>' +
         '</div>' +
       '</section>';
 
     document.body.appendChild(modal);
-    document.body.classList.add('modal-ouverte');
+    document.body.classList.add('triedre-modal-ouverte');
 
-    const boutonConfirmer = modal.querySelector('.confirmation-confirmer');
-    const boutonAnnuler = modal.querySelector('.confirmation-annuler');
-    const boutonFermer = modal.querySelector('.confirmation-fermer');
-    const overlay = modal.querySelector('.confirmation-overlay');
+    const boutonConfirmer = modal.querySelector('.triedre-confirmation-confirmer');
+    const boutonAnnuler = modal.querySelector('.triedre-confirmation-annuler');
+    const boutonFermer = modal.querySelector('.triedre-confirmation-fermer');
+    const overlay = modal.querySelector('.triedre-confirmation-overlay');
 
     function fermer(resultat) {
-      document.body.classList.remove('modal-ouverte');
+      document.body.classList.remove('triedre-modal-ouverte');
       document.removeEventListener('keydown', gererClavier);
       modal.classList.remove('is-visible');
+
       setTimeout(function () {
         modal.remove();
         resolve(resultat);
@@ -219,18 +224,16 @@ function afficherPagePanier() {
       '<button class="btn-vider-panier">Vider le panier</button>' +
     '</div>' +
     '<div class="panier-layout">' +
-      '<div class="panier-articles">' +
-        articlesHTML +
-        '<div class="panier-continuer-zone">' +
-          '<a href="boutique" class="panier-continuer-achats">← Continuer mes achats</a>' +
+      '<div class="panier-articles">' + articlesHTML + '</div>' +
+      '<div class="panier-resume-colonne">' +
+        '<a href="boutique" class="panier-continuer-achats">← Continuer mes achats</a>' +
+        '<div class="panier-resume">' +
+          '<h2>Résumé</h2>' +
+          '<div class="panier-ligne-resume"><span>Sous-total</span><span>' + total + ' $</span></div>' +
+          '<div class="panier-ligne-resume"><span>Livraison</span><span>Calculée à l\'étape suivante</span></div>' +
+          '<div class="panier-total"><span>Total</span><span class="accent">' + total + ' $</span></div>' +
+          '<button class="btn btn-primary btn-commander">Passer à la commande</button>' +
         '</div>' +
-      '</div>' +
-      '<div class="panier-resume">' +
-        '<h2>Résumé</h2>' +
-        '<div class="panier-ligne-resume"><span>Sous-total</span><span>' + total + ' $</span></div>' +
-        '<div class="panier-ligne-resume"><span>Livraison</span><span>Calculée à l\'étape suivante</span></div>' +
-        '<div class="panier-total"><span>Total</span><span class="accent">' + total + ' $</span></div>' +
-        '<button class="btn btn-primary btn-commander">Passer à la commande</button>' +
       '</div>' +
     '</div>';
 
@@ -251,7 +254,6 @@ function afficherPagePanier() {
         annuler: 'Annuler'
       }).then(function (confirmation) {
         if (!confirmation) return;
-
         viderPanier();
         afficherPagePanier();
         afficherToast('Ton panier a été vidé.', 'succes');

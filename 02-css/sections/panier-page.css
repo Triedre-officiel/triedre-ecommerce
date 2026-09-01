@@ -180,18 +180,21 @@
   margin-top: var(--space-lg);
 }
 
-.panier-continuer-zone {
-  margin-top: 28px;
+.panier-resume-colonne {
+  flex: 1;
+  min-width: 280px;
 }
 
 .panier-continuer-achats {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--color-text-primary);
+  margin-bottom: var(--space-sm);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
   font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s ease, transform 0.2s ease;
+  text-decoration: underline;
+  transition: color var(--transition-fast), transform var(--transition-fast);
 }
 
 .panier-continuer-achats:hover {
@@ -213,6 +216,10 @@
     width: 100%;
     position: static;
   }
+
+   .panier-resume-colonne {
+    width: 100%;
+  }
 }
 
 @media (max-width: 500px) {
@@ -228,8 +235,4 @@
     width: 100%;
   }
 }
-@media (max-width: 768px) {
-  .panier-continuer-zone {
-    margin-top: 22px;
-  }
-}
+

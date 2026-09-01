@@ -108,11 +108,11 @@
   color: var(--color-text-primary);
 }
 
-body.modal-ouverte {
+body.triedre-modal-ouverte {
   overflow: hidden;
 }
 
-.confirmation-modal {
+.triedre-confirmation-modal {
   position: fixed;
   inset: 0;
   z-index: 1300;
@@ -124,19 +124,19 @@ body.modal-ouverte {
   transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
-.confirmation-modal.is-visible {
+.triedre-confirmation-modal.is-visible {
   opacity: 1;
   visibility: visible;
 }
 
-.confirmation-overlay {
+.triedre-confirmation-overlay {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.72);
   backdrop-filter: blur(5px);
 }
 
-.confirmation-contenu {
+.triedre-confirmation-contenu {
   position: relative;
   z-index: 1;
   width: min(100%, 500px);
@@ -150,11 +150,11 @@ body.modal-ouverte {
   transition: transform 0.2s ease;
 }
 
-.confirmation-modal.is-visible .confirmation-contenu {
+.triedre-confirmation-modal.is-visible .triedre-confirmation-contenu {
   transform: translateY(0) scale(1);
 }
 
-.confirmation-fermer {
+.triedre-confirmation-fermer {
   position: absolute;
   top: 14px;
   right: 14px;
@@ -171,11 +171,11 @@ body.modal-ouverte {
   cursor: pointer;
 }
 
-.confirmation-fermer:hover {
+.triedre-confirmation-fermer:hover {
   color: var(--color-text-primary);
 }
 
-.confirmation-icone {
+.triedre-confirmation-icone {
   width: 52px;
   height: 52px;
   margin: 0 auto 16px;
@@ -189,24 +189,24 @@ body.modal-ouverte {
   font-weight: 700;
 }
 
-.confirmation-contenu h2 {
+.triedre-confirmation-contenu h2 {
   margin: 0 0 10px;
 }
 
-.confirmation-contenu p {
+.triedre-confirmation-contenu p {
   margin: 0 auto 24px;
   max-width: 390px;
   color: var(--color-text-secondary);
   line-height: 1.6;
 }
 
-.confirmation-actions {
+.triedre-confirmation-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
-.confirmation-actions .btn {
+.triedre-confirmation-actions .btn {
   min-height: 50px;
   display: flex;
   align-items: center;
@@ -218,13 +218,13 @@ body.modal-ouverte {
   text-transform: none;
 }
 
-.confirmation-annuler {
+.triedre-confirmation-annuler {
   border: 1px solid var(--color-border);
   background: transparent;
   color: var(--color-text-primary);
 }
 
-.confirmation-annuler:hover {
+.triedre-confirmation-annuler:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
 }
@@ -237,18 +237,18 @@ body.modal-ouverte {
     width: auto;
   }
 
-  .confirmation-modal {
+  .triedre-confirmation-modal {
     place-items: end center;
     padding: 0;
   }
 
-  .confirmation-contenu {
+  .triedre-confirmation-contenu {
     width: 100%;
     padding: 28px var(--container-padding);
     border-radius: var(--radius-md) var(--radius-md) 0 0;
   }
 
-  .confirmation-actions {
+  .triedre-confirmation-actions {
     grid-template-columns: 1fr;
   }
 }
