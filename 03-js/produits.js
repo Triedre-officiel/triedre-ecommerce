@@ -1,6 +1,6 @@
-// ==========================================================================
+// ========================================================================== 
 // TRIÈDRE — Chargement dynamique de la fiche produit
-// ==========================================================================
+// ========================================================================== 
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -254,7 +254,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const tailleSelectionnee = document.querySelector('.taille-btn.active');
 
         if (!tailleSelectionnee) {
-          alert('Merci de sélectionner une taille avant d\'ajouter au panier.');
+          afficherToast(
+            'Sélectionne une taille avant d\'ajouter ce produit au panier.',
+            'avertissement'
+          );
           return;
         }
 
@@ -275,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
           quantite: quantite
         });
 
-        alert(nom + ' ajouté au panier !');
+        afficherToast(nom + ' ajouté au panier.', 'succes');
       });
     }
   }
@@ -456,7 +459,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const note = parseInt(inputNote.value, 10);
 
         if (note === 0) {
-          afficherToast('Merci de sélectionner une note avant de publier.');
+          afficherToast(
+            'Sélectionne une note avant de publier ton avis.',
+            'avertissement'
+          );
           return;
         }
 
@@ -477,14 +483,14 @@ document.addEventListener('DOMContentLoaded', function () {
           b.classList.remove('selectionnee');
         });
 
-        afficherToast('Merci pour ton avis ✓');
+        afficherToast('Merci pour ton avis.', 'succes');
       });
     }
   }
 
-  // ==========================================================================
+  // ========================================================================== 
   // Favoris — ouverture de la fenêtre de connexion
-  // ==========================================================================
+  // ========================================================================== 
 
   const boutonFavori = document.querySelector('.btn-favori');
   const favorisModal = document.getElementById('favoris-modal');

@@ -19,11 +19,13 @@ function ajouterAuPanier(article) {
            item.couleur === article.couleur &&
            item.taille === article.taille;
   });
+
   if (existant) {
     existant.quantite += article.quantite;
   } else {
     panier.push(article);
   }
+
   sauvegarderPanier(panier);
 }
 
@@ -54,35 +56,156 @@ function totalPanier() {
 function mettreAJourCompteur() {
   const badges = document.querySelectorAll('.cart-count');
   const total = nombreArticlesPanier();
+
   badges.forEach(function (badge) {
     badge.textContent = total;
   });
 }
 
-// ---- Notification discrète (toast), utilisable sur toutes les pages ----
-function afficherToast(message) {
+// ==========================================================================
+// Notifications TRIÈDRE — toast premium global
+// ==========================================================================
+
+function afficherToast(message, type) {
+  const typeToast = type || 'succes';
   let conteneurToast = document.getElementById('toast-conteneur');
+
   if (!conteneurToast) {
     conteneurToast = document.createElement('div');
     conteneurToast.id = 'toast-conteneur';
+    conteneurToast.setAttribute('aria-live', 'polite');
+    conteneurToast.setAttribute('aria-atomic', 'true');
     document.body.appendChild(conteneurToast);
   }
 
+  const icones = {
+    succes: '✓',
+    avertissement: '!',
+    erreur: '×',
+    info: 'i'
+  };
+
   const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.textContent = message;
+  toast.className = 'toast toast-' + typeToast;
+  toast.setAttribute('role', 'status');
+
+  const icone = document.createElement('span');
+  icone.className = 'toast-icone';
+  icone.setAttribute('aria-hidden', 'true');
+  icone.textContent = icones[typeToast] || icones.info;
+
+  const texte = document.createElement('p');
+  texte.className = 'toast-message';
+  texte.textContent = message;
+
+  const fermer = document.createElement('button');
+  fermer.className = 'toast-fermer';
+  fermer.type = 'button';
+  fermer.setAttribute('aria-label', 'Fermer la notification');
+  fermer.textContent = '×';
+
+  toast.appendChild(icone);
+  toast.appendChild(texte);
+  toast.appendChild(fermer);
   conteneurToast.appendChild(toast);
+
+  function retirerToast() {
+    toast.classList.remove('toast-visible');
+    setTimeout(function () {
+      toast.remove();
+      if (conteneurToast && conteneurToast.children.length === 0) {
+        conteneurToast.remove();
+      }
+    }, 250);
+  }
+
+  fermer.addEventListener('click', retirerToast);
 
   requestAnimationFrame(function () {
     toast.classList.add('toast-visible');
   });
 
-  setTimeout(function () {
-    toast.classList.remove('toast-visible');
-    setTimeout(function () {
-      toast.remove();
-    }, 300);
-  }, 3000);
+  setTimeout(retirerToast, 3800);
+}
+
+// ==========================================================================
+// Confirmation TRIÈDRE — modal premium global
+// ==========================================================================
+
+function demanderConfirmation(options) {
+  const parametres = options || {};
+
+  return new Promise(function (resolve) {
+    const ancienModal = document.getElementById('triedre-confirmation');
+    if (ancienModal) ancienModal.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'triedre-confirmation';
+    modal.className = 'confirmation-modal';
+
+    modal.innerHTML =
+      '<div class="confirmation-overlay"></div>' +
+      '<section class="confirmation-contenu" role="dialog" aria-modal="true" aria-labelledby="confirmation-titre">' +
+        '<button class="confirmation-fermer" type="button" aria-label="Fermer">×</button>' +
+        '<div class="confirmation-icone" aria-hidden="true">!</div>' +
+        '<h2 id="confirmation-titre">' + (parametres.titre || 'Confirmation') + '</h2>' +
+        '<p>' + (parametres.message || 'Souhaites-tu continuer ?') + '</p>' +
+        '<div class="confirmation-actions">' +
+          '<button class="btn confirmation-annuler" type="button">' +
+            (parametres.annuler || 'Annuler') +
+          '</button>' +
+          '<button class="btn btn-primary confirmation-confirmer" type="button">' +
+            (parametres.confirmer || 'Confirmer') +
+          '</button>' +
+        '</div>' +
+      '</section>';
+
+    document.body.appendChild(modal);
+    document.body.classList.add('modal-ouverte');
+
+    const boutonConfirmer = modal.querySelector('.confirmation-confirmer');
+    const boutonAnnuler = modal.querySelector('.confirmation-annuler');
+    const boutonFermer = modal.querySelector('.confirmation-fermer');
+    const overlay = modal.querySelector('.confirmation-overlay');
+
+    function fermer(resultat) {
+      document.body.classList.remove('modal-ouverte');
+      document.removeEventListener('keydown', gererClavier);
+      modal.classList.remove('is-visible');
+
+      setTimeout(function () {
+        modal.remove();
+        resolve(resultat);
+      }, 200);
+    }
+
+    function gererClavier(e) {
+      if (e.key === 'Escape') fermer(false);
+    }
+
+    boutonConfirmer.addEventListener('click', function () {
+      fermer(true);
+    });
+
+    boutonAnnuler.addEventListener('click', function () {
+      fermer(false);
+    });
+
+    boutonFermer.addEventListener('click', function () {
+      fermer(false);
+    });
+
+    overlay.addEventListener('click', function () {
+      fermer(false);
+    });
+
+    document.addEventListener('keydown', gererClavier);
+
+    requestAnimationFrame(function () {
+      modal.classList.add('is-visible');
+      boutonAnnuler.focus();
+    });
+  });
 }
 
 // ---- Affichage complet de la page panier ----
@@ -102,8 +225,10 @@ function afficherPagePanier() {
   }
 
   let articlesHTML = '';
+
   panier.forEach(function (item, index) {
     const sousTotal = (item.prix * item.quantite).toFixed(2);
+
     articlesHTML +=
       '<div class="panier-article" data-index="' + index + '">' +
         '<img src="' + item.image + '" alt="' + item.nom + '">' +
@@ -150,16 +275,23 @@ function afficherPagePanier() {
   const boutonVider = conteneur.querySelector('.btn-vider-panier');
   if (boutonVider) {
     boutonVider.addEventListener('click', function () {
-      const confirmation = confirm('Es-tu sûr de vouloir vider ton panier ? Cette action est irréversible.');
-      if (confirmation) {
+      demanderConfirmation({
+        titre: 'Vider le panier ?',
+        message: 'Tous les articles seront retirés de ton panier. Cette action est irréversible.',
+        confirmer: 'Vider le panier',
+        annuler: 'Annuler'
+      }).then(function (confirmation) {
+        if (!confirmation) return;
+
         viderPanier();
         afficherPagePanier();
-      }
+        afficherToast('Ton panier a été vidé.', 'succes');
+      });
     });
   }
 }
 
-// ---- Interactions du panier (délégation d'événements, attachée une seule fois) ----
+// ---- Interactions du panier ----
 function initialiserInteractionsPanier() {
   const conteneur = document.getElementById('panier-contenu');
   if (!conteneur) return;
@@ -167,6 +299,7 @@ function initialiserInteractionsPanier() {
   conteneur.addEventListener('click', function (e) {
     const ligne = e.target.closest('.panier-article');
     if (!ligne) return;
+
     const index = parseInt(ligne.getAttribute('data-index'), 10);
     const panierActuel = getPanier();
 
@@ -185,31 +318,37 @@ function initialiserInteractionsPanier() {
     }
 
     if (e.target.classList.contains('panier-supprimer')) {
+      const nomArticle = panierActuel[index].nom;
       supprimerDuPanier(index);
       afficherPagePanier();
+      afficherToast(nomArticle + ' retiré du panier.', 'info');
     }
   });
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-
   mettreAJourCompteur();
   afficherPagePanier();
   initialiserInteractionsPanier();
 
-  // ---- Année automatique du copyright ----
   const copyrightElement = document.querySelector('.footer-copyright');
   if (copyrightElement) {
-    copyrightElement.textContent = copyrightElement.textContent.replace(/\d{4}/, new Date().getFullYear());
+    copyrightElement.textContent =
+      copyrightElement.textContent.replace(/\d{4}/, new Date().getFullYear());
   }
 
   const onglets = document.querySelectorAll('.onglet-btn');
   if (onglets.length > 0) {
     onglets.forEach(function (onglet) {
       onglet.addEventListener('click', function () {
-        onglets.forEach(function (o) { o.classList.remove('active'); });
+        onglets.forEach(function (o) {
+          o.classList.remove('active');
+        });
+
         onglet.classList.add('active');
+
         const cible = onglet.getAttribute('data-cible');
+
         document.querySelectorAll('[data-formulaire]').forEach(function (formulaire) {
           formulaire.style.display = formulaire.id === cible ? 'flex' : 'none';
         });
@@ -220,9 +359,8 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('[data-formulaire]').forEach(function (formulaire) {
     formulaire.addEventListener('submit', function (e) {
       e.preventDefault();
-      alert('Formulaire envoyé ! (connexion à un vrai serveur à venir)');
+      afficherToast('Fonctionnalité bientôt disponible.', 'info');
       formulaire.reset();
     });
   });
-
 });
