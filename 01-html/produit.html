@@ -3,18 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
+  <meta name="robots" content="noindex, nofollow">
   <title id="page-title">Produit — TRIÈDRE</title>
   <link rel="stylesheet" href="../02-css/style.css">
 </head>
 <body>
 
-  <!-- Bandeau annonce -->
   <div class="top-banner">
     <p>Livraison gratuite au Canada dès 150$</p>
   </div>
 
-  <!-- En-tête / Navigation -->
   <header class="site-header">
     <a href="./" class="logo">
       <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
@@ -55,9 +53,7 @@
           <img id="image-principale" src="" alt="">
           <button class="galerie-fleche galerie-fleche-droite" aria-label="Photo suivante">›</button>
         </div>
-        <ul class="produit-miniatures" id="miniatures-liste">
-          <!-- Généré dynamiquement par produits.js -->
-        </ul>
+        <ul class="produit-miniatures" id="miniatures-liste"></ul>
       </div>
 
       <div class="produit-info">
@@ -68,24 +64,32 @@
         <p class="stock-message" id="produit-stock"></p>
 
         <div class="produit-option" id="bloc-couleur">
-          <label>Couleur : <span id="couleur-selectionnee"></span></label>
-          <ul class="couleur-options" id="couleur-options-liste">
-            <!-- Généré dynamiquement par produits.js -->
-          </ul>
+          <p class="produit-option-label">
+            Couleur : <span id="couleur-selectionnee"></span>
+          </p>
+          <ul class="couleur-options" id="couleur-options-liste"></ul>
         </div>
 
         <div class="produit-option">
-          <label>Taille</label>
-          <ul class="taille-options" id="taille-options-liste">
-            <!-- Généré dynamiquement par produits.js -->
-          </ul>
-          <a href="#" class="guide-tailles">Guide des tailles</a>
+          <p class="produit-option-label">Taille</p>
+          <ul class="taille-options" id="taille-options-liste"></ul>
+          <button type="button" class="guide-tailles" id="guide-tailles-bouton">
+            Guide des tailles
+          </button>
         </div>
 
         <div class="produit-actions">
           <div class="quantite-selecteur">
             <button class="quantite-moins" aria-label="Diminuer la quantité">−</button>
-            <input type="number" class="quantite-input" value="1" min="1" aria-label="Quantité">
+            <input
+              type="number"
+              id="quantite-produit"
+              name="quantite"
+              class="quantite-input"
+              value="1"
+              min="1"
+              aria-label="Quantité"
+            >
             <button class="quantite-plus" aria-label="Augmenter la quantité">+</button>
           </div>
           <button class="btn btn-primary btn-ajouter-panier">Ajouter au panier</button>
@@ -109,13 +113,10 @@
       </div>
     </section>
 
-    <!-- Produits similaires + Avis clients -->
     <div class="produit-suite">
-
       <section class="produits-similaires">
         <h2>Tu pourrais aussi aimer</h2>
-        <ul class="produits-grid produits-similaires-grid" id="produits-similaires-liste">
-        </ul>
+        <ul class="produits-grid produits-similaires-grid" id="produits-similaires-liste"></ul>
       </section>
 
       <section class="produit-avis">
@@ -128,35 +129,67 @@
           <form id="formulaire-avis">
             <div class="champ-groupe">
               <label for="avis-nom">Ton nom</label>
-              <input type="text" id="avis-nom" required>
+              <input type="text" id="avis-nom" name="avis-nom" required>
             </div>
 
             <div class="champ-groupe">
-              <label>Ta note</label>
-              <div class="avis-etoiles-input" id="avis-etoiles-input">
-                <button type="button" data-note="1">★</button>
-                <button type="button" data-note="2">★</button>
-                <button type="button" data-note="3">★</button>
-                <button type="button" data-note="4">★</button>
-                <button type="button" data-note="5">★</button>
+              <span class="avis-note-label">Ta note</span>
+              <div class="avis-etoiles-input" id="avis-etoiles-input" aria-label="Sélectionner une note sur 5">
+                <button type="button" data-note="1" aria-label="1 étoile">★</button>
+                <button type="button" data-note="2" aria-label="2 étoiles">★</button>
+                <button type="button" data-note="3" aria-label="3 étoiles">★</button>
+                <button type="button" data-note="4" aria-label="4 étoiles">★</button>
+                <button type="button" data-note="5" aria-label="5 étoiles">★</button>
               </div>
-              <input type="hidden" id="avis-note" value="0">
+              <input type="hidden" id="avis-note" name="avis-note" value="0">
             </div>
 
             <div class="champ-groupe">
               <label for="avis-commentaire">Ton commentaire</label>
-              <textarea id="avis-commentaire" rows="3" required></textarea>
+              <textarea id="avis-commentaire" name="avis-commentaire" rows="3" required></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">Publier mon avis</button>
           </form>
         </div>
       </section>
-
     </div>
   </main>
 
-  <!-- Fenêtre de connexion pour les favoris -->
+  <div class="guide-tailles-modal" id="guide-tailles-modal" hidden>
+    <div class="guide-tailles-overlay" data-fermer-guide-tailles></div>
+
+    <section class="guide-tailles-contenu"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="guide-tailles-titre">
+      <button class="guide-tailles-fermer"
+              type="button"
+              aria-label="Fermer le guide des tailles"
+              data-fermer-guide-tailles>×</button>
+
+      <p class="section-eyebrow">TRIÈDRE</p>
+      <h2 id="guide-tailles-titre">Guide des tailles</h2>
+      <p class="guide-tailles-produit" id="guide-tailles-produit"></p>
+
+      <div class="guide-tailles-table-wrapper">
+        <table class="guide-tailles-table">
+          <thead>
+            <tr>
+              <th scope="col">Taille</th>
+              <th scope="col">Disponibilité</th>
+            </tr>
+          </thead>
+          <tbody id="guide-tailles-corps"></tbody>
+        </table>
+      </div>
+
+      <p class="guide-tailles-note">
+        Les mesures détaillées seront ajoutées dès validation des tableaux de tailles officiels des fournisseurs TRIÈDRE.
+      </p>
+    </section>
+  </div>
+
   <div class="favoris-modal" id="favoris-modal" hidden>
     <div class="favoris-modal-overlay" data-fermer-favoris></div>
 

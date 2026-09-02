@@ -1,6 +1,6 @@
-// ==========================================================================
+// ========================================================================== 
 // TRIÈDRE — Gestion du panier (localStorage)
-// ==========================================================================
+// ========================================================================== 
 
 function getPanier() {
   const donnees = localStorage.getItem('triedre_panier');
@@ -57,9 +57,9 @@ function mettreAJourCompteur() {
   });
 }
 
-// ==========================================================================
+// ========================================================================== 
 // Notifications premium
-// ==========================================================================
+// ========================================================================== 
 
 function afficherToast(message, type) {
   const typeToast = type || 'succes';
@@ -120,6 +120,76 @@ function afficherToast(message, type) {
   });
 
   setTimeout(retirerToast, 3800);
+}
+
+// ========================================================================== 
+// Panneau premium — Produit ajouté au panier
+// ========================================================================== 
+
+function afficherAjoutPanierPremium(article) {
+  const ancienPanneau = document.getElementById('triedre-ajout-panier');
+  if (ancienPanneau) ancienPanneau.remove();
+
+  const panneau = document.createElement('div');
+  panneau.id = 'triedre-ajout-panier';
+  panneau.className = 'triedre-ajout-panier';
+
+  const prixTotal = (article.prix * article.quantite).toFixed(2);
+
+  panneau.innerHTML =
+    '<div class="triedre-ajout-panier-overlay"></div>' +
+    '<aside class="triedre-ajout-panier-panneau" role="dialog" aria-modal="true" aria-labelledby="triedre-ajout-panier-titre">' +
+      '<div class="triedre-ajout-panier-entete">' +
+        '<div class="triedre-ajout-panier-validation">' +
+          '<span class="triedre-ajout-panier-check" aria-hidden="true">✓</span>' +
+          '<h2 id="triedre-ajout-panier-titre">Ajouté au panier</h2>' +
+        '</div>' +
+        '<button class="triedre-ajout-panier-fermer" type="button" aria-label="Fermer">×</button>' +
+      '</div>' +
+      '<div class="triedre-ajout-panier-produit">' +
+        '<img class="triedre-ajout-panier-image" src="' + article.image + '" alt="' + article.nom + '">' +
+        '<div class="triedre-ajout-panier-infos">' +
+          '<h3>' + article.nom + '</h3>' +
+          '<p>Couleur : ' + article.couleur + '</p>' +
+          '<p>Taille : ' + article.taille + '</p>' +
+          '<p>Quantité : ' + article.quantite + '</p>' +
+          '<strong>' + prixTotal + ' $</strong>' +
+        '</div>' +
+      '</div>' +
+      '<div class="triedre-ajout-panier-actions">' +
+        '<a href="panier" class="btn triedre-ajout-panier-voir">Afficher le panier</a>' +
+        '<a href="commande" class="btn btn-primary triedre-ajout-panier-paiement">Paiement</a>' +
+      '</div>' +
+    '</aside>';
+
+  document.body.appendChild(panneau);
+  document.body.classList.add('triedre-modal-ouverte');
+
+  const boutonFermer = panneau.querySelector('.triedre-ajout-panier-fermer');
+  const overlay = panneau.querySelector('.triedre-ajout-panier-overlay');
+
+  function fermerPanneau() {
+    document.body.classList.remove('triedre-modal-ouverte');
+    document.removeEventListener('keydown', gererClavier);
+    panneau.classList.remove('is-visible');
+
+    setTimeout(function () {
+      panneau.remove();
+    }, 250);
+  }
+
+  function gererClavier(e) {
+    if (e.key === 'Escape') fermerPanneau();
+  }
+
+  boutonFermer.addEventListener('click', fermerPanneau);
+  overlay.addEventListener('click', fermerPanneau);
+  document.addEventListener('keydown', gererClavier);
+
+  requestAnimationFrame(function () {
+    panneau.classList.add('is-visible');
+    boutonFermer.focus();
+  });
 }
 
 function demanderConfirmation(options) {
@@ -186,9 +256,9 @@ function demanderConfirmation(options) {
   });
 }
 
-// ==========================================================================
+// ========================================================================== 
 // Affichage du panier
-// ==========================================================================
+// ========================================================================== 
 
 function afficherPagePanier() {
   const conteneur = document.getElementById('panier-contenu');
@@ -233,16 +303,12 @@ function afficherPagePanier() {
 
   conteneur.innerHTML =
     '<div class="panier-layout">' +
-
       '<div class="panier-articles-colonne">' +
         '<div class="panier-colonne-action panier-colonne-action-gauche">' +
           '<a href="boutique" class="panier-continuer-achats">Continuer mes achats</a>' +
         '</div>' +
-        '<div class="panier-articles">' +
-          articlesHTML +
-        '</div>' +
+        '<div class="panier-articles">' + articlesHTML + '</div>' +
       '</div>' +
-
       '<div class="panier-resume-colonne">' +
         '<div class="panier-colonne-action panier-colonne-action-droite">' +
           '<button class="btn-vider-panier" type="button">Vider le panier</button>' +
@@ -255,11 +321,9 @@ function afficherPagePanier() {
           '<button class="btn btn-primary btn-commander">Passer à la commande</button>' +
         '</div>' +
       '</div>' +
-
     '</div>';
 
   const boutonCommander = conteneur.querySelector('.btn-commander');
-
   if (boutonCommander) {
     boutonCommander.addEventListener('click', function () {
       window.location.href = 'commande';
@@ -267,7 +331,6 @@ function afficherPagePanier() {
   }
 
   const boutonVider = conteneur.querySelector('.btn-vider-panier');
-
   if (boutonVider) {
     boutonVider.addEventListener('click', function () {
       demanderConfirmation({
@@ -286,9 +349,9 @@ function afficherPagePanier() {
   }
 }
 
-// ==========================================================================
+// ========================================================================== 
 // Interactions du panier
-// ==========================================================================
+// ========================================================================== 
 
 function initialiserInteractionsPanier() {
   const conteneur = document.getElementById('panier-contenu');
@@ -334,9 +397,9 @@ function initialiserInteractionsPanier() {
   });
 }
 
-// ==========================================================================
+// ========================================================================== 
 // Initialisation
-// ==========================================================================
+// ========================================================================== 
 
 document.addEventListener('DOMContentLoaded', function () {
   mettreAJourCompteur();
@@ -364,8 +427,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const cible = onglet.getAttribute('data-cible');
 
         document.querySelectorAll('[data-formulaire]').forEach(function (formulaire) {
-          formulaire.style.display =
-            formulaire.id === cible ? 'flex' : 'none';
+          formulaire.style.display = formulaire.id === cible ? 'flex' : 'none';
         });
       });
     });

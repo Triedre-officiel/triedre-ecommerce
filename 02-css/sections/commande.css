@@ -12,6 +12,58 @@
   margin: var(--space-xs) 0 var(--space-lg);
 }
 
+/* ---- Choix du mode de commande ---- */
+.commande-acces {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.commande-acces-intro {
+  max-width: 680px;
+  margin: 0 auto var(--space-xl);
+  text-align: center;
+}
+
+.commande-acces-intro h2 {
+  margin-bottom: var(--space-sm);
+}
+
+.commande-acces-intro p:last-child {
+  color: var(--color-text-secondary);
+}
+
+.commande-acces-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.commande-acces-carte {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-lg);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.commande-acces-carte h3 {
+  margin-bottom: var(--space-sm);
+}
+
+.commande-acces-carte p {
+  flex: 1;
+  margin-bottom: var(--space-lg);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+  line-height: 1.6;
+}
+
+.commande-acces-carte .btn {
+  width: 100%;
+  text-align: center;
+}
+
 /* ---- Layout ---- */
 .commande-layout {
   display: flex;
@@ -33,6 +85,17 @@
 .commande-formulaire h2 {
   font-size: var(--font-size-h3);
   margin-bottom: var(--space-xs);
+}
+
+.commande-champs-obligatoires {
+  margin-top: calc(var(--space-sm) * -1);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+}
+
+.champ-obligatoire,
+.commande-champs-obligatoires span {
+  color: var(--color-accent);
 }
 
 .champ-ligne {
@@ -139,15 +202,16 @@
 .commande-resume-colonne {
   flex: 1;
   min-width: 280px;
+  position: relative;
 }
 
 .retour-panier {
-  display: flex;
-  justify-content: flex-end;
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--space-sm));
   font-size: var(--font-size-small);
   color: var(--color-text-secondary);
   text-decoration: underline;
-  margin-bottom: var(--space-sm);
   transition: color var(--transition-fast);
 }
 
@@ -157,8 +221,18 @@
 
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
+  .commande-acces-options {
+    grid-template-columns: 1fr;
+  }
+
   .commande-layout {
     flex-direction: column;
+  }
+
+  .commande-formulaire,
+  .commande-resume-colonne {
+    width: 100%;
+    min-width: 0;
   }
 
   .commande-resume {
