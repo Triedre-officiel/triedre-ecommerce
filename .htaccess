@@ -29,9 +29,9 @@ RewriteRule ^([^/]+)\.html$ /$1 [R=301,L]
     Header set Expires "0"
   </FilesMatch>
 
-  # CSS et JavaScript : revalidation systématique
-  <FilesMatch "\.(css|js)$">
-    Header set Cache-Control "no-cache, must-revalidate"
-  </FilesMatch>
+  # CSS, JavaScript et JSON : revalidation systématique
+  <FilesMatch "\.(css|js|json)$">
+  Header set Cache-Control "no-cache, must-revalidate"
+</FilesMatch>
 
 </IfModule>
