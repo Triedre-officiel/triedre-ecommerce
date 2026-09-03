@@ -37,6 +37,58 @@ document.addEventListener('DOMContentLoaded', function () {
     'Virginie-Occidentale', 'Washington', 'Wisconsin', 'Wyoming'
   ];
 
+
+  async function verifierStockCommande() {
+    const panier = getPanier();
+
+    if (panier.length === 0) {
+      return { valide: false, raison: 'panier-vide' };
+    }
+
+    try {
+      const clientStock = await obtenirClientStockSupabase();
+      const controles = await clientStock.verifierPanier(panier, true);
+
+      const invalide = controles.find(function (controle) {
+        return !controle.disponible;
+      });
+
+      if (invalide) {
+        return {
+          valide: false,
+          raison: invalide.raison,
+          controle: invalide
+        };
+      }
+
+      return { valide: true };
+    } catch (erreur) {
+      console.error('[TRIÈDRE] Vérification du stock commande impossible :', erreur);
+      return { valide: false, raison: 'verification-impossible' };
+    }
+  }
+
+  function messageStockCommande(resultat) {
+    if (resultat.raison === 'verification-impossible') {
+      return 'Le stock ne peut pas être vérifié pour le moment.';
+    }
+
+    if (resultat.raison === 'panier-vide') {
+      return 'Ton panier est vide.';
+    }
+
+    if (resultat.controle && resultat.controle.raison === 'indisponible') {
+      return resultat.controle.item.nom + ' est maintenant indisponible.';
+    }
+
+    if (resultat.controle && resultat.controle.raison === 'quantite') {
+      return 'La quantité de ' + resultat.controle.item.nom +
+        ' dépasse le stock disponible (' + resultat.controle.stock + ').';
+    }
+
+    return 'Le stock de ton panier a changé. Vérifie ton panier.';
+  }
+
   afficherChoixCommande();
 
   function afficherChoixCommande() {
@@ -78,7 +130,17 @@ document.addEventListener('DOMContentLoaded', function () {
     `;
 
     const boutonInvite = document.getElementById('commande-invite');
-    boutonInvite.addEventListener('click', afficherPageCommande);
+
+    boutonInvite.addEventListener('click', async function () {
+      const resultatStock = await verifierStockCommande();
+
+      if (!resultatStock.valide) {
+        afficherToast(messageStockCommande(resultatStock), 'avertissement');
+        return;
+      }
+
+      afficherPageCommande();
+    });
   }
 
   function afficherPanierVide() {
@@ -214,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
 
-    formulaire.addEventListener('submit', function (e) {
+    formulaire.addEventListener('submit', async function (e) {
       e.preventDefault();
 
       const nom = document.getElementById('cmd-nom');
@@ -264,6 +326,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (!estTelephoneValide(telephone.value, pays.value)) {
         erreurChamp(telephone, messageTelephone(pays.value));
+        return;
+      }
+
+      const resultatStock = await verifierStockCommande();
+
+      if (!resultatStock.valide) {
+        afficherToast(messageStockCommande(resultatStock), 'avertissement');
         return;
       }
 
