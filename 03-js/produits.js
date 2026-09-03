@@ -1,8 +1,8 @@
 // ==========================================================================
-// TRIÈDRE — Fiche produit — Catalogue V1 (variantes / SKU)
+// TRIÈDRE — Fiche produit — Catalogue V1 + stock Supabase
 // ==========================================================================
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
 
   const conteneurProduit = document.getElementById('produit-nom');
   if (!conteneurProduit) return;
@@ -14,34 +14,115 @@ document.addEventListener('DOMContentLoaded', function () {
   const cheminImages = '../05-images/produits/';
   let listeVues = [];
   let produitActuel = null;
+  let stockSupabaseCharge = false;
 
-  fetch('../04-data/produits.json')
-    .then(function (reponse) {
-      if (!reponse.ok) throw new Error('Impossible de charger produits.json');
-      return reponse.json();
-    })
-    .then(function (donnees) {
-      const produit = donnees.produits.find(function (p) {
-        return p.id === idProduit;
-      });
+  const guideTaillesBouton = document.getElementById('guide-tailles-bouton');
+  const guideTaillesModal = document.getElementById('guide-tailles-modal');
+  const guideTaillesProduit = document.getElementById('guide-tailles-produit');
+  const guideTaillesCorps = document.getElementById('guide-tailles-corps');
+  const boutonsFermerGuide =
+    document.querySelectorAll('[data-fermer-guide-tailles]');
 
-      if (!produit) {
-        document.getElementById('produit-nom').textContent = 'Produit introuvable';
-        document.getElementById('produit-description').textContent =
-          'Ce produit n\'existe pas ou n\'est plus disponible.';
+  const boutonFavori = document.querySelector('.btn-favori');
+  const favorisModal = document.getElementById('favoris-modal');
+  const boutonsFermerFavoris =
+    document.querySelectorAll('[data-fermer-favoris]');
+
+  try {
+    const reponse = await fetch('../04-data/produits.json');
+
+    if (!reponse.ok) {
+      throw new Error('Impossible de charger produits.json');
+    }
+
+    const donnees = await reponse.json();
+
+    const produit = donnees.produits.find(function (p) {
+      return p.id === idProduit;
+    });
+
+    if (!produit) {
+      document.getElementById('produit-nom').textContent =
+        'Produit introuvable';
+      document.getElementById('produit-description').textContent =
+        'Ce produit n\'existe pas ou n\'est plus disponible.';
+      return;
+    }
+
+    produitActuel = produit;
+
+    await chargerStockSupabase(produitActuel);
+
+    afficherProduit(produitActuel);
+    mettreAJourVisibiliteGuideTailles();
+    afficherProduitsSimilaires(donnees.produits, produitActuel);
+    afficherAvis(produitActuel);
+
+  } catch (erreur) {
+    console.error(erreur);
+    document.getElementById('produit-nom').textContent =
+      'Erreur de chargement';
+  }
+
+  async function chargerStockSupabase(produit) {
+    stockSupabaseCharge = false;
+
+    if (!window.triedreSupabase) {
+      console.error(
+        '[TRIÈDRE] Client Supabase indisponible : le stock ne peut pas être vérifié.'
+      );
+      return;
+    }
+
+    try {
+      const { data, error } = await window.triedreSupabase
+        .from('product_variants')
+        .select('variant_id, sku, stock, active')
+        .eq('product_id', produit.id);
+
+      if (error) {
+        console.error(
+          '[TRIÈDRE] Erreur de lecture du stock Supabase :',
+          error
+        );
         return;
       }
 
-      produitActuel = produit;
-      afficherProduit(produit);
-      mettreAJourVisibiliteGuideTailles();
-      afficherProduitsSimilaires(donnees.produits, produit);
-      afficherAvis(produit);
-    })
-    .catch(function (erreur) {
-      console.error(erreur);
-      document.getElementById('produit-nom').textContent = 'Erreur de chargement';
-    });
+      const stocksParSku = new Map();
+
+      (data || []).forEach(function (varianteSupabase) {
+        stocksParSku.set(varianteSupabase.sku, varianteSupabase);
+      });
+
+      (produit.variantes || []).forEach(function (varianteLocale) {
+        const varianteSupabase = stocksParSku.get(varianteLocale.sku);
+
+        if (!varianteSupabase) {
+          varianteLocale.stock = 0;
+          varianteLocale.actif = false;
+          return;
+        }
+
+        varianteLocale.stock = Number(varianteSupabase.stock);
+        varianteLocale.actif = varianteSupabase.active !== false;
+      });
+
+      stockSupabaseCharge = true;
+
+      console.log(
+        '[TRIÈDRE] Stock Supabase chargé pour ' +
+        produit.id +
+        ' — variantes reçues : ' +
+        (data || []).length
+      );
+
+    } catch (erreur) {
+      console.error(
+        '[TRIÈDRE] Erreur inattendue pendant la lecture du stock :',
+        erreur
+      );
+    }
+  }
 
   function variantesActives(produit) {
     return (produit.variantes || []).filter(function (v) {
@@ -188,12 +269,15 @@ document.addEventListener('DOMContentLoaded', function () {
       bouton.textContent = taille;
       bouton.setAttribute('data-taille', taille);
 
-      if (variante && variante.stock === 0) {
+      if (!stockSupabaseCharge) {
         bouton.disabled = true;
+      }
+
+      if (variante && variante.stock === 0) {
         bouton.classList.add('indisponible');
       }
 
-      if (tailles.length === 1 && !bouton.disabled) {
+      if (tailles.length === 1 && stockSupabaseCharge) {
         bouton.classList.add('active');
       }
 
@@ -210,7 +294,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!tailleBouton) return null;
 
-    const taille = tailleBouton.getAttribute('data-taille') || tailleBouton.textContent;
+    const taille =
+      tailleBouton.getAttribute('data-taille') || tailleBouton.textContent;
 
     return variantesActives(produitActuel).find(function (v) {
       return v.couleur === couleur && v.taille === taille;
@@ -231,6 +316,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!stockMessage || !boutonAjouterPanier) return;
 
+    if (!stockSupabaseCharge) {
+      stockMessage.textContent =
+        'Stock momentanément indisponible. Réessaie dans quelques instants.';
+      stockMessage.className = 'stock-message stock-limite-texte';
+      boutonAjouterPanier.disabled = true;
+      boutonAjouterPanier.textContent = 'Stock indisponible';
+      return;
+    }
+
     if (!variante) {
       stockMessage.textContent = '';
       stockMessage.className = 'stock-message';
@@ -240,13 +334,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (variante.stock === 0) {
-      stockMessage.textContent = 'Rupture de stock';
-      stockMessage.className = 'stock-message stock-rupture';
+      stockMessage.textContent = 'Indisponible';
+      stockMessage.className = 'stock-message stock-limite-texte';
       boutonAjouterPanier.disabled = true;
-      boutonAjouterPanier.textContent = 'Rupture de stock';
-    } else if (typeof variante.stock === 'number' && variante.stock <= 5) {
+      boutonAjouterPanier.textContent = 'Indisponible';
+    } else if (typeof variante.stock === 'number' && variante.stock > 0) {
       stockMessage.textContent =
-        'Plus que ' + variante.stock + ' en stock — dépêche-toi !';
+        'Plus que ' + variante.stock + ' en stock';
       stockMessage.className = 'stock-message stock-limite-texte';
       boutonAjouterPanier.disabled = false;
       boutonAjouterPanier.textContent = 'Ajouter au panier';
@@ -348,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (listeTailles) {
       listeTailles.addEventListener('click', function (e) {
         const bouton = e.target.closest('.taille-btn');
-        if (!bouton || bouton.disabled) return;
+        if (!bouton || !stockSupabaseCharge) return;
 
         document.querySelectorAll('.taille-btn').forEach(function (b) {
           b.classList.remove('active');
@@ -375,8 +469,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const valeur = parseInt(quantiteInput.value, 10);
         const variante = varianteSelectionnee();
 
-        if (variante && typeof variante.stock === 'number' &&
-            valeur >= variante.stock) {
+        if (
+          variante &&
+          typeof variante.stock === 'number' &&
+          valeur >= variante.stock
+        ) {
           return;
         }
 
@@ -388,6 +485,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (boutonAjouter) {
       boutonAjouter.addEventListener('click', function () {
+        if (!stockSupabaseCharge) {
+          afficherToast(
+            'Le stock ne peut pas être vérifié pour le moment.',
+            'avertissement'
+          );
+          return;
+        }
+
         const variante = varianteSelectionnee();
 
         if (!variante) {
@@ -399,14 +504,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (variante.stock === 0) {
-          afficherToast('Cette variante est en rupture de stock.', 'avertissement');
+          afficherToast(
+            'Cette variante est en rupture de stock.',
+            'avertissement'
+          );
           return;
         }
 
         const quantite =
           parseInt(document.querySelector('.quantite-input').value, 10);
 
-        if (typeof variante.stock === 'number' && quantite > variante.stock) {
+        if (
+          typeof variante.stock === 'number' &&
+          quantite > variante.stock
+        ) {
           afficherToast(
             'La quantité demandée dépasse le stock disponible.',
             'avertissement'
@@ -651,17 +762,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-
   // ==========================================================================
   // Guide des tailles
   // ==========================================================================
-
-  const guideTaillesBouton = document.getElementById('guide-tailles-bouton');
-  const guideTaillesModal = document.getElementById('guide-tailles-modal');
-  const guideTaillesProduit = document.getElementById('guide-tailles-produit');
-  const guideTaillesCorps = document.getElementById('guide-tailles-corps');
-  const boutonsFermerGuide =
-    document.querySelectorAll('[data-fermer-guide-tailles]');
 
   function ouvrirGuideTailles(e) {
     if (e) e.preventDefault();
@@ -742,12 +845,6 @@ document.addEventListener('DOMContentLoaded', function () {
       fermerGuideTailles();
     }
   });
-
-
-  const boutonFavori = document.querySelector('.btn-favori');
-  const favorisModal = document.getElementById('favoris-modal');
-  const boutonsFermerFavoris =
-    document.querySelectorAll('[data-fermer-favoris]');
 
   function ouvrirModalFavoris() {
     if (!favorisModal) return;
