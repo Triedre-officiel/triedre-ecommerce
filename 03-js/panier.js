@@ -559,32 +559,4 @@ document.addEventListener('DOMContentLoaded', function () {
     copyrightElement.textContent =
       copyrightElement.textContent.replace(/\d{4}/, new Date().getFullYear());
   }
-
-  const onglets = document.querySelectorAll('.onglet-btn');
-
-  if (onglets.length > 0) {
-    onglets.forEach(function (onglet) {
-      onglet.addEventListener('click', function () {
-        onglets.forEach(function (o) {
-          o.classList.remove('active');
-        });
-
-        onglet.classList.add('active');
-
-        const cible = onglet.getAttribute('data-cible');
-
-        document.querySelectorAll('[data-formulaire]').forEach(function (formulaire) {
-          formulaire.style.display = formulaire.id === cible ? 'flex' : 'none';
-        });
-      });
-    });
-  }
-
-  document.querySelectorAll('[data-formulaire]').forEach(function (formulaire) {
-    formulaire.addEventListener('submit', function (e) {
-      e.preventDefault();
-      afficherToast('Fonctionnalité bientôt disponible.', 'info');
-      formulaire.reset();
-    });
-  });
 });

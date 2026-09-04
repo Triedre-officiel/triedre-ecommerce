@@ -1,0 +1,1629 @@
+/* ==========================================================================
+   TRIÈDRE — Espace Membre — Auth email-first V2
+   ========================================================================== */
+
+.membre-message {
+  margin-bottom: 1rem;
+  padding: .9rem 1rem;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .04);
+  line-height: 1.45;
+}
+
+.membre-message-succes,
+.membre-message-avertissement,
+.membre-message-erreur {
+  border-color: rgba(212, 175, 55, .55);
+}
+
+#membre-auth-zone h2 {
+  margin-bottom: 1rem;
+}
+
+#formulaire-email-first {
+  display: grid;
+  gap: 1rem;
+}
+
+.membre-email-rappel {
+  margin-bottom: 1.35rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  word-break: break-word;
+}
+
+.membre-aide-mdp {
+  display: block;
+  margin-top: .45rem;
+  color: var(--color-text-secondary, #b7b7b7);
+}
+
+.membre-creer-compte {
+  margin-top: 1.1rem;
+  text-align: center;
+  color: var(--color-text-secondary, #b7b7b7);
+}
+
+.membre-creer-compte button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.membre-creer-compte button:hover,
+.membre-creer-compte button:focus-visible {
+  color: var(--color-accent, #d4af37);
+}
+
+.membre-connecte,
+.membre-reset {
+  width: 100%;
+}
+
+.membre-connecte h2,
+.membre-reset h2 {
+  margin-bottom: 1.5rem;
+}
+
+.membre-compte-infos {
+  display: grid;
+  gap: .75rem;
+  margin: 1.5rem 0;
+}
+
+.membre-compte-infos p {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .85rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+
+.membre-compte-infos span {
+  color: var(--color-text-secondary, #aaa);
+}
+
+.membre-compte-infos strong {
+  text-align: right;
+}
+
+.membre-reset form {
+  display: grid;
+  gap: 1rem;
+}
+
+.champ-mot-de-passe {
+  position: relative;
+  width: 100%;
+}
+
+.champ-mot-de-passe input {
+  width: 100%;
+  padding-right: 3rem;
+}
+
+.champ-mot-de-passe input::-ms-reveal,
+.champ-mot-de-passe input::-ms-clear {
+  display: none;
+}
+
+.mot-de-passe-toggle {
+  position: absolute;
+  top: 50%;
+  right: .8rem;
+  transform: translateY(-50%);
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, .82);
+  cursor: pointer;
+  transition: color .2s ease;
+}
+
+.mot-de-passe-toggle:hover,
+.mot-de-passe-toggle:focus-visible {
+  color: var(--color-accent, #d4af37);
+}
+
+.mot-de-passe-toggle:focus-visible {
+  outline: 1px solid var(--color-accent, #d4af37);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.icone-oeil {
+  width: 1.3rem;
+  height: 1.3rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icone-oeil-ferme {
+  display: none;
+}
+
+.mot-de-passe-toggle[aria-pressed="true"] .icone-oeil-ouvert {
+  display: none;
+}
+
+.mot-de-passe-toggle[aria-pressed="true"] .icone-oeil-ferme {
+  display: block;
+}
+
+.formulaire-membre button:disabled,
+.membre-connecte button:disabled,
+.membre-reset button:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
+/* Priorité absolue aux étapes masquées */
+#membre-auth-zone [hidden],
+.membre-formulaires [hidden] {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .membre-compte-infos p {
+    flex-direction: column;
+  }
+
+  .membre-compte-infos strong {
+    text-align: left;
+  }
+}
+
+/* ==========================================================================
+   TRIÈDRE — Tableau de bord membre
+   ========================================================================== */
+
+.membre-connecte {
+  display: grid;
+  gap: 2rem;
+}
+
+.membre-dashboard-entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+
+.membre-dashboard-entete h2 {
+  margin: 0;
+}
+
+.membre-dashboard-email {
+  margin-top: .45rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  word-break: break-word;
+}
+
+.membre-deconnexion-haut {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text-secondary, #b7b7b7);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.membre-deconnexion-haut:hover,
+.membre-deconnexion-haut:focus-visible {
+  color: var(--color-accent, #d4af37);
+}
+
+.membre-dashboard-section {
+  display: grid;
+}
+
+.membre-dashboard-section h3 {
+  margin: 0 0 .65rem;
+  color: var(--color-accent, #d4af37);
+  font-size: .9rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.membre-dashboard-lien {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .10);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.membre-dashboard-lien > span[aria-hidden="true"] {
+  font-size: 1.55rem;
+  line-height: 1;
+  color: var(--color-text-secondary, #b7b7b7);
+}
+
+.membre-dashboard-lien:hover,
+.membre-dashboard-lien:focus-visible {
+  color: var(--color-accent, #d4af37);
+}
+
+.membre-dashboard-lien:hover > span[aria-hidden="true"],
+.membre-dashboard-lien:focus-visible > span[aria-hidden="true"] {
+  color: var(--color-accent, #d4af37);
+}
+
+.membre-connecte .membre-connecte .membre-suppression-compte {
+  margin-top: 1.4rem;
+  padding: 1rem 0;
+  border: 0;
+  color: inherit;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.membre-dashboard-aide {
+  padding-top: .25rem;
+}
+
+@media (min-width: 900px) {
+  .membre-connecte {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2.5rem;
+  }
+
+  .membre-dashboard-entete {
+    grid-column: 1 / -1;
+  }
+
+  .membre-dashboard-aide {
+    grid-column: 1 / -1;
+    max-width: calc(50% - 1.25rem);
+  }
+}
+
+@media (max-width: 600px) {
+  .membre-dashboard-entete {
+    flex-direction: column;
+    gap: .75rem;
+  }
+
+  .membre-deconnexion-haut {
+    align-self: flex-start;
+  }
+}
+
+
+.membre-connecte .membre-suppression-compte:hover,
+.membre-connecte .membre-suppression-compte:focus-visible {
+  color: var(--color-accent, #d4af37);
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Mode connecté épuré
+   Le discours commercial reste visible avant connexion uniquement.
+   ========================================================================== */
+
+.membre-page.membre-page-connectee .membre-avantages > p:not(.section-eyebrow),
+.membre-page.membre-page-connectee .avantages-liste {
+  display: none;
+}
+
+.membre-page.membre-page-connectee .membre-connecte .section-eyebrow,
+.membre-page.membre-page-connectee .membre-dashboard-email {
+  display: none;
+}
+
+.membre-page.membre-page-connectee .membre-avantages h1 {
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .membre-page.membre-page-connectee {
+    gap: var(--space-lg);
+  }
+
+  .membre-page.membre-page-connectee .membre-avantages {
+    margin-bottom: 0;
+  }
+
+  .membre-page.membre-page-connectee .membre-formulaires {
+    margin-top: 0;
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Connexion mobile : titre sur une seule ligne
+   ========================================================================== */
+
+@media (max-width: 600px) {
+  #auth-etape-email h2 {
+    font-size: clamp(1rem, 4.5vw, 1.2rem);
+    white-space: nowrap;
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Suppression sécurisée du compte
+   ========================================================================== */
+
+.membre-modal[hidden] {
+  display: none !important;
+}
+
+.membre-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.membre-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .72);
+  backdrop-filter: blur(3px);
+}
+
+.membre-modal-contenu {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 520px);
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, .42);
+}
+
+.membre-modal-contenu h2 {
+  margin: 0 2.5rem 1rem 0;
+}
+
+.membre-modal-texte {
+  margin-bottom: 1.25rem;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+
+.membre-modal-fermer {
+  position: absolute;
+  top: .9rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 1.7rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.membre-modal-fermer:hover,
+.membre-modal-fermer:focus-visible {
+  color: var(--color-accent);
+}
+
+.membre-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .75rem;
+  margin-top: 1.25rem;
+}
+
+.membre-modal-erreur {
+  margin-top: .75rem;
+  color: var(--color-accent);
+}
+
+body.membre-modal-ouverte {
+  overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  .membre-modal-contenu {
+    padding: 1.25rem;
+  }
+
+  .membre-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .membre-modal-actions .btn {
+    width: 100%;
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Mes informations
+   ========================================================================== */
+
+#modal-mes-informations .membre-modal-contenu {
+  width: min(100%, 560px);
+}
+
+#profil-courriel[readonly] {
+  opacity: .72;
+  cursor: default;
+}
+
+.membre-champ-note {
+  display: block;
+  margin-top: .35rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  font-size: var(--font-size-small);
+  line-height: 1.45;
+}
+
+.membre-modal-succes {
+  margin-top: .75rem;
+  color: var(--color-accent, #d4af37);
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Parcours email-first V3 + compte pro
+   ========================================================================== */
+
+.membre-message a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.membre-modal-compte {
+  width: min(100%, 720px);
+}
+
+.membre-profil-grille {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.25rem;
+}
+
+.membre-profil-grille .champ-groupe {
+  margin-bottom: 0;
+}
+
+.membre-profil-grille .champ-groupe-large {
+  grid-column: 1 / -1;
+}
+
+#modal-mes-informations input[readonly] {
+  opacity: .78;
+  cursor: default;
+}
+
+#modal-mes-informations select,
+#modal-mes-informations input[type="date"] {
+  width: 100%;
+}
+
+#modal-mes-informations select {
+  min-height: 48px;
+  padding: .85rem 1rem;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .03);
+  color: var(--color-text, #fff);
+  font: inherit;
+}
+
+#modal-mes-informations select:focus,
+#modal-mes-informations input:focus {
+  outline: 1px solid var(--color-accent, #d4af37);
+  outline-offset: 1px;
+}
+
+#modal-mes-informations input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: .85;
+  cursor: pointer;
+}
+
+@media (max-width: 700px) {
+  .membre-modal-compte {
+    width: min(100%, 560px);
+  }
+
+  .membre-profil-grille {
+    grid-template-columns: 1fr;
+  }
+
+  .membre-profil-grille .champ-groupe-large {
+    grid-column: auto;
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Espace Membre V3 — sous-page Mes informations
+   ========================================================================== */
+
+.membre-informations {
+  width: 100%;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.membre-informations[hidden] {
+  display: none !important;
+}
+
+.membre-souspage-entete {
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+
+.membre-souspage-entete h2 {
+  margin: .35rem 0 0;
+}
+
+.membre-retour {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  margin-bottom: 1.1rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary, #b7b7b7);
+  font: inherit;
+  cursor: pointer;
+}
+
+.membre-retour > span[aria-hidden="true"] {
+  font-size: 1.8rem;
+  line-height: .8;
+}
+
+.membre-retour:hover,
+.membre-retour:focus-visible {
+  color: var(--color-accent, #d4af37);
+}
+
+.membre-informations-form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.membre-profil-grille {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.15rem 1.35rem;
+}
+
+.membre-profil-grille .champ-groupe {
+  margin-bottom: 0;
+}
+
+.membre-profil-grille .champ-groupe-large {
+  grid-column: 1 / -1;
+}
+
+.membre-sexe {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.membre-sexe legend {
+  margin-bottom: .65rem;
+  font-weight: 600;
+}
+
+.membre-sexe-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem 1.5rem;
+}
+
+.membre-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.membre-radio input {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  accent-color: var(--color-accent, #d4af37);
+}
+
+#profil-email[readonly] {
+  opacity: .78;
+  cursor: default;
+}
+
+#profil-date-naissance::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: .85;
+  cursor: pointer;
+}
+
+.membre-informations-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.membre-informations-actions .btn {
+  min-width: min(100%, 280px);
+}
+
+@media (max-width: 700px) {
+  .membre-profil-grille {
+    grid-template-columns: 1fr;
+  }
+
+  .membre-profil-grille .champ-groupe-large {
+    grid-column: auto;
+  }
+
+  .membre-informations-actions .btn {
+    width: 100%;
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Espace Membre V4 — Mes préférences
+   ========================================================================== */
+
+.membre-preferences {
+  width: 100%;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.membre-preferences[hidden] {
+  display: none !important;
+}
+
+.membre-preferences-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.membre-preference-bloc {
+  padding: 1.2rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .10);
+}
+
+.membre-preference-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.membre-preference-bloc h3 {
+  margin: 0 0 .35rem;
+  font-size: 1.05rem;
+  color: var(--color-text, #fff);
+}
+
+.membre-preference-bloc p,
+.membre-preferences-note {
+  margin: 0;
+  color: var(--color-text-secondary, #b7b7b7);
+  line-height: 1.55;
+}
+
+.membre-preference-texte {
+  margin-bottom: 1rem;
+}
+
+.membre-switch {
+  position: relative;
+  flex: 0 0 auto;
+  width: 3.25rem;
+  height: 1.8rem;
+  cursor: pointer;
+}
+
+.membre-switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.membre-switch-visuel {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .07);
+  transition: background .2s ease, border-color .2s ease;
+}
+
+.membre-switch-visuel::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: .22rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: #fff;
+  transition: transform .2s ease, background .2s ease;
+}
+
+.membre-switch input:checked + .membre-switch-visuel {
+  border-color: var(--color-accent, #d4af37);
+  background: rgba(212, 175, 55, .22);
+}
+
+.membre-switch input:checked + .membre-switch-visuel::after {
+  transform: translate(1.43rem, -50%);
+  background: var(--color-accent, #d4af37);
+}
+
+.membre-switch input:focus-visible + .membre-switch-visuel {
+  outline: 2px solid var(--color-accent, #d4af37);
+  outline-offset: 3px;
+}
+
+.membre-langue {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .8rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.membre-radio-carte {
+  min-height: 52px;
+  padding: .85rem 1rem;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .025);
+  transition: border-color .2s ease, color .2s ease, background .2s ease;
+}
+
+.membre-radio-carte:has(input:checked) {
+  border-color: var(--color-accent, #d4af37);
+  color: var(--color-accent, #d4af37);
+  background: rgba(212, 175, 55, .07);
+}
+
+.membre-preferences-note {
+  font-size: .9rem;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+@media (max-width: 600px) {
+  .membre-preference-entete {
+    align-items: flex-start;
+  }
+
+  .membre-langue {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Espace Membre V5 — Mes adresses
+   ========================================================================== */
+
+.membre-adresses {
+  width: 100%;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.membre-adresses[hidden],
+.membre-adresse-form[hidden] {
+  display: none !important;
+}
+
+.membre-adresses-barre {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, .10);
+}
+
+.membre-adresses-barre p,
+.membre-adresses-vide {
+  margin: 0;
+  color: var(--color-text-secondary, #b7b7b7);
+  line-height: 1.55;
+}
+
+.membre-adresses-barre .btn {
+  flex: 0 0 auto;
+}
+
+.membre-adresses-liste {
+  display: grid;
+  gap: 1rem;
+}
+
+.membre-adresse-carte {
+  padding: 1.15rem 1.2rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .025);
+}
+
+.membre-adresse-carte-entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: .75rem;
+}
+
+.membre-adresse-carte-titre {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .55rem;
+}
+
+.membre-adresse-carte h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--color-text, #fff);
+}
+
+.membre-adresse-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: .2rem .55rem;
+  border: 1px solid rgba(212, 175, 55, .55);
+  border-radius: 999px;
+  color: var(--color-accent, #d4af37);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.membre-adresse-carte p {
+  margin: .15rem 0;
+  color: var(--color-text-secondary, #b7b7b7);
+  line-height: 1.45;
+}
+
+.membre-adresse-carte-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .85rem 1.2rem;
+  margin-top: 1rem;
+  padding-top: .9rem;
+  border-top: 1px solid rgba(255, 255, 255, .08);
+}
+
+.membre-adresse-action {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text, #fff);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.membre-adresse-action:hover,
+.membre-adresse-action:focus-visible {
+  color: var(--color-accent, #d4af37);
+}
+
+.membre-adresse-action-supprimer:hover,
+.membre-adresse-action-supprimer:focus-visible {
+  color: #f0a5a5;
+}
+
+.membre-adresse-form {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: .25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, .10);
+}
+
+.membre-adresse-form-entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.membre-adresse-form-entete h3 {
+  margin: .25rem 0 0;
+  font-size: 1.45rem;
+}
+
+.membre-adresse-annuler-haut {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary, #b7b7b7);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.membre-adresse-annuler-haut:hover,
+.membre-adresse-annuler-haut:focus-visible {
+  color: var(--color-accent, #d4af37);
+}
+
+.membre-adresse-grille {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.2rem;
+}
+
+.membre-adresse-grille .champ-groupe {
+  margin-bottom: 0;
+}
+
+.membre-adresse-grille .champ-groupe-large {
+  grid-column: 1 / -1;
+}
+
+.membre-adresse-grille select {
+  width: 100%;
+  min-height: 48px;
+  padding: .85rem 1rem;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .03);
+  color: var(--color-text, #fff);
+  font: inherit;
+}
+
+.membre-adresse-grille select:focus {
+  outline: 1px solid var(--color-accent, #d4af37);
+  outline-offset: 1px;
+}
+
+.membre-optionnel {
+  color: var(--color-text-secondary, #b7b7b7);
+  font-weight: 400;
+}
+
+.membre-adresse-defaut {
+  display: inline-flex;
+  align-items: center;
+  gap: .7rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.membre-adresse-defaut input {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  accent-color: var(--color-accent, #d4af37);
+}
+
+.membre-adresse-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .75rem;
+}
+
+@media (max-width: 700px) {
+  .membre-adresses-barre,
+  .membre-adresse-form-entete {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .membre-adresses-barre .btn,
+  .membre-adresse-actions .btn {
+    width: 100%;
+  }
+
+  .membre-adresse-grille {
+    grid-template-columns: 1fr;
+  }
+
+  .membre-adresse-grille .champ-groupe-large {
+    grid-column: auto;
+  }
+
+  .membre-adresse-actions {
+    flex-direction: column-reverse;
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — V5.1 Adresses — champs obligatoires et listes déroulantes
+   ========================================================================== */
+
+.membre-obligatoire {
+  color: var(--color-accent, #d4af37);
+  font-weight: 700;
+}
+
+.membre-adresse-grille select {
+  color-scheme: dark;
+  background-color: #242424;
+  color: #fff;
+}
+
+.membre-adresse-grille select option {
+  background: #242424;
+  color: #fff;
+}
+
+.membre-adresse-grille select option:checked {
+  background: #3a3a3a;
+  color: #fff;
+}
+
+.membre-adresse-grille input:invalid:not(:placeholder-shown),
+.membre-adresse-grille select:invalid {
+  border-color: rgba(255, 255, 255, .24);
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — V5.2 Adresses — cohérence checkout internationale
+   ========================================================================== */
+
+#adresse-region-groupe select,
+#adresse-region-groupe input {
+  width: 100%;
+}
+
+#adresse-region-groupe select {
+  color-scheme: dark;
+  background-color: #242424;
+  color: #fff;
+}
+
+#adresse-region-groupe select option {
+  background: #242424;
+  color: #fff;
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Mes commandes V6
+   ========================================================================== */
+
+.membre-commandes {
+  width: 100%;
+}
+
+.membre-commandes-intro {
+  margin-bottom: 1.4rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  line-height: 1.55;
+}
+
+.membre-commandes-liste {
+  display: grid;
+  gap: 1rem;
+}
+
+.membre-commande-carte {
+  padding: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .025);
+}
+
+.membre-commande-entete,
+.membre-commande-pied {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.membre-commande-numero {
+  margin: 0 0 .25rem;
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  text-transform: uppercase;
+}
+
+.membre-commande-date {
+  color: var(--color-text-secondary, #b7b7b7);
+  font-size: .9rem;
+}
+
+.membre-commande-statut {
+  flex: 0 0 auto;
+  padding: .35rem .65rem;
+  border: 1px solid rgba(212, 175, 55, .5);
+  border-radius: 999px;
+  color: var(--color-accent, #d4af37);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.membre-commande-articles {
+  display: grid;
+  gap: .65rem;
+  margin: 1rem 0;
+  padding: 1rem 0;
+  border-top: 1px solid rgba(255, 255, 255, .09);
+  border-bottom: 1px solid rgba(255, 255, 255, .09);
+}
+
+.membre-commande-article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.membre-commande-article-infos {
+  min-width: 0;
+}
+
+.membre-commande-article-nom {
+  display: block;
+  font-weight: 600;
+}
+
+.membre-commande-article-details {
+  display: block;
+  margin-top: .15rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  font-size: .86rem;
+}
+
+.membre-commande-article-prix,
+.membre-commande-total {
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.membre-commande-total {
+  color: var(--color-accent, #d4af37);
+}
+
+.membre-commandes-vide {
+  padding: 2rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 10px;
+  text-align: center;
+  background: rgba(255, 255, 255, .025);
+}
+
+.membre-commandes-vide h3 {
+  margin: .25rem 0 .65rem;
+}
+
+.membre-commandes-vide > p:not(.section-eyebrow) {
+  margin-bottom: 1.25rem;
+  color: var(--color-text-secondary, #b7b7b7);
+}
+
+@media (max-width: 600px) {
+  .membre-commande-entete,
+  .membre-commande-pied {
+    flex-direction: column;
+  }
+
+  .membre-commande-statut {
+    align-self: flex-start;
+  }
+
+  .membre-commande-article {
+    align-items: flex-start;
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Mes favoris V7
+   ========================================================================== */
+
+.membre-favoris {
+  width: 100%;
+}
+
+.membre-favoris-intro {
+  margin-bottom: 1.4rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  line-height: 1.55;
+}
+
+.membre-favoris-liste {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.membre-favori-carte {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .025);
+}
+
+.membre-favori-image {
+  width: 92px;
+  height: 112px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .05);
+}
+
+.membre-favori-image-placeholder {
+  width: 92px;
+  height: 112px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .05);
+  color: var(--color-accent, #d4af37);
+  font-family: var(--font-heading);
+  font-size: .8rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.membre-favori-contenu {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.membre-favori-nom {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.08rem;
+  text-transform: uppercase;
+}
+
+.membre-favori-prix {
+  margin-top: .35rem;
+  color: var(--color-accent, #d4af37);
+  font-weight: 700;
+}
+
+.membre-favori-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.membre-favori-lien,
+.membre-favori-supprimer {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: .9rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.membre-favori-lien:hover,
+.membre-favori-lien:focus-visible,
+.membre-favori-supprimer:hover,
+.membre-favori-supprimer:focus-visible {
+  color: var(--color-accent, #d4af37);
+}
+
+.membre-favoris-vide {
+  padding: 2rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 10px;
+  text-align: center;
+  background: rgba(255, 255, 255, .025);
+}
+
+.membre-favoris-vide h3 {
+  margin: .25rem 0 .65rem;
+}
+
+.membre-favoris-vide > p:not(.section-eyebrow) {
+  margin-bottom: 1.25rem;
+  color: var(--color-text-secondary, #b7b7b7);
+}
+
+@media (max-width: 760px) {
+  .membre-favoris-liste {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .membre-favori-carte {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+
+  .membre-favori-image,
+  .membre-favori-image-placeholder {
+    width: 76px;
+    height: 96px;
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Favoris V8.2 — Variante exacte
+   ========================================================================== */
+
+.membre-favori-variante {
+  margin-top: .35rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  font-size: .86rem;
+  line-height: 1.4;
+}
+
+.membre-favori-disponibilite {
+  margin-top: .45rem;
+  font-size: .82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.membre-favori-disponibilite.is-disponible {
+  color: var(--color-accent, #d4af37);
+}
+
+.membre-favori-disponibilite.is-indisponible {
+  color: var(--color-text-secondary, #b7b7b7);
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — V9 — Abonnements / Programmes / Communauté
+   ========================================================================== */
+
+.membre-abonnements,
+.membre-programmes,
+.membre-communaute { width: 100%; }
+
+.membre-souspage-intro {
+  margin-bottom: 1.4rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  line-height: 1.55;
+}
+
+.membre-etat-vide--compact,
+.membre-programmes-bloc,
+.membre-programmes-prive,
+.membre-progression-concept,
+.membre-communaute-manifeste,
+.membre-communaute-composer,
+.membre-communaute-regle {
+  padding: 1.35rem;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 10px;
+  background: rgba(255,255,255,.025);
+}
+
+.membre-etat-vide--compact { margin-bottom: 1rem; }
+
+.membre-etat-vide--compact h3,
+.membre-programmes-bloc h3,
+.membre-programmes-prive h3,
+.membre-progression-concept h3,
+.membre-communaute-manifeste h3,
+.membre-communaute-composer h3 { margin: .25rem 0 .55rem; }
+
+.membre-etat-vide--compact p:last-child,
+.membre-programmes-bloc p:last-child,
+.membre-programmes-prive p:last-child,
+.membre-communaute-manifeste p:last-child,
+.membre-communaute-composer p:last-of-type {
+  color: var(--color-text-secondary, #b7b7b7);
+  line-height: 1.55;
+}
+
+.membre-architecture-grid,
+.membre-programmes-sections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.membre-architecture-carte {
+  min-height: 145px;
+  padding: 1.2rem;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 10px;
+  background: rgba(255,255,255,.02);
+}
+
+.membre-architecture-carte h3 { margin: .35rem 0 .5rem; }
+.membre-architecture-carte p {
+  color: var(--color-text-secondary, #b7b7b7);
+  line-height: 1.5;
+}
+.membre-architecture-numero {
+  color: var(--color-accent, #d4af37);
+  font-family: var(--font-heading);
+  letter-spacing: .08em;
+}
+
+.membre-programmes-prive {
+  margin-bottom: 1rem;
+  border-color: rgba(212,175,55,.35);
+}
+.membre-programmes-bloc { margin-bottom: 1rem; }
+.membre-progression-concept { margin-top: 1rem; }
+
+.membre-progression-indicateurs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: .75rem;
+  margin-top: 1rem;
+}
+.membre-progression-indicateurs > div {
+  padding: 1rem;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 8px;
+  text-align: center;
+}
+.membre-progression-indicateurs strong {
+  display: block;
+  color: var(--color-accent, #d4af37);
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+}
+.membre-progression-indicateurs span {
+  display: block;
+  margin-top: .25rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  font-size: .82rem;
+}
+
+.membre-communaute-manifeste {
+  margin-bottom: 1rem;
+  border-color: rgba(212,175,55,.35);
+}
+
+.membre-communaute-nav {
+  display: flex;
+  gap: .5rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  padding-bottom: .25rem;
+}
+.membre-communaute-nav button {
+  flex: 0 0 auto;
+  padding: .7rem 1rem;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.membre-communaute-nav button:hover,
+.membre-communaute-nav button:focus-visible,
+.membre-communaute-nav button.is-active {
+  color: var(--color-accent, #d4af37);
+  border-color: var(--color-accent, #d4af37);
+}
+.membre-communaute-vue[hidden] { display: none !important; }
+.membre-communaute-composer .btn { margin-top: 1rem; }
+
+.membre-communaute-liste {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 1rem;
+}
+.membre-communaute-liste article {
+  min-height: 140px;
+  padding: 1.2rem;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 10px;
+  background: rgba(255,255,255,.02);
+}
+.membre-communaute-liste article h3 { margin-bottom: .45rem; }
+.membre-communaute-liste article p {
+  color: var(--color-text-secondary, #b7b7b7);
+  line-height: 1.5;
+}
+
+.membre-communaute-regle {
+  display: flex;
+  gap: .65rem;
+  margin-top: 1rem;
+  border-color: rgba(212,175,55,.35);
+}
+.membre-communaute-regle strong {
+  color: var(--color-accent, #d4af37);
+  white-space: nowrap;
+}
+.membre-communaute-regle span {
+  color: var(--color-text-secondary, #b7b7b7);
+}
+
+@media (max-width: 760px) {
+  .membre-architecture-grid,
+  .membre-programmes-sections,
+  .membre-communaute-liste { grid-template-columns: 1fr; }
+
+  .membre-progression-indicateurs {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+
+  .membre-communaute-regle { flex-direction: column; }
+}
+
+@media (max-width: 420px) {
+  .membre-progression-indicateurs { grid-template-columns: 1fr; }
+}
+
+/* V9.2 — version épurée */
+.membre-abonnements-stack,.membre-programmes-stack{display:grid;gap:1rem}
+.membre-bloc-principal{padding:1.25rem;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.025)}
+.membre-bloc-principal h3{margin:.25rem 0 .5rem}
+.membre-bloc-principal p:last-of-type{color:var(--color-text-secondary,#b7b7b7);line-height:1.5}
+.membre-bloc-principal .btn{margin-top:1rem}
+.membre-actions-centrees{display:flex;justify-content:flex-start}
+@media(max-width:760px){
+  .membre-abonnements-stack,.membre-programmes-stack{gap:.85rem}
+  .membre-bloc-principal,.membre-progression-concept,.membre-communaute-manifeste,.membre-communaute-composer,.membre-communaute-regle{padding:1rem}
+  .membre-actions-centrees .btn{width:100%}
+}

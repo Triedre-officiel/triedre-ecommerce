@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
+  <meta name="robots" content="noindex, nofollow">
   <title>Espace Membre — TRIÈDRE</title>
   <link rel="stylesheet" href="../02-css/style.css">
+  <link rel="stylesheet" href="../02-css/sections/membre-auth.css">
 </head>
 <body>
 
@@ -15,9 +16,10 @@
 
   <header class="site-header">
     <a href="./" class="logo">
-          <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
-          <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
+      <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+      <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
     </a>
+
     <nav class="main-nav">
       <ul>
         <li><a href="./">Accueil</a></li>
@@ -27,9 +29,11 @@
         <li><a href="membre" class="active">Espace Membre</a></li>
       </ul>
     </nav>
+
     <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
-            <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
     </button>
+
     <div class="header-icons">
       <button aria-label="Rechercher"><img src="../05-images/icons/icon-search.svg" alt=""></button>
       <a href="membre" aria-label="Mon compte"><img src="../05-images/icons/icon-account.svg" alt=""></a>
@@ -41,10 +45,7 @@
   </header>
 
   <main>
-
     <section class="membre-page">
-
-      <!-- Avantages -->
       <div class="membre-avantages">
         <p class="section-eyebrow">Espace Membre</p>
         <h1>Plus qu'un compte. <span class="accent">Une communauté.</span></h1>
@@ -58,58 +59,734 @@
         </ul>
       </div>
 
-      <!-- Formulaires -->
       <div class="membre-formulaires">
-        <div class="onglets-membre">
-          <button class="onglet-btn active" data-cible="connexion">Connexion</button>
-          <button class="onglet-btn" data-cible="inscription">Inscription</button>
+        <div id="membre-message" class="membre-message" hidden aria-live="polite"></div>
+
+        <div id="membre-auth-zone">
+
+          <!-- Étape 1 : courriel -->
+          <section id="auth-etape-email">
+            <p class="section-eyebrow">Connexion / Inscription</p>
+            <h2>Entre ton adresse courriel.</h2>
+
+            <form id="formulaire-email-first" novalidate>
+              <div class="champ-groupe">
+                <label for="auth-email">Courriel</label>
+                <input
+                  type="email"
+                  id="auth-email"
+                  name="email"
+                  autocomplete="email"
+                  required
+                >
+              </div>
+
+              <button type="submit" class="btn btn-primary" id="auth-email-continuer">
+                Continuer
+              </button>
+            </form>
+          </section>
+
+          <!-- Étape 2 : mot de passe -->
+          <form class="formulaire-membre" id="connexion" hidden novalidate>
+            <p class="section-eyebrow">Connexion</p>
+            <h2>Entre ton mot de passe.</h2>
+            <p class="membre-email-rappel" id="connexion-email-affiche"></p>
+
+            <input type="hidden" id="connexion-email">
+
+            <div class="champ-groupe">
+              <label for="connexion-mdp">Mot de passe</label>
+              <div class="champ-mot-de-passe">
+                <input type="password" id="connexion-mdp" autocomplete="current-password" required>
+                <button
+                  type="button"
+                  class="mot-de-passe-toggle"
+                  data-password-toggle="connexion-mdp"
+                  aria-label="Afficher le mot de passe"
+                  aria-pressed="false"
+                >
+                  <svg class="icone-oeil icone-oeil-ouvert" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6S2.5 12 2.5 12Z"></path>
+                    <circle cx="12" cy="12" r="2.75"></circle>
+                  </svg>
+                  <svg class="icone-oeil icone-oeil-ferme" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 3l18 18"></path>
+                    <path d="M10.6 6.15A9.7 9.7 0 0 1 12 6c6 0 9.5 6 9.5 6a15.9 15.9 0 0 1-2.15 2.75"></path>
+                    <path d="M6.25 6.3C3.9 8.1 2.5 12 2.5 12s3.5 6 9.5 6a9.5 9.5 0 0 0 3.4-.62"></path>
+                    <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <a href="#" class="mdp-oublie" id="mdp-oublie">Mot de passe oublié ?</a>
+            <button type="submit" class="btn btn-primary" id="connexion-submit">Se connecter</button>
+
+            <p class="membre-creer-compte">
+              Pas encore de compte ?
+              <button type="button" id="ouvrir-inscription">Créer mon compte</button>
+            </p>
+          </form>
+
+          <!-- Inscription -->
+          <form class="formulaire-membre" id="inscription" hidden novalidate>
+            <p class="section-eyebrow">Inscription</p>
+            <h2>Crée ton compte TRIÈDRE.</h2>
+            <p class="membre-email-rappel" id="inscription-email-affiche"></p>
+
+            <input type="hidden" id="inscription-email">
+
+            <div class="champ-groupe">
+              <label for="inscription-nom">Nom complet</label>
+              <input type="text" id="inscription-nom" autocomplete="name" required>
+            </div>
+
+            <div class="champ-groupe">
+              <label for="inscription-mdp">Mot de passe</label>
+              <div class="champ-mot-de-passe">
+                <input type="password" id="inscription-mdp" autocomplete="new-password" minlength="8" required>
+                <button
+                  type="button"
+                  class="mot-de-passe-toggle"
+                  data-password-toggle="inscription-mdp"
+                  aria-label="Afficher le mot de passe"
+                  aria-pressed="false"
+                >
+                  <svg class="icone-oeil icone-oeil-ouvert" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6S2.5 12 2.5 12Z"></path>
+                    <circle cx="12" cy="12" r="2.75"></circle>
+                  </svg>
+                  <svg class="icone-oeil icone-oeil-ferme" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 3l18 18"></path>
+                    <path d="M10.6 6.15A9.7 9.7 0 0 1 12 6c6 0 9.5 6 9.5 6a15.9 15.9 0 0 1-2.15 2.75"></path>
+                    <path d="M6.25 6.3C3.9 8.1 2.5 12 2.5 12s3.5 6 9.5 6a9.5 9.5 0 0 0 3.4-.62"></path>
+                    <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path>
+                  </svg>
+                </button>
+              </div>
+              <small class="membre-aide-mdp">8 caractères minimum.</small>
+            </div>
+
+            <label class="case-consentement">
+              <input type="checkbox" id="marketing-consent">
+              <span>Je souhaite recevoir les communications, nouveautés et offres de TRIÈDRE.</span>
+            </label>
+
+            <button type="submit" class="btn btn-primary" id="inscription-submit">
+              Créer mon compte
+            </button>
+
+            <p class="membre-creer-compte">
+              Déjà un compte ?
+              <button type="button" id="retour-connexion">Se connecter</button>
+            </p>
+          </form>
         </div>
 
-        <!-- Formulaire connexion -->
-        <form class="formulaire-membre" id="connexion" data-formulaire>
-          <div class="champ-groupe">
-            <label for="connexion-email">Courriel</label>
-            <input type="email" id="connexion-email" required>
-          </div>
-          <div class="champ-groupe">
-            <label for="connexion-mdp">Mot de passe</label>
-            <input type="password" id="connexion-mdp" required>
-          </div>
-          <a href="#" class="mdp-oublie">Mot de passe oublié ?</a>
-          <button type="submit" class="btn btn-primary">Se connecter</button>
-        </form>
+        <section id="membre-connecte" class="membre-connecte" hidden>
+          <div class="membre-dashboard-entete">
+            <div>
+              <p class="section-eyebrow">TRIÈDRE</p>
+              <h2>Bienvenue <span class="accent" id="membre-prenom"></span></h2>
+              <p class="membre-dashboard-email" id="membre-email"></p>
+            </div>
 
-        <!-- Formulaire inscription -->
-        <form class="formulaire-membre" id="inscription" data-formulaire style="display: none;">
-          <div class="champ-groupe">
-            <label for="inscription-nom">Nom complet</label>
-            <input type="text" id="inscription-nom" required>
+            <button type="button" class="membre-deconnexion-haut" id="membre-deconnexion">
+              Se déconnecter
+            </button>
           </div>
-          <div class="champ-groupe">
-            <label for="inscription-email">Courriel</label>
-            <input type="email" id="inscription-email" required>
+
+          <div class="membre-dashboard-section">
+            <h3>Mon activité</h3>
+
+            <button type="button" class="membre-dashboard-lien" id="ouvrir-mes-commandes">
+              <span>Mes commandes</span>
+              <span aria-hidden="true">›</span>
+            </button>
+
+            <button type="button" class="membre-dashboard-lien" id="ouvrir-mes-favoris">
+              <span>Mes favoris</span>
+              <span aria-hidden="true">›</span>
+            </button>
+
+            <button type="button" class="membre-dashboard-lien" id="ouvrir-mes-abonnements">
+              <span>Mes abonnements</span>
+              <span aria-hidden="true">›</span>
+            </button>
+
+            <button type="button" class="membre-dashboard-lien" id="ouvrir-mes-programmes">
+              <span>Mes programmes</span>
+              <span aria-hidden="true">›</span>
+            </button>
           </div>
-          <div class="champ-groupe">
-            <label for="inscription-mdp">Mot de passe</label>
-            <input type="password" id="inscription-mdp" required minlength="8">
+
+          <div class="membre-dashboard-section">
+            <h3>Mon compte</h3>
+
+            <button type="button" class="membre-dashboard-lien" id="ouvrir-mes-informations">
+              <span>Mes informations</span>
+              <span aria-hidden="true">›</span>
+            </button>
+
+            <button type="button" class="membre-dashboard-lien" id="ouvrir-mes-adresses">
+              <span>Mes adresses</span>
+              <span aria-hidden="true">›</span>
+            </button>
+
+            <button type="button" class="membre-dashboard-lien" id="ouvrir-mes-preferences">
+              <span>Mes préférences</span>
+              <span aria-hidden="true">›</span>
+            </button>
+
+            <button type="button" class="membre-dashboard-lien" data-fonction-future>
+              <span>Mes avantages</span>
+              <span aria-hidden="true">›</span>
+            </button>
           </div>
-          <label class="case-consentement">
-            <input type="checkbox" required>
-            <span>J'accepte de recevoir les communications de TRIÈDRE</span>
-          </label>
-          <button type="submit" class="btn btn-primary">Créer mon compte</button>
-        </form>
+
+          <div class="membre-dashboard-section membre-dashboard-aide">
+            <h3>Aide</h3>
+
+            <button type="button" class="membre-dashboard-lien" id="ouvrir-communaute">
+              <span>Communauté</span>
+              <span aria-hidden="true">›</span>
+            </button>
+
+            <a href="contact" class="membre-dashboard-lien">
+              <span>Aide &amp; contact</span>
+              <span aria-hidden="true">›</span>
+            </a>
+
+            <button type="button" class="membre-dashboard-lien membre-suppression-compte" id="ouvrir-suppression-compte">
+              <span>Supprimer mon compte</span>
+            </button>
+          </div>
+        </section>
+
+
+
+
+        <section id="membre-abonnements" class="membre-abonnements" hidden>
+          <div class="membre-souspage-entete">
+            <button type="button" class="membre-retour" id="retour-abonnements-tableau-de-bord" aria-label="Retour à mon compte"><span aria-hidden="true">‹</span><span>Mon compte</span></button>
+            <p class="section-eyebrow">Mon activité</p>
+            <h2>Mes abonnements</h2>
+          </div>
+          <div class="membre-abonnements-stack">
+            <article class="membre-bloc-principal">
+              <p class="section-eyebrow">Abonnement actif</p>
+              <h3>Aucun abonnement actif.</h3>
+              <p>Ton abonnement TRIÈDRE apparaîtra ici lorsqu’il sera activé.</p>
+            </article>
+            <article class="membre-bloc-principal">
+              <p class="section-eyebrow">Toutes les formules</p>
+              <h3>Découvre les formules TRIÈDRE.</h3>
+              <p>Compare les différentes options disponibles et choisis celle qui correspond à ton parcours.</p>
+              <button type="button" class="btn btn-secondary" data-abonnement-futur>Voir les formules</button>
+            </article>
+            <div class="membre-actions-centrees">
+              <button type="button" class="btn btn-primary" data-abonnement-futur>Gérer mon abonnement</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="membre-programmes" class="membre-programmes" hidden>
+          <div class="membre-souspage-entete">
+            <button type="button" class="membre-retour" id="retour-programmes-tableau-de-bord" aria-label="Retour à mon compte"><span aria-hidden="true">‹</span><span>Mon compte</span></button>
+            <p class="section-eyebrow">Mon activité</p>
+            <h2>Mes programmes</h2>
+          </div>
+          <div class="membre-programmes-stack">
+            <article class="membre-bloc-principal">
+              <p class="section-eyebrow">Programme en cours</p>
+              <h3>Aucun programme actif.</h3>
+              <p>Ton programme en cours et ta prochaine séance apparaîtront ici.</p>
+            </article>
+            <article class="membre-bloc-principal">
+              <p class="section-eyebrow">Mes programmes</p>
+              <h3>Aucun programme pour le moment.</h3>
+              <p>Retrouve ici tous tes programmes, qu’ils soient commencés, terminés ou pas encore débutés.</p>
+            </article>
+            <div class="membre-progression-concept">
+              <p class="section-eyebrow">Tableau de progression</p>
+              <h3>Progression. Discipline. Résultats.</h3>
+              <div class="membre-progression-indicateurs">
+                <div><strong>—</strong><span>Séances cette semaine</span></div>
+                <div><strong>—</strong><span>Objectif hebdomadaire</span></div>
+                <div><strong>—</strong><span>Constance</span></div>
+                <div><strong>—</strong><span>Programme terminé</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="membre-communaute" class="membre-communaute" hidden>
+          <div class="membre-souspage-entete">
+            <button type="button" class="membre-retour" id="retour-communaute-tableau-de-bord" aria-label="Retour à mon compte">
+              <span aria-hidden="true">‹</span><span>Mon compte</span>
+            </button>
+            <p class="section-eyebrow">TRIÈDRE</p>
+            <h2>Communauté</h2>
+          </div>
+
+          <div class="membre-communaute-manifeste">
+            <p class="section-eyebrow">Plus qu’un compte. Une communauté.</p>
+            <h3>Échanger. Partager. Soutenir. Avancer ensemble.</h3>
+
+          </div>
+
+          <nav class="membre-communaute-nav" aria-label="Rubriques de la communauté">
+            <button type="button" class="is-active" data-communaute-vue="fil">Fil</button>
+            <button type="button" data-communaute-vue="discussions">Discussions</button>
+            <button type="button" data-communaute-vue="defis">Défis</button>
+            <button type="button" data-communaute-vue="evenements">Événements</button>
+          </nav>
+
+          <div class="membre-communaute-vues">
+            <section class="membre-communaute-vue is-active" data-communaute-panel="fil">
+              <div class="membre-communaute-composer">
+                <p class="section-eyebrow">Fil communautaire</p>
+                <h3>Partage ce que tu veux.</h3>
+                <p>Une question, une réussite ou un message de soutien.</p>
+                <button type="button" class="btn btn-primary" data-communaute-futur>Créer une publication</button>
+              </div>
+            </section>
+
+            <section class="membre-communaute-vue" data-communaute-panel="discussions" hidden>
+              <div class="membre-communaute-liste">
+                <article><h3>Entraînement</h3><p>Échanger autour des séances, exercices et habitudes.</p></article>
+                <article><h3>Alimentation</h3><p>Partager des idées, routines et expériences sans jugement.</p></article>
+                <article><h3>Mental & discipline</h3><p>Parler des périodes difficiles, de constance et de motivation.</p></article>
+              </div>
+            </section>
+
+            <section class="membre-communaute-vue" data-communaute-panel="defis" hidden>
+              <div class="membre-communaute-liste">
+                <article><h3>21 jours de constance</h3><p>Un défi personnel soutenu par la communauté, sans classement imposé.</p></article>
+                <article><h3>12 séances en 30 jours</h3><p>Participer à son rythme et partager seulement si on le souhaite.</p></article>
+                <article><h3>Défis collectifs</h3><p>Des objectifs communs pour avancer ensemble plutôt que se comparer.</p></article>
+              </div>
+            </section>
+
+            <section class="membre-communaute-vue" data-communaute-panel="evenements" hidden>
+              <div class="membre-communaute-liste">
+                <article><h3>Cours collectifs</h3><p>Découvre les séances de groupe proposées par TRIÈDRE.</p></article>
+                <article><h3>Soirées TRIÈDRE</h3><p>Retrouve les rencontres et moments communautaires organisés pour les membres.</p></article>
+                <article><h3>Événements spéciaux</h3><p>Ateliers, activités et rendez-vous ponctuels seront annoncés ici.</p></article>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section id="membre-favoris" class="membre-favoris" hidden>
+          <div class="membre-souspage-entete">
+            <button type="button" class="membre-retour" id="retour-favoris-tableau-de-bord" aria-label="Retour à mon compte">
+              <span aria-hidden="true">‹</span>
+              <span>Mon compte</span>
+            </button>
+
+            <p class="section-eyebrow">Mon activité</p>
+            <h2>Mes favoris</h2>
+          </div>
+
+          <div class="membre-favoris-intro">
+            <p>Retrouve ici les produits TRIÈDRE que tu souhaites garder à portée de main.</p>
+          </div>
+
+          <div id="liste-favoris" class="membre-favoris-liste" aria-live="polite"></div>
+
+          <div id="aucun-favori" class="membre-favoris-vide" hidden>
+            <p class="section-eyebrow">Sélection</p>
+            <h3>Aucun favori pour le moment.</h3>
+            <p>Ajoute tes pièces TRIÈDRE préférées et retrouve-les ici facilement.</p>
+            <a href="boutique" class="btn btn-primary">Découvrir la boutique</a>
+          </div>
+
+          <p id="favoris-erreur" class="membre-modal-erreur" hidden></p>
+        </section>
+
+        <section id="membre-commandes" class="membre-commandes" hidden>
+          <div class="membre-souspage-entete">
+            <button type="button" class="membre-retour" id="retour-commandes-tableau-de-bord" aria-label="Retour à mon compte">
+              <span aria-hidden="true">‹</span>
+              <span>Mon compte</span>
+            </button>
+
+            <p class="section-eyebrow">Mon activité</p>
+            <h2>Mes commandes</h2>
+          </div>
+
+          <div class="membre-commandes-intro">
+            <p>Retrouve ici l’historique et le statut de tes commandes TRIÈDRE.</p>
+          </div>
+
+          <div id="liste-commandes" class="membre-commandes-liste" aria-live="polite"></div>
+
+          <div id="aucune-commande" class="membre-commandes-vide" hidden>
+            <p class="section-eyebrow">Historique</p>
+            <h3>Aucune commande pour le moment.</h3>
+            <p>Lorsque tu effectueras un achat TRIÈDRE, il apparaîtra ici.</p>
+            <a href="boutique" class="btn btn-primary">Découvrir la boutique</a>
+          </div>
+
+          <p id="commandes-erreur" class="membre-modal-erreur" hidden></p>
+        </section>
+
+        <section id="membre-informations" class="membre-informations" hidden>
+          <div class="membre-souspage-entete">
+            <button type="button" class="membre-retour" id="retour-tableau-de-bord" aria-label="Retour à mon compte">
+              <span aria-hidden="true">‹</span>
+              <span>Mon compte</span>
+            </button>
+
+            <p class="section-eyebrow">Données du compte</p>
+            <h2>Mes informations</h2>
+          </div>
+
+          <form id="formulaire-mes-informations" class="membre-informations-form" novalidate>
+            <div class="membre-profil-grille">
+              <div class="champ-groupe">
+                <label for="profil-prenom">Prénom</label>
+                <input type="text" id="profil-prenom" name="first_name" autocomplete="given-name" required>
+              </div>
+
+              <div class="champ-groupe">
+                <label for="profil-nom">Nom</label>
+                <input type="text" id="profil-nom" name="last_name" autocomplete="family-name" required>
+              </div>
+
+              <fieldset class="membre-sexe champ-groupe-large">
+                <legend>Sexe</legend>
+                <div class="membre-sexe-options">
+                  <label class="membre-radio">
+                    <input type="radio" name="profil-sexe" value="masculin">
+                    <span>Masculin</span>
+                  </label>
+                  <label class="membre-radio">
+                    <input type="radio" name="profil-sexe" value="feminin">
+                    <span>Féminin</span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <div class="champ-groupe">
+                <label for="profil-date-naissance">Date de naissance</label>
+                <input type="date" id="profil-date-naissance" name="birth_date" autocomplete="bday">
+              </div>
+
+              <div class="champ-groupe">
+                <label for="profil-telephone">Téléphone</label>
+                <input type="tel" id="profil-telephone" name="phone" autocomplete="tel" inputmode="tel" placeholder="+1 514 000 0000">
+              </div>
+
+              <div class="champ-groupe champ-groupe-large">
+                <label for="profil-email">E-mail</label>
+                <input type="email" id="profil-email" autocomplete="email" readonly aria-readonly="true">
+                <small class="membre-champ-note">L'adresse e-mail est liée à ton compte TRIÈDRE.</small>
+              </div>
+            </div>
+
+            <p class="membre-modal-erreur" id="mes-informations-erreur" hidden></p>
+            <p class="membre-modal-succes" id="mes-informations-succes" hidden></p>
+
+            <div class="membre-informations-actions">
+              <button type="submit" class="btn btn-primary" id="enregistrer-mes-informations">
+                Enregistrer les modifications
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section id="membre-preferences" class="membre-preferences" hidden>
+          <div class="membre-souspage-entete">
+            <button type="button" class="membre-retour" id="retour-preferences-tableau-de-bord" aria-label="Retour à mon compte">
+              <span aria-hidden="true">‹</span>
+              <span>Mon compte</span>
+            </button>
+
+            <p class="section-eyebrow">Préférences du compte</p>
+            <h2>Mes préférences</h2>
+          </div>
+
+          <form id="formulaire-mes-preferences" class="membre-preferences-form" novalidate>
+            <section class="membre-preference-bloc">
+              <div class="membre-preference-entete">
+                <div>
+                  <h3>Communications TRIÈDRE</h3>
+                  <p>Choisis si tu souhaites recevoir les nouveautés, lancements et offres de TRIÈDRE par courriel.</p>
+                </div>
+
+                <label class="membre-switch" for="preference-marketing">
+                  <input type="checkbox" id="preference-marketing">
+                  <span class="membre-switch-visuel" aria-hidden="true"></span>
+                  <span class="sr-only">Recevoir les communications TRIÈDRE</span>
+                </label>
+              </div>
+            </section>
+
+            <section class="membre-preference-bloc">
+              <div class="membre-preference-texte">
+                <h3>Langue des communications</h3>
+                <p>Choisis la langue que TRIÈDRE utilisera pour communiquer avec toi.</p>
+              </div>
+
+              <fieldset class="membre-langue">
+                <legend class="sr-only">Langue préférée</legend>
+                <label class="membre-radio membre-radio-carte">
+                  <input type="radio" name="preference-langue" value="fr" required>
+                  <span>Français</span>
+                </label>
+
+                <label class="membre-radio membre-radio-carte">
+                  <input type="radio" name="preference-langue" value="en" required>
+                  <span>English</span>
+                </label>
+              </fieldset>
+            </section>
+
+            <p class="membre-preferences-note">Tu peux modifier ces préférences à tout moment depuis ton espace membre.</p>
+
+            <p class="membre-modal-erreur" id="mes-preferences-erreur" hidden></p>
+            <p class="membre-modal-succes" id="mes-preferences-succes" hidden></p>
+
+            <div class="membre-informations-actions">
+              <button type="submit" class="btn btn-primary" id="enregistrer-mes-preferences">
+                Enregistrer les préférences
+              </button>
+            </div>
+          </form>
+        </section>
+
+
+        <section id="membre-adresses" class="membre-adresses" hidden>
+          <div class="membre-souspage-entete">
+            <button type="button" class="membre-retour" id="retour-adresses-tableau-de-bord" aria-label="Retour à mon compte">
+              <span aria-hidden="true">‹</span>
+              <span>Mon compte</span>
+            </button>
+
+            <p class="section-eyebrow">Livraison</p>
+            <h2>Mes adresses</h2>
+          </div>
+
+          <div class="membre-adresses-barre">
+            <p>Enregistre tes adresses pour accélérer tes prochaines commandes.</p>
+            <button type="button" class="btn btn-primary" id="ajouter-adresse">Ajouter une adresse</button>
+          </div>
+
+          <div id="liste-adresses" class="membre-adresses-liste" aria-live="polite"></div>
+          <p id="aucune-adresse" class="membre-adresses-vide" hidden>Aucune adresse enregistrée pour le moment.</p>
+
+          <form id="formulaire-adresse" class="membre-adresse-form" hidden novalidate>
+            <div class="membre-adresse-form-entete">
+              <div>
+                <p class="section-eyebrow" id="adresse-mode-label">Nouvelle adresse</p>
+                <h3 id="adresse-form-titre">Ajouter une adresse</h3>
+              </div>
+              <button type="button" class="membre-adresse-annuler-haut" id="annuler-adresse-haut">Annuler</button>
+            </div>
+
+            <input type="hidden" id="adresse-id">
+
+            <div class="membre-adresse-grille">
+              <div class="champ-groupe">
+                <label for="adresse-libelle">Nom de l’adresse <span class="membre-optionnel">(facultatif)</span></label>
+                <input type="text" id="adresse-libelle" maxlength="40" placeholder="Maison, Travail…">
+              </div>
+
+              <div class="champ-groupe">
+                <label for="adresse-pays">Pays / Région <span class="membre-obligatoire" aria-hidden="true">*</span></label>
+                <select id="adresse-pays" autocomplete="country-name" required aria-required="true">
+                  <option value="CA">Canada</option>
+                  <option value="US">États-Unis</option>
+                  <option value="MX">Mexique</option>
+                  <option value="OTHER">Autre pays</option>
+                </select>
+              </div>
+
+              <div class="champ-groupe">
+                <label for="adresse-prenom">Prénom <span class="membre-obligatoire" aria-hidden="true">*</span></label>
+                <input type="text" id="adresse-prenom" autocomplete="given-name" minlength="2" required aria-required="true">
+              </div>
+
+              <div class="champ-groupe">
+                <label for="adresse-nom">Nom <span class="membre-obligatoire" aria-hidden="true">*</span></label>
+                <input type="text" id="adresse-nom" autocomplete="family-name" minlength="2" required aria-required="true">
+              </div>
+
+              <div class="champ-groupe champ-groupe-large">
+                <label for="adresse-ligne1">Adresse <span class="membre-obligatoire" aria-hidden="true">*</span></label>
+                <input type="text" id="adresse-ligne1" autocomplete="address-line1" minlength="5" required aria-required="true" placeholder="Numéro et nom de rue">
+              </div>
+
+              <div class="champ-groupe champ-groupe-large">
+                <label for="adresse-ligne2">Appartement, unité, suite <span class="membre-optionnel">(facultatif)</span></label>
+                <input type="text" id="adresse-ligne2" autocomplete="address-line2">
+              </div>
+
+              <div class="champ-groupe">
+                <label for="adresse-ville">Ville <span class="membre-obligatoire" aria-hidden="true">*</span></label>
+                <input type="text" id="adresse-ville" autocomplete="address-level2" minlength="2" required aria-required="true">
+              </div>
+
+              <div class="champ-groupe" id="adresse-region-groupe"></div>
+
+              <div class="champ-groupe">
+                <label for="adresse-code-postal" id="adresse-code-postal-label">Code postal <span class="membre-obligatoire" aria-hidden="true">*</span></label>
+                <input type="text" id="adresse-code-postal" autocomplete="postal-code" maxlength="12" required aria-required="true" placeholder="H2X 1Y4">
+              </div>
+
+              <div class="champ-groupe">
+                <label for="adresse-telephone">Téléphone <span class="membre-obligatoire" aria-hidden="true">*</span></label>
+                <input type="tel" id="adresse-telephone" autocomplete="tel" inputmode="tel" minlength="7" required aria-required="true" placeholder="+1 514 000 0000">
+              </div>
+            </div>
+
+            <label class="membre-adresse-defaut">
+              <input type="checkbox" id="adresse-par-defaut">
+              <span>Utiliser comme adresse de livraison par défaut</span>
+            </label>
+
+            <p class="membre-modal-erreur" id="adresse-erreur" hidden></p>
+            <p class="membre-modal-succes" id="adresse-succes" hidden></p>
+
+            <div class="membre-adresse-actions">
+              <button type="button" class="btn btn-secondaire" id="annuler-adresse">Annuler</button>
+              <button type="submit" class="btn btn-primary" id="enregistrer-adresse">Enregistrer l’adresse</button>
+            </div>
+          </form>
+        </section>
+
+        <section id="membre-reset" class="membre-reset" hidden>
+          <p class="section-eyebrow">Sécurité</p>
+          <h2>Choisis un nouveau mot de passe.</h2>
+
+          <form id="formulaire-reset-mdp" novalidate>
+            <div class="champ-groupe">
+              <label for="nouveau-mdp">Nouveau mot de passe</label>
+              <div class="champ-mot-de-passe">
+                <input type="password" id="nouveau-mdp" autocomplete="new-password" minlength="8" required>
+                <button type="button" class="mot-de-passe-toggle" data-password-toggle="nouveau-mdp" aria-label="Afficher le mot de passe" aria-pressed="false">
+                  <svg class="icone-oeil icone-oeil-ouvert" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6S2.5 12 2.5 12Z"></path>
+                    <circle cx="12" cy="12" r="2.75"></circle>
+                  </svg>
+                  <svg class="icone-oeil icone-oeil-ferme" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 3l18 18"></path>
+                    <path d="M10.6 6.15A9.7 9.7 0 0 1 12 6c6 0 9.5 6 9.5 6a15.9 15.9 0 0 1-2.15 2.75"></path>
+                    <path d="M6.25 6.3C3.9 8.1 2.5 12 2.5 12s3.5 6 9.5 6a9.5 9.5 0 0 0 3.4-.62"></path>
+                    <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="champ-groupe">
+              <label for="nouveau-mdp-confirmation">Confirmer le mot de passe</label>
+              <div class="champ-mot-de-passe">
+                <input type="password" id="nouveau-mdp-confirmation" autocomplete="new-password" minlength="8" required>
+                <button type="button" class="mot-de-passe-toggle" data-password-toggle="nouveau-mdp-confirmation" aria-label="Afficher le mot de passe" aria-pressed="false">
+                  <svg class="icone-oeil icone-oeil-ouvert" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6S2.5 12 2.5 12Z"></path>
+                    <circle cx="12" cy="12" r="2.75"></circle>
+                  </svg>
+                  <svg class="icone-oeil icone-oeil-ferme" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 3l18 18"></path>
+                    <path d="M10.6 6.15A9.7 9.7 0 0 1 12 6c6 0 9.5 6 9.5 6a15.9 15.9 0 0 1-2.15 2.75"></path>
+                    <path d="M6.25 6.3C3.9 8.1 2.5 12 2.5 12s3.5 6 9.5 6a9.5 9.5 0 0 0 3.4-.62"></path>
+                    <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Enregistrer le nouveau mot de passe</button>
+          </form>
+        </section>
+      </div>
+    </section>
+      <div class="membre-modal" id="modal-suppression-compte" hidden>
+        <div class="membre-modal-overlay" data-fermer-suppression></div>
+
+        <section
+          class="membre-modal-contenu"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="titre-suppression-compte"
+        >
+          <button
+            type="button"
+            class="membre-modal-fermer"
+            data-fermer-suppression
+            aria-label="Fermer"
+          >
+            ×
+          </button>
+
+          <p class="section-eyebrow">Compte TRIÈDRE</p>
+          <h2 id="titre-suppression-compte">Supprimer ton compte ?</h2>
+
+          <p class="membre-modal-texte">
+            Cette action est définitive. Ton compte et ton profil membre seront supprimés.
+          </p>
+
+          <form id="formulaire-suppression-compte" novalidate>
+            <div class="champ-groupe">
+              <label for="suppression-mdp">Confirme ton mot de passe</label>
+
+              <div class="champ-mot-de-passe">
+                <input
+                  type="password"
+                  id="suppression-mdp"
+                  autocomplete="current-password"
+                  required
+                >
+
+                <button
+                  type="button"
+                  class="mot-de-passe-toggle"
+                  data-password-toggle="suppression-mdp"
+                  aria-label="Afficher le mot de passe"
+                  aria-pressed="false"
+                >
+                  <svg class="icone-oeil icone-oeil-ouvert" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6S2.5 12 2.5 12Z"></path>
+                    <circle cx="12" cy="12" r="2.75"></circle>
+                  </svg>
+                  <svg class="icone-oeil icone-oeil-ferme" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 3l18 18"></path>
+                    <path d="M10.6 6.15A9.7 9.7 0 0 1 12 6c6 0 9.5 6 9.5 6a15.9 15.9 0 0 1-2.15 2.75"></path>
+                    <path d="M6.25 6.3C3.9 8.1 2.5 12 2.5 12s3.5 6 9.5 6a9.5 9.5 0 0 0 3.4-.62"></path>
+                    <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <p class="membre-modal-erreur" id="suppression-compte-erreur" hidden></p>
+
+            <div class="membre-modal-actions">
+              <button type="button" class="btn btn-secondaire" data-fermer-suppression>
+                Annuler
+              </button>
+
+              <button type="submit" class="btn btn-primary" id="confirmer-suppression-compte">
+                Supprimer mon compte
+              </button>
+            </div>
+          </form>
+        </section>
       </div>
 
-    </section>
-
-  </main>
+    </main>
 
   <footer class="site-footer">
     <div class="footer-brand">
       <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
       <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
       <p>Corps. Mental. Confiance.<br>Un mode de vie. Une discipline.<br>Une seule direction.</p>
+
       <div class="social-links">
         <a href="https://www.facebook.com/share/1KZvCWZQVM/" target="_blank" rel="noopener" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
         <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" target="_blank" rel="noopener" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
@@ -117,6 +794,7 @@
         <a href="#" target="_blank" rel="noopener" aria-label="YouTube"><img src="../05-images/icons/icon-youtube.svg" alt=""></a>
       </div>
     </div>
+
     <nav class="footer-nav">
       <h4>Navigation</h4>
       <ul>
@@ -128,6 +806,7 @@
         <li><a href="contact">Contact</a></li>
       </ul>
     </nav>
+
     <nav class="footer-aide">
       <h4>Aide</h4>
       <ul>
@@ -138,19 +817,23 @@
         <li><a href="confidentialite">Politique de confidentialité</a></li>
       </ul>
     </nav>
+
     <div class="footer-contact">
       <h4>Contact</h4>
       <p>Montréal, Québec, Canada</p>
       <p><a href="mailto:info@triedreofficiel.com">info@triedreofficiel.com</a></p>
     </div>
+
     <p class="footer-copyright">© 2026 Trièdre Athletic. Tous droits réservés.</p>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../03-js/supabase-config.js"></script>
   <script src="../03-js/panier.js"></script>
   <script src="../03-js/recherche.js"></script>
   <script src="../03-js/main.js"></script>
   <script src="../03-js/navigation.js"></script>
   <script src="../03-js/banniere-promo.js"></script>
-  
+  <script src="../03-js/membre.js"></script>
 </body>
 </html>
