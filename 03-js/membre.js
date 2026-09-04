@@ -182,7 +182,6 @@ document.addEventListener('DOMContentLoaded', function () {
   activerOubli();
   activerDashboard();
   activerMesAbonnements();
-  activerActionsAbonnements();
   activerMesProgrammes();
   activerCommunaute();
   activerMesFavoris();
@@ -478,14 +477,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  function activerActionsAbonnements() {
-    document.querySelectorAll('[data-abonnement-futur]').forEach(function (bouton) {
-      bouton.addEventListener('click', function () {
-        afficherToast('Fonction à venir.', 'info');
-      });
-    });
-  }
-
   function activerMesProgrammes() {
     if (!boutonMesProgrammes || !zoneProgrammes || !boutonRetourProgrammes) return;
 
@@ -619,7 +610,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
 
-      afficherFavoris(liste, stockParSku);
+      const catalogueProduits = await chargerCatalogueFavoris();
+
+      afficherFavoris(liste, stockParSku, catalogueProduits);
       zoneConnectee.hidden = true;
       zoneFavoris.hidden = false;
     } catch (error) {
@@ -634,7 +627,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  function afficherFavoris(favoris, stockParSku) {
+  function afficherFavoris(favoris, stockParSku, catalogueProduits) {
     listeFavoris.innerHTML = '';
 
     if (!favoris.length) {
@@ -649,11 +642,15 @@ document.addEventListener('DOMContentLoaded', function () {
       carte.className = 'membre-favori-carte';
 
       let visuel;
+      const imageCatalogue = trouverImageFavoriDepuisCatalogue(
+        favori,
+        catalogueProduits
+      );
 
-      if (favori.image_url) {
+      if (imageCatalogue) {
         visuel = document.createElement('img');
         visuel.className = 'membre-favori-image';
-        visuel.src = favori.image_url;
+        visuel.src = imageCatalogue;
         visuel.alt = favori.product_name || 'Produit TRIÈDRE';
         visuel.loading = 'lazy';
       } else {
@@ -755,6 +752,61 @@ document.addEventListener('DOMContentLoaded', function () {
       carte.appendChild(contenu);
       listeFavoris.appendChild(carte);
     });
+  }
+
+  async function chargerCatalogueFavoris() {
+    try {
+      const response = await fetch('../04-data/produits.json');
+
+      if (!response.ok) {
+        throw new Error('Impossible de charger produits.json');
+      }
+
+      const donnees = await response.json();
+      return Array.isArray(donnees.produits) ? donnees.produits : [];
+    } catch (error) {
+      console.warn('[TRIÈDRE] Catalogue favoris :', error);
+      return [];
+    }
+  }
+
+  function trouverImageFavoriDepuisCatalogue(favori, catalogueProduits) {
+    if (!favori || !favori.product_id || !Array.isArray(catalogueProduits)) {
+      return '';
+    }
+
+    const produit = catalogueProduits.find(function (item) {
+      return item.id === favori.product_id;
+    });
+
+    if (!produit || !Array.isArray(produit.variantes)) {
+      return '';
+    }
+
+    // Le SKU est la source de vérité : il identifie exactement
+    // le produit + la couleur + la taille du favori.
+    const variante = produit.variantes.find(function (item) {
+      return item.sku === favori.sku;
+    });
+
+    if (variante && variante.photoFace) {
+      return '../05-images/produits/' + variante.photoFace;
+    }
+
+    // Secours uniquement si le SKU n'est pas retrouvé :
+    // on tente couleur + taille, qui correspondent aussi à une variante précise.
+    const varianteSecours = produit.variantes.find(function (item) {
+      return (
+        item.couleur === favori.color &&
+        item.taille === favori.size
+      );
+    });
+
+    if (varianteSecours && varianteSecours.photoFace) {
+      return '../05-images/produits/' + varianteSecours.photoFace;
+    }
+
+    return '';
   }
 
   async function retirerFavori(favoriId, carte) {
