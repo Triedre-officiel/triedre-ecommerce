@@ -5,7 +5,7 @@
 .univers-hero {
   max-width: 720px;
   margin: 0 auto;
-  padding: var(--space-2xl) var(--container-padding) var(--space-xl);
+  padding: 1.5rem var(--container-padding) 8.5rem;
   text-align: center;
 }
 
@@ -29,8 +29,8 @@
   align-items: flex-start;
   gap: var(--space-xl);
   max-width: var(--container-max-width);
-  margin: 0 auto;
-  padding: var(--space-xl) var(--container-padding) var(--space-2xl);
+  margin: -8.5rem auto 0;
+  padding: var(--space-xl) var(--container-padding) var(--space-xs);
 }
 
 .univers-philosophie-image {
@@ -67,7 +67,7 @@
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
   .univers-hero h1 {
-    white-space: normal;
+  white-space: normal;
     line-height: 1.1;
   }
 

@@ -1615,15 +1615,714 @@ body.membre-modal-ouverte {
   .membre-progression-indicateurs { grid-template-columns: 1fr; }
 }
 
-/* V9.2 — version épurée */
-.membre-abonnements-stack,.membre-programmes-stack{display:grid;gap:1rem}
-.membre-bloc-principal{padding:1.25rem;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.025)}
-.membre-bloc-principal h3{margin:.25rem 0 .5rem}
-.membre-bloc-principal p:last-of-type{color:var(--color-text-secondary,#b7b7b7);line-height:1.5}
-.membre-bloc-principal .btn{margin-top:1rem}
-.membre-actions-centrees{display:flex;justify-content:flex-start}
-@media(max-width:760px){
-  .membre-abonnements-stack,.membre-programmes-stack{gap:.85rem}
-  .membre-bloc-principal,.membre-progression-concept,.membre-communaute-manifeste,.membre-communaute-composer,.membre-communaute-regle{padding:1rem}
-  .membre-actions-centrees .btn{width:100%}
+
+/* ==========================================================================
+   TRIÈDRE — V10 — Mes programmes
+   ========================================================================== */
+
+.membre-programmes-v10 {
+  display: grid;
+  gap: 1rem;
+}
+
+.programme-calendrier-carte,
+.programme-mes-programmes,
+.programme-progression {
+  padding: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .025);
+}
+
+.programme-section-entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.programme-section-entete h3,
+.programme-seance-jour h3,
+.programme-etat-vide strong {
+  margin: .2rem 0 0;
+}
+
+.programme-calendrier-actions {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.programme-calendrier-nav,
+.programme-calendrier-aujourdhui {
+  min-height: 38px;
+  border: 1px solid rgba(255,255,255,.13);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.programme-calendrier-nav {
+  width: 38px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+}
+
+.programme-calendrier-aujourdhui {
+  padding: 0 .8rem;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  font-size: .78rem;
+}
+
+.programme-calendrier-nav:hover,
+.programme-calendrier-nav:focus-visible,
+.programme-calendrier-aujourdhui:hover,
+.programme-calendrier-aujourdhui:focus-visible {
+  color: var(--color-accent, #d4af37);
+  border-color: var(--color-accent, #d4af37);
+}
+
+.programme-periode {
+  margin: .8rem 0 .65rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  font-size: .86rem;
+}
+
+.programme-jours {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: .45rem;
+}
+
+.programme-jour {
+  position: relative;
+  min-width: 0;
+  padding: .7rem .35rem;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 10px;
+  background: rgba(255,255,255,.02);
+  color: inherit;
+  cursor: pointer;
+  text-align: center;
+}
+
+.programme-jour:hover,
+.programme-jour:focus-visible {
+  border-color: rgba(212,175,55,.65);
+}
+
+.programme-jour.is-selected {
+  color: #111;
+  background: var(--color-accent, #d4af37);
+  border-color: var(--color-accent, #d4af37);
+}
+
+.programme-jour.is-aujourdhui:not(.is-selected) {
+  border-color: var(--color-accent, #d4af37);
+}
+
+.programme-jour.has-seance::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: .32rem;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-accent, #d4af37);
+  transform: translateX(-50%);
+}
+
+.programme-jour.is-selected.has-seance::after {
+  background: #111;
+}
+
+.programme-jour-nom,
+.programme-jour-date {
+  display: block;
+}
+
+.programme-jour-nom {
+  margin-bottom: .18rem;
+  font-size: .68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.programme-jour-date {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.programme-seance-jour {
+  margin-top: 1rem;
+  padding: 1.1rem;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 10px;
+  background: rgba(0,0,0,.18);
+}
+
+.programme-seance-jour > div > p:last-child {
+  margin-top: .45rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  line-height: 1.5;
+}
+
+.programme-seance-details {
+  margin-top: 1rem;
+}
+
+.programme-seance-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: .6rem;
+  margin-bottom: 1rem;
+}
+
+.programme-seance-meta span {
+  padding: .75rem;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 8px;
+  color: var(--color-text-secondary, #b7b7b7);
+  text-align: center;
+  font-size: .77rem;
+}
+
+.programme-seance-meta strong {
+  display: block;
+  margin-bottom: .2rem;
+  color: var(--color-accent, #d4af37);
+  font-family: var(--font-heading);
+  font-size: 1rem;
+}
+
+.programme-exercices {
+  display: grid;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+
+.programme-exercice {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .7rem;
+  align-items: center;
+  padding: .75rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.programme-exercice:last-child {
+  border-bottom: 0;
+}
+
+.programme-exercice strong {
+  display: block;
+  margin-bottom: .15rem;
+}
+
+.programme-exercice small,
+.programme-exercice > span {
+  color: var(--color-text-secondary, #b7b7b7);
+}
+
+.programme-etat-vide {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px dashed rgba(255,255,255,.18);
+  border-radius: 10px;
+}
+
+.programme-etat-vide p {
+  margin-top: .35rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  line-height: 1.45;
+}
+
+.programme-section-entete--progression {
+  margin-bottom: 1rem;
+}
+
+.programme-progression-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+}
+
+.programme-indicateur,
+.programme-resultats {
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 10px;
+  background: rgba(0,0,0,.14);
+}
+
+.programme-indicateur {
+  padding: 1rem;
+}
+
+.programme-indicateur-kicker {
+  margin: 0 0 .35rem;
+  color: var(--color-accent, #d4af37);
+  font-family: var(--font-heading);
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.programme-indicateur > strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.programme-indicateur > span {
+  display: block;
+  margin-top: .38rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  font-size: .82rem;
+}
+
+.programme-resultats {
+  grid-column: 1 / -1;
+  padding: 1rem;
+}
+
+.programme-resultats-entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1rem;
+  margin-bottom: .8rem;
+}
+
+.programme-resultats-entete strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 1.65rem;
+}
+
+.programme-resultats-entete > span {
+  color: var(--color-text-secondary, #b7b7b7);
+  font-size: .8rem;
+}
+
+.programme-courbe {
+  position: relative;
+  min-height: 170px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255,255,255,.015);
+}
+
+.programme-courbe svg {
+  display: block;
+  width: 100%;
+  min-height: 170px;
+}
+
+.programme-courbe-grille line {
+  stroke: rgba(255,255,255,.08);
+  stroke-width: 1;
+  stroke-dasharray: 5 7;
+}
+
+#programme-courbe-ligne {
+  fill: none;
+  stroke: var(--color-accent, #d4af37);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.programme-courbe-point {
+  fill: var(--color-accent, #d4af37);
+  stroke: #111;
+  stroke-width: 3;
+}
+
+.programme-courbe-vide {
+  position: absolute;
+  inset: 50% 1rem auto;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary, #b7b7b7);
+  text-align: center;
+  line-height: 1.45;
+}
+
+.programme-ajouter-poids {
+  margin-top: .75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-accent, #d4af37);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+@media (max-width: 760px) {
+  .programme-calendrier-carte,
+  .programme-mes-programmes,
+  .programme-progression {
+    padding: 1rem;
+  }
+
+  .programme-section-entete {
+    flex-direction: column;
+  }
+
+  .programme-calendrier-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .programme-jours {
+    display: flex;
+    gap: .4rem;
+    overflow-x: auto;
+    padding-bottom: .35rem;
+    scrollbar-width: thin;
+  }
+
+  .programme-jour {
+    flex: 0 0 54px;
+  }
+}
+
+@media (max-width: 520px) {
+  .programme-progression-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .programme-resultats {
+    grid-column: auto;
+  }
+
+  .programme-seance-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .programme-resultats-entete {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+/* ==========================================================================
+   TRIÈDRE — V10.1 — Correctif responsive Mes programmes
+   À AJOUTER À LA FIN de 02-css/sections/membre-auth.css
+   ========================================================================== */
+
+.membre-programmes,
+.membre-programmes-v10,
+.programme-calendrier-carte,
+.programme-mes-programmes,
+.programme-progression,
+.programme-seance-jour,
+.programme-section-entete,
+.programme-calendrier-actions,
+.programme-jours,
+.programme-etat-vide,
+.programme-progression-grid,
+.programme-indicateur,
+.programme-resultats {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.programme-seance-jour,
+.programme-seance-jour *,
+.programme-etat-vide,
+.programme-etat-vide *,
+.programme-resultats,
+.programme-resultats * {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+@media (max-width: 760px) {
+  .membre-programmes-v10 {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .programme-calendrier-carte,
+  .programme-mes-programmes,
+  .programme-progression {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .programme-section-entete {
+    width: 100%;
+  }
+
+  .programme-calendrier-actions {
+    width: 100%;
+    min-width: 0;
+    justify-content: space-between;
+    gap: .5rem;
+  }
+
+  .programme-calendrier-aujourdhui {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 160px;
+    white-space: nowrap;
+  }
+
+  .programme-calendrier-nav {
+    flex: 0 0 38px;
+  }
+
+  .programme-periode {
+    width: 100%;
+  }
+
+  .programme-jours {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    gap: .4rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 0 .5rem;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .programme-jour {
+    flex: 0 0 54px;
+    min-width: 54px;
+    scroll-snap-align: start;
+  }
+
+  .programme-seance-jour {
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .programme-seance-jour > div,
+  .programme-seance-details,
+  .programme-exercices,
+  .programme-exercice {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .programme-seance-jour h3,
+  .programme-seance-jour p,
+  .programme-exercice strong,
+  .programme-exercice small,
+  .programme-exercice > span {
+    max-width: 100%;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 520px) {
+  .programme-calendrier-carte,
+  .programme-mes-programmes,
+  .programme-progression {
+    padding: .9rem;
+  }
+
+  .programme-calendrier-actions {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr) 38px;
+    align-items: center;
+  }
+
+  .programme-calendrier-aujourdhui {
+    width: 100%;
+    max-width: none;
+    padding-inline: .6rem;
+    font-size: .74rem;
+  }
+
+  .programme-seance-jour {
+    padding: .9rem;
+  }
+
+  .programme-seance-jour > div > p:last-child {
+    font-size: .88rem;
+    line-height: 1.45;
+  }
+
+  .programme-exercice {
+    grid-template-columns: minmax(0, 1fr);
+    gap: .35rem;
+  }
+
+  .programme-exercice > span {
+    justify-self: start;
+  }
+
+  .programme-progression-grid {
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   TRIÈDRE — V11 — Programmes fonctionnels
+   À AJOUTER À LA FIN du membre-auth.css ACTUEL
+   ========================================================================== */
+
+.programme-etat-vide.has-programmes {
+  display: grid;
+  gap: .65rem;
+  padding: 0;
+  border: 0;
+}
+
+.programme-attribue-carte {
+  padding: .9rem 1rem;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 9px;
+  background: rgba(0,0,0,.14);
+}
+
+.programme-attribue-carte.is-active {
+  border-color: rgba(201,162,39,.45);
+}
+
+.programme-attribue-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.programme-attribue-entete strong {
+  min-width: 0;
+}
+
+.programme-attribue-statut {
+  flex: 0 0 auto;
+  color: var(--color-accent);
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.programme-attribue-carte p {
+  margin-top: .3rem;
+  color: var(--color-text-secondary);
+  font-size: .82rem;
+}
+
+.programme-jour.is-completed::before {
+  content: "✓";
+  position: absolute;
+  top: .2rem;
+  right: .28rem;
+  color: var(--color-accent);
+  font-size: .65rem;
+  font-weight: 800;
+}
+
+.programme-jour.is-selected.is-completed::before {
+  color: #111;
+}
+
+.programme-poids-modal[hidden] {
+  display: none !important;
+}
+
+.programme-poids-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(0,0,0,.78);
+  backdrop-filter: blur(5px);
+}
+
+.programme-poids-modal-dialog {
+  position: relative;
+  width: min(100%, 430px);
+  padding: 1.35rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg-secondary);
+  box-shadow: var(--shadow-card);
+}
+
+.programme-poids-modal-dialog h3 {
+  margin-bottom: .45rem;
+}
+
+.programme-poids-modal-intro {
+  margin-bottom: 1rem;
+  font-size: .88rem;
+}
+
+.programme-poids-modal-fermer {
+  position: absolute;
+  top: .7rem;
+  right: .8rem;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 50%;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.programme-poids-modal form {
+  display: grid;
+  gap: .85rem;
+}
+
+.programme-poids-modal label {
+  display: grid;
+  gap: .35rem;
+  color: var(--color-text-secondary);
+  font-size: .82rem;
+}
+
+.programme-poids-modal input {
+  width: 100%;
+  padding: .8rem .85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+.programme-poids-modal input:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.programme-poids-erreur {
+  color: #ff8f8f;
+  font-size: .82rem;
+}
+
+.programme-modal-ouvert {
+  overflow: hidden;
+}
+
+@media (max-width: 520px) {
+  .programme-attribue-entete {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .25rem;
+  }
+
+  .programme-poids-modal-dialog {
+    padding: 1rem;
+  }
 }

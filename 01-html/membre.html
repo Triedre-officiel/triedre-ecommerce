@@ -293,31 +293,125 @@
 
         <section id="membre-programmes" class="membre-programmes" hidden>
           <div class="membre-souspage-entete">
-            <button type="button" class="membre-retour" id="retour-programmes-tableau-de-bord" aria-label="Retour à mon compte"><span aria-hidden="true">‹</span><span>Mon compte</span></button>
+            <button type="button" class="membre-retour" id="retour-programmes-tableau-de-bord" aria-label="Retour à mon compte">
+              <span aria-hidden="true">‹</span><span>Mon compte</span>
+            </button>
             <p class="section-eyebrow">Mon activité</p>
             <h2>Mes programmes</h2>
           </div>
-          <div class="membre-programmes-stack">
-            <article class="membre-bloc-principal">
-              <p class="section-eyebrow">Programme en cours</p>
-              <h3>Aucun programme actif.</h3>
-              <p>Ton programme en cours et ta prochaine séance apparaîtront ici.</p>
-            </article>
-            <article class="membre-bloc-principal">
-              <p class="section-eyebrow">Mes programmes</p>
-              <h3>Aucun programme pour le moment.</h3>
-              <p>Retrouve ici tous tes programmes, qu’ils soient commencés, terminés ou pas encore débutés.</p>
-            </article>
-            <div class="membre-progression-concept">
-              <p class="section-eyebrow">Tableau de progression</p>
-              <h3>Progression. Discipline. Résultats.</h3>
-              <div class="membre-progression-indicateurs">
-                <div><strong>—</strong><span>Séances cette semaine</span></div>
-                <div><strong>—</strong><span>Objectif hebdomadaire</span></div>
-                <div><strong>—</strong><span>Constance</span></div>
-                <div><strong>—</strong><span>Programme terminé</span></div>
+
+          <div class="membre-programmes-v10">
+            <section class="programme-calendrier-carte" aria-labelledby="programme-calendrier-titre">
+              <div class="programme-section-entete">
+                <div>
+                  <p class="section-eyebrow">Calendrier d’entraînement</p>
+                  <h3 id="programme-calendrier-titre">Ma semaine</h3>
+                </div>
+
+                <div class="programme-calendrier-actions">
+                  <button type="button" class="programme-calendrier-nav" id="programme-semaine-precedente" aria-label="Semaine précédente">‹</button>
+                  <button type="button" class="programme-calendrier-aujourdhui" id="programme-semaine-actuelle">Cette semaine</button>
+                  <button type="button" class="programme-calendrier-nav" id="programme-semaine-suivante" aria-label="Semaine suivante">›</button>
+                </div>
               </div>
-            </div>
+
+              <p class="programme-periode" id="programme-periode"></p>
+              <div class="programme-jours" id="programme-jours" role="list" aria-label="Jours de la semaine"></div>
+
+              <div class="programme-seance-jour" id="programme-seance-jour">
+                <div>
+                  <p class="section-eyebrow" id="programme-jour-selectionne-label">Séance du jour</p>
+                  <h3 id="programme-seance-titre">Aucune séance prévue.</h3>
+                  <p id="programme-seance-description">
+                    Lorsqu’un coach TRIÈDRE t’assignera une séance pour cette date, elle apparaîtra ici.
+                  </p>
+                </div>
+
+                <div class="programme-seance-details" id="programme-seance-details" hidden>
+                  <div class="programme-seance-meta">
+                    <span><strong id="programme-seance-duree">—</strong> Durée</span>
+                    <span><strong id="programme-seance-niveau">—</strong> Niveau</span>
+                    <span><strong id="programme-seance-objectif">—</strong> Objectif</span>
+                  </div>
+
+                  <div class="programme-exercices" id="programme-exercices"></div>
+
+                  <button type="button" class="btn btn-primary" id="programme-commencer-seance">
+                    Commencer la séance
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <section class="programme-mes-programmes" aria-labelledby="programme-liste-titre">
+              <div class="programme-section-entete">
+                <div>
+                  <p class="section-eyebrow">Bibliothèque personnelle</p>
+                  <h3 id="programme-liste-titre">Mes programmes</h3>
+                </div>
+              </div>
+
+              <div class="programme-etat-vide">
+                <strong>Aucun programme attribué pour le moment.</strong>
+                <p>
+                  Les programmes commencés, à venir ou terminés apparaîtront ici.
+                </p>
+              </div>
+            </section>
+
+            <section class="programme-progression" aria-labelledby="programme-progression-titre">
+              <div class="programme-section-entete programme-section-entete--progression">
+                <div>
+                  <p class="section-eyebrow">Tableau de progression</p>
+                  <h3 id="programme-progression-titre">Progression. Discipline. Résultats.</h3>
+                </div>
+              </div>
+
+              <div class="programme-progression-grid">
+                <article class="programme-indicateur">
+                  <p class="programme-indicateur-kicker">Progression</p>
+                  <strong id="programme-seances-semaine">—</strong>
+                  <span>Séances cette semaine</span>
+                </article>
+
+                <article class="programme-indicateur">
+                  <p class="programme-indicateur-kicker">Discipline</p>
+                  <strong id="programme-duree-programme">—</strong>
+                  <span>Durée du programme</span>
+                </article>
+
+                <article class="programme-resultats">
+                  <div class="programme-resultats-entete">
+                    <div>
+                      <p class="programme-indicateur-kicker">Résultats</p>
+                      <strong id="programme-poids-actuel">— kg</strong>
+                    </div>
+                    <span id="programme-poids-evolution">Évolution du poids</span>
+                  </div>
+
+                  <div class="programme-courbe" id="programme-courbe-poids" aria-label="Évolution du poids">
+                    <svg viewBox="0 0 620 190" role="img" aria-labelledby="programme-courbe-titre">
+                      <title id="programme-courbe-titre">Courbe d’évolution du poids</title>
+                      <g class="programme-courbe-grille" aria-hidden="true">
+                        <line x1="30" y1="35" x2="590" y2="35"></line>
+                        <line x1="30" y1="80" x2="590" y2="80"></line>
+                        <line x1="30" y1="125" x2="590" y2="125"></line>
+                        <line x1="30" y1="170" x2="590" y2="170"></line>
+                      </g>
+                      <polyline id="programme-courbe-ligne" points="" hidden></polyline>
+                      <g id="programme-courbe-points"></g>
+                    </svg>
+                    <p class="programme-courbe-vide" id="programme-courbe-vide">
+                      Ajoute une première mesure de poids pour commencer ton suivi.
+                    </p>
+                  </div>
+
+                  <button type="button" class="programme-ajouter-poids" id="programme-ajouter-poids">
+                    Ajouter mon poids
+                  </button>
+                </article>
+              </div>
+            </section>
           </div>
         </section>
 

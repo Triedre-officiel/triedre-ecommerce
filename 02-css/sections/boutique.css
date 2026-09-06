@@ -5,7 +5,7 @@
 .boutique-header {
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: var(--space-2xl) var(--container-padding) var(--space-lg);
+  padding: 1.5rem var(--container-padding) var(--space-lg);
   text-align: center;
 }
 

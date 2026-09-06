@@ -9,7 +9,7 @@
   gap: var(--space-xl);
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: var(--space-2xl) var(--container-padding);
+  padding: 1.5rem var(--container-padding) var(--space-2xl);
 }
 
 .marque-hero-content {

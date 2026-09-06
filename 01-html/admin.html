@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Administration — TRIÈDRE</title>
+  <link rel="stylesheet" href="../02-css/style.css">
+  <link rel="stylesheet" href="../02-css/sections/admin.css">
+</head>
+<body>
+  <main class="admin-page">
+    <section class="admin-hero">
+      <p class="section-eyebrow">TRIÈDRE ATHLETIC</p>
+      <h1>ESPACE <span class="accent">ADMIN.</span></h1>
+      <p>Gestion centrale de TRIÈDRE.</p>
+    </section>
+
+    <section id="admin-acces" class="admin-card">
+      <p>Vérification de l’accès administrateur…</p>
+    </section>
+
+    <section id="admin-zone" class="admin-grid" hidden>
+      <article class="admin-card">
+        <p class="section-eyebrow">Équipe</p>
+        <h2>COACHS</h2>
+        <p>Gestion des comptes coach et de leurs accès.</p>
+      </article>
+
+      <article class="admin-card">
+        <p class="section-eyebrow">Membres</p>
+        <h2>CLIENTS & ABONNÉS</h2>
+        <p>Vue d’ensemble des membres TRIÈDRE.</p>
+      </article>
+
+      <article class="admin-card">
+        <p class="section-eyebrow">Athletic</p>
+        <h2>PROGRAMMES</h2>
+        <p>Supervision des programmes attribués.</p>
+      </article>
+
+      <article class="admin-card">
+        <p class="section-eyebrow">Commerce</p>
+        <h2>COMMANDES</h2>
+        <p>Administration des commandes et opérations futures.</p>
+      </article>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../03-js/supabase-config.js"></script>
+  <script src="../03-js/admin.js"></script>
+</body>
+</html>

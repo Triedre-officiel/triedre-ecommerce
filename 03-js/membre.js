@@ -168,6 +168,18 @@ document.addEventListener('DOMContentLoaded', function () {
   let ignorerConnexionAutomatique = false;
   let emailRetourApresReset = '';
 
+  const etatProgrammesV11 = {
+    userId: null,
+    programmes: [],
+    programmeActif: null,
+    seances: [],
+    mesures: [],
+    debutSemaine: obtenirDebutSemaine(new Date()),
+    dateSelectionnee: normaliserDate(new Date()),
+    seanceSelectionnee: null,
+    chargement: false
+  };
+
   activerAffichageMotDePasse();
   activerParcoursEmailFirst();
 
@@ -183,6 +195,7 @@ document.addEventListener('DOMContentLoaded', function () {
   activerDashboard();
   activerMesAbonnements();
   activerMesProgrammes();
+  initialiserMesProgrammesV10();
   activerCommunaute();
   activerMesFavoris();
   activerMesCommandes();
@@ -330,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       afficherMessage('Connexion réussie.', 'succes');
-      afficherConnecte(data.user);
+      await orienterApresConnexion(data.user);
       window.setTimeout(function () {
         if (message.textContent === 'Connexion réussie.') masquerMessage();
       }, 3000);
@@ -478,17 +491,989 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function activerMesProgrammes() {
-    if (!boutonMesProgrammes || !zoneProgrammes || !boutonRetourProgrammes) return;
+    if (!boutonMesProgrammes || !zoneProgrammes || !boutonRetourProgrammes) {
+      return;
+    }
 
-    boutonMesProgrammes.addEventListener('click', function () {
-      masquerSousPagesV9();
-      zoneConnectee.hidden = true;
-      zoneProgrammes.hidden = false;
-    });
+    boutonMesProgrammes.addEventListener('click', ouvrirMesProgrammesV11);
 
     boutonRetourProgrammes.addEventListener('click', function () {
       zoneProgrammes.hidden = true;
       zoneConnectee.hidden = false;
+    });
+  }
+
+  function initialiserMesProgrammesV10() {
+    const precedent = document.getElementById('programme-semaine-precedente');
+    const suivant = document.getElementById('programme-semaine-suivante');
+    const actuelle = document.getElementById('programme-semaine-actuelle');
+    const boutonPoids = document.getElementById('programme-ajouter-poids');
+    const boutonSeance = document.getElementById('programme-commencer-seance');
+
+    if (precedent) {
+      precedent.addEventListener('click', function () {
+        etatProgrammesV11.debutSemaine =
+          ajouterJours(etatProgrammesV11.debutSemaine, -7);
+        etatProgrammesV11.dateSelectionnee =
+          normaliserDate(etatProgrammesV11.debutSemaine);
+        rendreCalendrierProgrammesV11();
+      });
+    }
+
+    if (suivant) {
+      suivant.addEventListener('click', function () {
+        etatProgrammesV11.debutSemaine =
+          ajouterJours(etatProgrammesV11.debutSemaine, 7);
+        etatProgrammesV11.dateSelectionnee =
+          normaliserDate(etatProgrammesV11.debutSemaine);
+        rendreCalendrierProgrammesV11();
+      });
+    }
+
+    if (actuelle) {
+      actuelle.addEventListener('click', function () {
+        etatProgrammesV11.debutSemaine = obtenirDebutSemaine(new Date());
+        etatProgrammesV11.dateSelectionnee = normaliserDate(new Date());
+        rendreCalendrierProgrammesV11();
+      });
+    }
+
+    if (boutonPoids) {
+      boutonPoids.addEventListener('click', ouvrirModalPoidsV11);
+    }
+
+    if (boutonSeance) {
+      boutonSeance.addEventListener('click', gererActionSeanceV11);
+    }
+
+    rendreCalendrierProgrammesV11();
+    rendreCourbePoidsV10([]);
+  }
+
+  async function ouvrirMesProgrammesV11() {
+    if (etatProgrammesV11.chargement) {
+      return;
+    }
+
+    etatProgrammesV11.chargement = true;
+    boutonMesProgrammes.disabled = true;
+
+    try {
+      const {
+        data: { user },
+        error: erreurUtilisateur
+      } = await supabase.auth.getUser();
+
+      if (erreurUtilisateur || !user) {
+        throw erreurUtilisateur || new Error('SESSION_INVALIDE');
+      }
+
+      etatProgrammesV11.userId = user.id;
+
+      await chargerDonneesProgrammesV11();
+
+      zoneConnectee.hidden = true;
+      zoneProgrammes.hidden = false;
+    } catch (error) {
+      console.error('[TRIÈDRE] Chargement des programmes :', error);
+      afficherToast(
+        'Impossible de charger tes programmes pour le moment.',
+        'erreur'
+      );
+    } finally {
+      etatProgrammesV11.chargement = false;
+      boutonMesProgrammes.disabled = false;
+    }
+  }
+
+  async function chargerDonneesProgrammesV11() {
+    const { data: affectations, error: erreurAffectations } = await supabase
+      .from('member_programs')
+      .select(`
+        id,
+        program_id,
+        coach_id,
+        start_date,
+        end_date,
+        status,
+        created_at
+      `)
+      .eq('user_id', etatProgrammesV11.userId)
+      .order('start_date', { ascending: false });
+
+    if (erreurAffectations) {
+      throw erreurAffectations;
+    }
+
+    const idsProgrammes = Array.from(
+      new Set((affectations || []).map(function (item) {
+        return item.program_id;
+      }).filter(Boolean))
+    );
+
+    let catalogues = [];
+
+    if (idsProgrammes.length) {
+      const { data, error } = await supabase
+        .from('training_programs')
+        .select(`
+          id,
+          name,
+          goal,
+          level,
+          duration_weeks,
+          sessions_per_week,
+          description,
+          active
+        `)
+        .in('id', idsProgrammes);
+
+      if (error) {
+        throw error;
+      }
+
+      catalogues = data || [];
+    }
+
+    const catalogueParId = new Map(
+      catalogues.map(function (programme) {
+        return [programme.id, programme];
+      })
+    );
+
+    etatProgrammesV11.programmes = (affectations || []).map(function (affectation) {
+      return Object.assign({}, affectation, {
+        programme: catalogueParId.get(affectation.program_id) || null
+      });
+    });
+
+    etatProgrammesV11.programmeActif =
+      etatProgrammesV11.programmes.find(function (item) {
+        return item.status === 'active';
+      }) || null;
+
+    etatProgrammesV11.seances = [];
+    etatProgrammesV11.mesures = [];
+
+    if (etatProgrammesV11.programmeActif) {
+      await chargerSeancesProgrammeActifV11();
+      await chargerMesuresPoidsV11();
+    } else {
+      // Le poids reste personnel : si aucun programme n'est actif,
+      // on garde les dernières mesures disponibles pour ne rien perdre.
+      await chargerMesuresPoidsV11();
+    }
+
+    rendreMesProgrammesV11();
+    rendreCalendrierProgrammesV11();
+    rendreIndicateursProgrammesV11();
+    rendreCourbePoidsV10(
+      etatProgrammesV11.mesures.map(function (mesure) {
+        return {
+          poids: mesure.weight_kg,
+          date: mesure.measured_on
+        };
+      })
+    );
+  }
+
+  async function chargerSeancesProgrammeActifV11() {
+    const affectation = etatProgrammesV11.programmeActif;
+
+    const { data: seances, error: erreurSeances } = await supabase
+      .from('training_sessions')
+      .select(`
+        id,
+        member_program_id,
+        scheduled_date,
+        week_number,
+        session_number,
+        title,
+        description,
+        duration_minutes,
+        level,
+        objective,
+        started_at,
+        completed_at
+      `)
+      .eq('member_program_id', affectation.id)
+      .order('scheduled_date', { ascending: true });
+
+    if (erreurSeances) {
+      throw erreurSeances;
+    }
+
+    const idsSeances = (seances || []).map(function (seance) {
+      return seance.id;
+    });
+
+    let exercices = [];
+
+    if (idsSeances.length) {
+      const { data, error } = await supabase
+        .from('training_exercises')
+        .select(`
+          id,
+          session_id,
+          position,
+          name,
+          sets,
+          reps,
+          rest_seconds,
+          duration_seconds,
+          notes
+        `)
+        .in('session_id', idsSeances)
+        .order('position', { ascending: true });
+
+      if (error) {
+        throw error;
+      }
+
+      exercices = data || [];
+    }
+
+    const exercicesParSeance = new Map();
+
+    exercices.forEach(function (exercice) {
+      if (!exercicesParSeance.has(exercice.session_id)) {
+        exercicesParSeance.set(exercice.session_id, []);
+      }
+
+      exercicesParSeance.get(exercice.session_id).push(exercice);
+    });
+
+    etatProgrammesV11.seances = (seances || []).map(function (seance) {
+      return {
+        id: seance.id,
+        date: seance.scheduled_date,
+        weekNumber: seance.week_number,
+        sessionNumber: seance.session_number,
+        titre: seance.title,
+        description: seance.description,
+        dureeMinutes: seance.duration_minutes,
+        niveau: seance.level,
+        objectif: seance.objective,
+        startedAt: seance.started_at,
+        completedAt: seance.completed_at,
+        exercices: exercicesParSeance.get(seance.id) || []
+      };
+    });
+  }
+
+  async function chargerMesuresPoidsV11() {
+    let requete = supabase
+      .from('weight_entries')
+      .select('id, measured_on, weight_kg, created_at')
+      .eq('user_id', etatProgrammesV11.userId)
+      .order('measured_on', { ascending: true })
+      .limit(100);
+
+    if (
+      etatProgrammesV11.programmeActif &&
+      etatProgrammesV11.programmeActif.start_date
+    ) {
+      requete = requete.gte(
+        'measured_on',
+        etatProgrammesV11.programmeActif.start_date
+      );
+    }
+
+    const { data, error } = await requete;
+
+    if (error) {
+      throw error;
+    }
+
+    etatProgrammesV11.mesures = data || [];
+  }
+
+  function rendreCalendrierProgrammesV11() {
+    const listeJours = document.getElementById('programme-jours');
+    const periode = document.getElementById('programme-periode');
+
+    if (!listeJours || !periode) {
+      return;
+    }
+
+    const jours = construireSemaine(etatProgrammesV11.debutSemaine);
+    listeJours.innerHTML = '';
+
+    periode.textContent =
+      formaterDateCourte(jours[0]) +
+      ' — ' +
+      formaterDateCourte(jours[6]);
+
+    jours.forEach(function (date) {
+      const bouton = document.createElement('button');
+      bouton.type = 'button';
+      bouton.className = 'programme-jour';
+      bouton.setAttribute('role', 'listitem');
+
+      const cle = cleDate(date);
+      const selectionnee =
+        cle === cleDate(etatProgrammesV11.dateSelectionnee);
+      const aujourdHui = cle === cleDate(new Date());
+
+      const seance = etatProgrammesV11.seances.find(function (item) {
+        return item.date === cle;
+      });
+
+      if (selectionnee) {
+        bouton.classList.add('is-selected');
+      }
+
+      if (aujourdHui) {
+        bouton.classList.add('is-aujourdhui');
+      }
+
+      if (seance) {
+        bouton.classList.add('has-seance');
+
+        if (seance.completedAt) {
+          bouton.classList.add('is-completed');
+          bouton.setAttribute('title', 'Séance terminée');
+        } else {
+          bouton.setAttribute('title', seance.titre || 'Séance prévue');
+        }
+      }
+
+      const nom = document.createElement('span');
+      nom.className = 'programme-jour-nom';
+      nom.textContent = ['lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.', 'dim.'][
+        (date.getDay() + 6) % 7
+      ];
+
+      const nombre = document.createElement('span');
+      nombre.className = 'programme-jour-date';
+      nombre.textContent = String(date.getDate());
+
+      bouton.appendChild(nom);
+      bouton.appendChild(nombre);
+
+      bouton.addEventListener('click', function () {
+        etatProgrammesV11.dateSelectionnee = normaliserDate(date);
+        rendreCalendrierProgrammesV11();
+      });
+
+      listeJours.appendChild(bouton);
+    });
+
+    afficherSeanceProgrammeV10(etatProgrammesV11);
+  }
+
+  function afficherSeanceProgrammeV10(etat) {
+    const label = document.getElementById('programme-jour-selectionne-label');
+    const titre = document.getElementById('programme-seance-titre');
+    const description = document.getElementById('programme-seance-description');
+    const details = document.getElementById('programme-seance-details');
+    const duree = document.getElementById('programme-seance-duree');
+    const niveau = document.getElementById('programme-seance-niveau');
+    const objectif = document.getElementById('programme-seance-objectif');
+    const exercices = document.getElementById('programme-exercices');
+    const bouton = document.getElementById('programme-commencer-seance');
+
+    if (!label || !titre || !description || !details) {
+      return;
+    }
+
+    const date = etat.dateSelectionnee;
+    const cle = cleDate(date);
+
+    const seance = etat.seances.find(function (item) {
+      return item.date === cle;
+    }) || null;
+
+    etatProgrammesV11.seanceSelectionnee = seance;
+
+    label.textContent =
+      'Séance — ' +
+      date.toLocaleDateString('fr-CA', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long'
+      });
+
+    if (!seance) {
+      titre.textContent = 'Aucune séance prévue.';
+      description.textContent =
+        'Lorsqu’un coach TRIÈDRE t’assignera une séance pour cette date, elle apparaîtra ici.';
+      details.hidden = true;
+      return;
+    }
+
+    titre.textContent = seance.titre || 'Séance TRIÈDRE';
+    description.textContent = seance.description || '';
+    duree.textContent = seance.dureeMinutes
+      ? seance.dureeMinutes + ' min'
+      : '—';
+    niveau.textContent = seance.niveau || '—';
+    objectif.textContent = seance.objectif || '—';
+    exercices.innerHTML = '';
+
+    (seance.exercices || []).forEach(function (exercice) {
+      const ligne = document.createElement('div');
+      ligne.className = 'programme-exercice';
+
+      const info = document.createElement('div');
+
+      const nom = document.createElement('strong');
+      nom.textContent = exercice.name || 'Exercice';
+
+      const consigne = document.createElement('small');
+      const morceauxConsigne = [];
+
+      if (exercice.notes) {
+        morceauxConsigne.push(exercice.notes);
+      }
+
+      if (Number(exercice.rest_seconds) > 0) {
+        morceauxConsigne.push(
+          'Repos : ' + formaterDureeSecondesV11(exercice.rest_seconds)
+        );
+      }
+
+      consigne.textContent = morceauxConsigne.join(' · ');
+
+      info.appendChild(nom);
+      info.appendChild(consigne);
+
+      const prescription = document.createElement('span');
+      prescription.textContent = construirePrescriptionExerciceV11(exercice);
+
+      ligne.appendChild(info);
+      ligne.appendChild(prescription);
+      exercices.appendChild(ligne);
+    });
+
+    if (bouton) {
+      bouton.disabled = false;
+
+      if (seance.completedAt) {
+        bouton.textContent = 'Séance terminée ✓';
+        bouton.disabled = true;
+      } else if (seance.startedAt) {
+        bouton.textContent = 'Terminer la séance';
+      } else {
+        bouton.textContent = 'Commencer la séance';
+      }
+    }
+
+    details.hidden = false;
+  }
+
+  function construirePrescriptionExerciceV11(exercice) {
+    if (Number(exercice.duration_seconds) > 0) {
+      return formaterDureeSecondesV11(exercice.duration_seconds);
+    }
+
+    const series = Number(exercice.sets);
+    const repetitions = (exercice.reps || '').trim();
+
+    if (series > 0 && repetitions) {
+      return series + ' × ' + repetitions;
+    }
+
+    if (series > 0) {
+      return series + (series > 1 ? ' séries' : ' série');
+    }
+
+    return repetitions || '—';
+  }
+
+  function formaterDureeSecondesV11(secondes) {
+    const total = Number(secondes) || 0;
+
+    if (total >= 60 && total % 60 === 0) {
+      return (total / 60) + ' min';
+    }
+
+    if (total >= 60) {
+      const minutes = Math.floor(total / 60);
+      const reste = total % 60;
+      return minutes + ' min ' + reste + ' s';
+    }
+
+    return total + ' s';
+  }
+
+  async function gererActionSeanceV11() {
+    const seance = etatProgrammesV11.seanceSelectionnee;
+
+    if (!seance) {
+      afficherToast('Aucune séance n’est prévue pour cette date.', 'info');
+      return;
+    }
+
+    const bouton = document.getElementById('programme-commencer-seance');
+
+    if (bouton) {
+      bouton.disabled = true;
+    }
+
+    try {
+      if (!seance.startedAt) {
+        const { data, error } = await supabase.rpc(
+          'start_own_training_session',
+          { target_session_id: seance.id }
+        );
+
+        if (error) {
+          throw error;
+        }
+
+        const resultat = Array.isArray(data) ? data[0] : data;
+
+        seance.startedAt =
+          (resultat && resultat.started_at) || new Date().toISOString();
+
+        afficherToast('Séance commencée. Bon entraînement 💪', 'succes');
+      } else if (!seance.completedAt) {
+        const { data, error } = await supabase.rpc(
+          'complete_own_training_session',
+          { target_session_id: seance.id }
+        );
+
+        if (error) {
+          throw error;
+        }
+
+        const resultat = Array.isArray(data) ? data[0] : data;
+
+        seance.completedAt =
+          (resultat && resultat.completed_at) || new Date().toISOString();
+
+        afficherToast('Séance terminée. Progression enregistrée.', 'succes');
+      }
+
+      afficherSeanceProgrammeV10(etatProgrammesV11);
+      rendreCalendrierProgrammesV11();
+      rendreIndicateursProgrammesV11();
+    } catch (error) {
+      console.error('[TRIÈDRE] Action séance :', error);
+      afficherToast(
+        'Impossible d’enregistrer cette séance pour le moment.',
+        'erreur'
+      );
+    } finally {
+      if (bouton && !seance.completedAt) {
+        bouton.disabled = false;
+      }
+    }
+  }
+
+  function rendreMesProgrammesV11() {
+    const conteneur = document.querySelector(
+      '#membre-programmes .programme-etat-vide'
+    );
+
+    if (!conteneur) {
+      return;
+    }
+
+    conteneur.innerHTML = '';
+
+    if (!etatProgrammesV11.programmes.length) {
+      const titre = document.createElement('strong');
+      titre.textContent = 'Aucun programme attribué pour le moment.';
+
+      const texte = document.createElement('p');
+      texte.textContent =
+        'Les programmes commencés, à venir ou terminés apparaîtront ici.';
+
+      conteneur.appendChild(titre);
+      conteneur.appendChild(texte);
+      conteneur.classList.remove('has-programmes');
+      return;
+    }
+
+    conteneur.classList.add('has-programmes');
+
+    etatProgrammesV11.programmes.forEach(function (affectation) {
+      const carte = document.createElement('article');
+      carte.className = 'programme-attribue-carte';
+
+      if (affectation.status === 'active') {
+        carte.classList.add('is-active');
+      }
+
+      const entete = document.createElement('div');
+      entete.className = 'programme-attribue-entete';
+
+      const nom = document.createElement('strong');
+      nom.textContent =
+        (affectation.programme && affectation.programme.name) ||
+        'Programme TRIÈDRE';
+
+      const statut = document.createElement('span');
+      statut.className = 'programme-attribue-statut';
+      statut.textContent = libelleStatutProgrammeV11(affectation.status);
+
+      entete.appendChild(nom);
+      entete.appendChild(statut);
+
+      const details = document.createElement('p');
+      const morceaux = [];
+
+      if (affectation.programme && affectation.programme.level) {
+        morceaux.push(affectation.programme.level);
+      }
+
+      if (
+        affectation.programme &&
+        Number(affectation.programme.duration_weeks) > 0
+      ) {
+        morceaux.push(
+          affectation.programme.duration_weeks + ' semaines'
+        );
+      }
+
+      if (
+        affectation.programme &&
+        Number(affectation.programme.sessions_per_week) > 0
+      ) {
+        morceaux.push(
+          affectation.programme.sessions_per_week + ' séances / semaine'
+        );
+      }
+
+      details.textContent = morceaux.join(' · ');
+
+      carte.appendChild(entete);
+      carte.appendChild(details);
+      conteneur.appendChild(carte);
+    });
+  }
+
+  function libelleStatutProgrammeV11(statut) {
+    const libelles = {
+      scheduled: 'À venir',
+      active: 'En cours',
+      completed: 'Terminé',
+      cancelled: 'Annulé'
+    };
+
+    return libelles[statut] || 'Programme';
+  }
+
+  function rendreIndicateursProgrammesV11() {
+    const progression = document.getElementById('programme-seances-semaine');
+    const discipline = document.getElementById('programme-duree-programme');
+
+    if (!progression || !discipline) {
+      return;
+    }
+
+    const debut = obtenirDebutSemaine(new Date());
+    const fin = ajouterJours(debut, 6);
+    const debutCle = cleDate(debut);
+    const finCle = cleDate(fin);
+
+    const seancesSemaine = etatProgrammesV11.seances.filter(function (seance) {
+      return seance.date >= debutCle && seance.date <= finCle;
+    });
+
+    const terminees = seancesSemaine.filter(function (seance) {
+      return Boolean(seance.completedAt);
+    }).length;
+
+    progression.textContent = seancesSemaine.length
+      ? terminees + ' / ' + seancesSemaine.length
+      : '—';
+
+    const actif = etatProgrammesV11.programmeActif;
+
+    if (!actif || !actif.programme) {
+      discipline.textContent = '—';
+      return;
+    }
+
+    const totalSemaines = Number(actif.programme.duration_weeks) || 0;
+
+    if (!totalSemaines || !actif.start_date) {
+      discipline.textContent = totalSemaines
+        ? totalSemaines + ' semaines'
+        : '—';
+      return;
+    }
+
+    const debutProgramme = normaliserDate(actif.start_date + 'T12:00:00');
+    const aujourdHui = normaliserDate(new Date());
+    const ecartJours = Math.floor(
+      (aujourdHui - debutProgramme) / 86400000
+    );
+
+    const semaineCourante = Math.max(
+      1,
+      Math.min(
+        totalSemaines,
+        Math.floor(Math.max(ecartJours, 0) / 7) + 1
+      )
+    );
+
+    discipline.textContent =
+      'Semaine ' + semaineCourante + ' / ' + totalSemaines;
+  }
+
+  function ouvrirModalPoidsV11() {
+    if (!etatProgrammesV11.userId) {
+      afficherToast('Connecte-toi pour enregistrer ton poids.', 'info');
+      return;
+    }
+
+    let modal = document.getElementById('programme-poids-modal-v11');
+
+    if (!modal) {
+      modal = creerModalPoidsV11();
+      document.body.appendChild(modal);
+    }
+
+    const date = modal.querySelector('#programme-poids-date-v11');
+    const poids = modal.querySelector('#programme-poids-valeur-v11');
+    const erreur = modal.querySelector('#programme-poids-erreur-v11');
+
+    date.value = cleDate(new Date());
+    poids.value = '';
+    erreur.textContent = '';
+    erreur.hidden = true;
+
+    modal.hidden = false;
+    document.body.classList.add('programme-modal-ouvert');
+
+    window.setTimeout(function () {
+      poids.focus();
+    }, 0);
+  }
+
+  function creerModalPoidsV11() {
+    const modal = document.createElement('div');
+    modal.id = 'programme-poids-modal-v11';
+    modal.className = 'programme-poids-modal';
+    modal.hidden = true;
+
+    modal.innerHTML = `
+      <div class="programme-poids-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="programme-poids-modal-titre-v11">
+        <button type="button" class="programme-poids-modal-fermer" aria-label="Fermer">×</button>
+        <p class="section-eyebrow">Résultats</p>
+        <h3 id="programme-poids-modal-titre-v11">Ajouter mon poids</h3>
+        <p class="programme-poids-modal-intro">
+          Cette mesure reste privée dans ton espace membre.
+        </p>
+
+        <form id="programme-poids-form-v11">
+          <label>
+            Date
+            <input id="programme-poids-date-v11" type="date" required>
+          </label>
+
+          <label>
+            Poids (kg)
+            <input id="programme-poids-valeur-v11" type="number" min="20" max="350" step="0.1" inputmode="decimal" required>
+          </label>
+
+          <p id="programme-poids-erreur-v11" class="programme-poids-erreur" hidden></p>
+
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </form>
+      </div>
+    `;
+
+    const fermer = function () {
+      modal.hidden = true;
+      document.body.classList.remove('programme-modal-ouvert');
+    };
+
+    modal.querySelector('.programme-poids-modal-fermer')
+      .addEventListener('click', fermer);
+
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) {
+        fermer();
+      }
+    });
+
+    modal.querySelector('#programme-poids-form-v11')
+      .addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const date = modal.querySelector('#programme-poids-date-v11');
+        const poids = modal.querySelector('#programme-poids-valeur-v11');
+        const erreur = modal.querySelector('#programme-poids-erreur-v11');
+        const bouton = modal.querySelector('button[type="submit"]');
+
+        const valeur = Number(poids.value);
+
+        if (!date.value || !Number.isFinite(valeur) || valeur < 20 || valeur > 350) {
+          erreur.textContent = 'Entre une date et un poids valides.';
+          erreur.hidden = false;
+          return;
+        }
+
+        bouton.disabled = true;
+        erreur.hidden = true;
+
+        try {
+          const { error } = await supabase
+            .from('weight_entries')
+            .upsert(
+              {
+                user_id: etatProgrammesV11.userId,
+                measured_on: date.value,
+                weight_kg: valeur
+              },
+              {
+                onConflict: 'user_id,measured_on'
+              }
+            );
+
+          if (error) {
+            throw error;
+          }
+
+          await chargerMesuresPoidsV11();
+
+          rendreCourbePoidsV10(
+            etatProgrammesV11.mesures.map(function (mesure) {
+              return {
+                poids: mesure.weight_kg,
+                date: mesure.measured_on
+              };
+            })
+          );
+
+          fermer();
+          afficherToast('Poids enregistré.', 'succes');
+        } catch (error) {
+          console.error('[TRIÈDRE] Enregistrement du poids :', error);
+          erreur.textContent =
+            'Impossible d’enregistrer cette mesure pour le moment.';
+          erreur.hidden = false;
+        } finally {
+          bouton.disabled = false;
+        }
+      });
+
+    return modal;
+  }
+
+  function rendreCourbePoidsV10(mesures) {
+    const ligne = document.getElementById('programme-courbe-ligne');
+    const points = document.getElementById('programme-courbe-points');
+    const vide = document.getElementById('programme-courbe-vide');
+    const poidsActuel = document.getElementById('programme-poids-actuel');
+    const evolution = document.getElementById('programme-poids-evolution');
+
+    if (!ligne || !points || !vide || !poidsActuel || !evolution) {
+      return;
+    }
+
+    ligne.setAttribute('points', '');
+    ligne.hidden = true;
+    points.innerHTML = '';
+
+    if (!Array.isArray(mesures) || mesures.length === 0) {
+      poidsActuel.textContent = '— kg';
+      evolution.textContent = 'Évolution du poids';
+      vide.hidden = false;
+      return;
+    }
+
+    const valeurs = mesures.map(function (item) {
+      return Number(item.poids);
+    }).filter(Number.isFinite);
+
+    if (!valeurs.length) {
+      return;
+    }
+
+    const min = Math.min.apply(null, valeurs);
+    const max = Math.max.apply(null, valeurs);
+    const amplitude = Math.max(max - min, 1);
+
+    const coords = valeurs.map(function (valeur, index) {
+      const x = 45 + (index * 530) / Math.max(valeurs.length - 1, 1);
+      const y = 155 - ((valeur - min) / amplitude) * 105;
+      return { x: x, y: y };
+    });
+
+    ligne.setAttribute(
+      'points',
+      coords.map(function (point) {
+        return point.x.toFixed(1) + ',' + point.y.toFixed(1);
+      }).join(' ')
+    );
+
+    ligne.hidden = false;
+    vide.hidden = true;
+
+    coords.forEach(function (point) {
+      const cercle = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'circle'
+      );
+
+      cercle.setAttribute('cx', point.x.toFixed(1));
+      cercle.setAttribute('cy', point.y.toFixed(1));
+      cercle.setAttribute('r', '6');
+      cercle.setAttribute('class', 'programme-courbe-point');
+      points.appendChild(cercle);
+    });
+
+    const premier = valeurs[0];
+    const dernier = valeurs[valeurs.length - 1];
+    const delta = dernier - premier;
+
+    poidsActuel.textContent =
+      dernier.toFixed(1).replace('.', ',') + ' kg';
+
+    evolution.textContent =
+      (delta === 0
+        ? '± 0'
+        : (delta > 0 ? '+ ' : '− ') +
+          Math.abs(delta).toFixed(1).replace('.', ',')
+      ) +
+      ' kg depuis le début';
+  }
+
+  function obtenirDebutSemaine(date) {
+    const copie = normaliserDate(date);
+    const jour = copie.getDay();
+    const decalage = jour === 0 ? -6 : 1 - jour;
+    return ajouterJours(copie, decalage);
+  }
+
+  function construireSemaine(debut) {
+    return Array.from({ length: 7 }, function (_, index) {
+      return ajouterJours(debut, index);
+    });
+  }
+
+  function ajouterJours(date, nombre) {
+    const copie = normaliserDate(date);
+    copie.setDate(copie.getDate() + nombre);
+    return copie;
+  }
+
+  function normaliserDate(date) {
+    const copie = new Date(date);
+    copie.setHours(12, 0, 0, 0);
+    return copie;
+  }
+
+  function cleDate(date) {
+    const d = normaliserDate(date);
+
+    return [
+      d.getFullYear(),
+      String(d.getMonth() + 1).padStart(2, '0'),
+      String(d.getDate()).padStart(2, '0')
+    ].join('-');
+  }
+
+  function formaterDateCourte(date) {
+    return date.toLocaleDateString('fr-CA', {
+      day: 'numeric',
+      month: 'short'
     });
   }
 
@@ -783,8 +1768,6 @@ document.addEventListener('DOMContentLoaded', function () {
       return '';
     }
 
-    // Le SKU est la source de vérité : il identifie exactement
-    // le produit + la couleur + la taille du favori.
     const variante = produit.variantes.find(function (item) {
       return item.sku === favori.sku;
     });
@@ -793,8 +1776,6 @@ document.addEventListener('DOMContentLoaded', function () {
       return '../05-images/produits/' + variante.photoFace;
     }
 
-    // Secours uniquement si le SKU n'est pas retrouvé :
-    // on tente couleur + taille, qui correspondent aussi à une variante précise.
     const varianteSecours = produit.variantes.find(function (item) {
       return (
         item.couleur === favori.color &&
@@ -1999,6 +2980,90 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  async function orienterApresConnexion(user) {
+    try {
+      const { data: contexte, error } = await supabase.rpc(
+        'get_my_access_context'
+      );
+
+      if (error) {
+        console.error('[TRIÈDRE] Résolution de l’espace après connexion :', error);
+        afficherConnecte(user);
+        return;
+      }
+
+      const acces = Array.isArray(contexte) ? contexte[0] : contexte;
+      const role = acces && acces.role ? acces.role : 'member';
+
+      if (role === 'admin') {
+        window.location.assign('/admin');
+        return;
+      }
+
+      if (role === 'coach') {
+        window.location.assign('/coach');
+        return;
+      }
+
+      afficherConnecte(user);
+    } catch (error) {
+      console.error('[TRIÈDRE] Orientation après connexion :', error);
+      afficherConnecte(user);
+    }
+  }
+
+  async function afficherAccesEspaceStaff() {
+    if (!btnDeconnexion) {
+      return;
+    }
+
+    const ancienLien = document.getElementById('membre-acces-staff');
+    if (ancienLien) {
+      ancienLien.remove();
+    }
+
+    try {
+      const { data: contexte, error } = await supabase.rpc(
+        'get_my_access_context'
+      );
+
+      if (error) {
+        console.error('[TRIÈDRE] Accès espace staff :', error);
+        return;
+      }
+
+      const acces = Array.isArray(contexte) ? contexte[0] : contexte;
+      const role = acces && acces.role ? acces.role : 'member';
+
+      if (role !== 'coach' && role !== 'admin') {
+        return;
+      }
+
+      const lien = document.createElement('a');
+      lien.id = 'membre-acces-staff';
+      lien.className = 'membre-acces-staff';
+      lien.href = role === 'admin' ? '/admin' : '/coach';
+      lien.textContent = role === 'admin' ? 'Espace Admin' : 'Espace Coach';
+
+      const titreBienvenue = document.getElementById('membre-prenom');
+
+      if (titreBienvenue && titreBienvenue.parentElement) {
+        titreBienvenue.parentElement.insertAdjacentElement('afterend', lien);
+      } else {
+        btnDeconnexion.insertAdjacentElement('beforebegin', lien);
+      }
+    } catch (error) {
+      console.error('[TRIÈDRE] Création accès staff :', error);
+    }
+  }
+
+  function retirerAccesEspaceStaff() {
+    const lien = document.getElementById('membre-acces-staff');
+    if (lien) {
+      lien.remove();
+    }
+  }
+
   function afficherConnecte(user) {
     authZone.hidden = true;
     zoneReset.hidden = true;
@@ -2012,9 +3077,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const nomMetadata = user.user_metadata && user.user_metadata.full_name ? user.user_metadata.full_name : '';
     const prenomMetadata = user.user_metadata && user.user_metadata.first_name ? user.user_metadata.first_name : '';
     majEnteteCompte({ email: user.email || '', prenom: prenomMetadata || decouperNomComplet(nomMetadata).prenom, nomComplet: nomMetadata });
+    afficherAccesEspaceStaff();
   }
 
   function afficherDeconnecte(effacerEmail) {
+    retirerAccesEspaceStaff();
     zoneConnectee.hidden = true;
     zoneInformations.hidden = true;
     zonePreferences.hidden = true;
