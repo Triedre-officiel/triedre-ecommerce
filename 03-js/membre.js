@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const supabase = window.triedreSupabase;
   const membrePage = document.querySelector('.membre-page');
+  const navigationMembre = document.getElementById('membre-navigation-connectee');
+  const boutonAccueilMembre = document.getElementById('membre-retour-accueil');
 
   const authZone = document.getElementById('membre-auth-zone');
   const etapeEmail = document.getElementById('auth-etape-email');
@@ -77,6 +79,16 @@ document.addEventListener('DOMContentLoaded', function () {
   const erreurMesInformations = document.getElementById('mes-informations-erreur');
   const succesMesInformations = document.getElementById('mes-informations-succes');
   const boutonEnregistrerInformations = document.getElementById('enregistrer-mes-informations');
+  const boutonAnnulerInformations = document.getElementById('annuler-mes-informations');
+
+  const boutonOuvrirMotDePasse = document.getElementById('modifier-mot-de-passe');
+  const zoneMotDePasse = document.getElementById('zone-modification-mot-de-passe');
+  const champMotDePasseActuel = document.getElementById('mot-de-passe-actuel');
+  const champNouveauMotDePasse = document.getElementById('nouveau-mot-de-passe');
+  const champConfirmationMotDePasse = document.getElementById('confirmation-mot-de-passe');
+  const boutonAnnulerMotDePasse = document.getElementById('annuler-mot-de-passe');
+  const boutonSauvegarderMotDePasse = document.getElementById('sauvegarder-mot-de-passe');
+  const erreurMotDePasse = document.getElementById('mot-de-passe-erreur');
 
   const boutonMesPreferences = document.getElementById('ouvrir-mes-preferences');
   const zonePreferences = document.getElementById('membre-preferences');
@@ -205,7 +217,41 @@ document.addEventListener('DOMContentLoaded', function () {
   activerSuppressionCompte();
   activerDeconnexion();
   activerReset();
+  initialiserNavigationMembrePremium();
   initialiserSession();
+
+  function masquerToutesZonesMembre() {
+    ['membre-connecte','membre-abonnements','membre-programmes','membre-communaute','membre-favoris','membre-commandes','membre-informations','membre-preferences','membre-adresses','membre-reset'].forEach(function (id) { const zone = document.getElementById(id); if (zone) zone.hidden = true; });
+  }
+
+  function fermerMenusNavigationMembre() {
+    if (!navigationMembre) return;
+    navigationMembre.querySelectorAll('details[open]').forEach(function (details) { details.removeAttribute('open'); });
+  }
+
+  function afficherAccueilMembrePremium() {
+    masquerToutesZonesMembre();
+    zoneConnectee.hidden = false;
+    fermerMenusNavigationMembre();
+    window.scrollTo({ top: membrePage ? membrePage.offsetTop : 0, behavior: 'smooth' });
+  }
+
+  function initialiserNavigationMembrePremium() {
+    if (!navigationMembre) return;
+    if (boutonAccueilMembre) boutonAccueilMembre.addEventListener('click', afficherAccueilMembrePremium);
+    navigationMembre.addEventListener('click', function (event) {
+      const bouton = event.target.closest('button');
+      if (!bouton) return;
+      const estNavigation = bouton.id && bouton.id.indexOf('ouvrir-') === 0;
+      if (estNavigation) masquerToutesZonesMembre();
+      window.setTimeout(fermerMenusNavigationMembre, 0);
+    }, true);
+    const raccourcis = { commandes: 'ouvrir-mes-commandes', favoris: 'ouvrir-mes-favoris', programmes: 'ouvrir-mes-programmes', informations: 'ouvrir-mes-informations' };
+    document.querySelectorAll('[data-membre-raccourci]').forEach(function (bouton) {
+      bouton.addEventListener('click', function () { const idCible = raccourcis[bouton.getAttribute('data-membre-raccourci')]; const cible = idCible ? document.getElementById(idCible) : null; if (cible) cible.click(); });
+    });
+    document.addEventListener('click', function (event) { if (!navigationMembre.contains(event.target)) fermerMenusNavigationMembre(); });
+  }
 
   function activerParcoursEmailFirst() {
     formulaireEmail.addEventListener('submit', async function (event) {
@@ -470,9 +516,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function masquerSousPagesV9() {
-    [zoneAbonnements, zoneProgrammes, zoneCommunaute].forEach(function (zone) {
-      if (zone) zone.hidden = true;
-    });
+    masquerToutesZonesMembre();
   }
 
   function activerMesAbonnements() {
@@ -1157,65 +1201,309 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function rendreIndicateursProgrammesV11() {
-    const progression = document.getElementById('programme-seances-semaine');
-    const discipline = document.getElementById('programme-duree-programme');
+    const seancesSemaineElement = document.getElementById('programme-seances-semaine');
+    const pourcentageElement = document.getElementById('programme-entrainements-pourcentage');
+    const dureeProgrammeElement = document.getElementById('programme-duree-programme');
+    const seriesTotalesElement = document.getElementById('programme-series-totales');
+    const seriesComparaisonElement = document.getElementById('programme-series-comparaison');
+    const constanceValeurElement = document.getElementById('programme-constance-valeur');
+    const constanceLibelleElement = document.getElementById('programme-constance-libelle');
+    const constanceCercle = document.getElementById('programme-constance-progression');
 
-    if (!progression || !discipline) {
+    const actif = etatProgrammesV11.programmeActif;
+    const seances = etatProgrammesV11.seances || [];
+
+    if (!actif || !actif.programme) {
+      if (seancesSemaineElement) seancesSemaineElement.textContent = '—';
+      if (pourcentageElement) pourcentageElement.textContent = '—';
+      if (dureeProgrammeElement) dureeProgrammeElement.textContent = '—';
+      if (seriesTotalesElement) seriesTotalesElement.textContent = '—';
+      if (seriesComparaisonElement) seriesComparaisonElement.textContent = '—';
+      if (constanceValeurElement) constanceValeurElement.textContent = '—';
+      if (constanceLibelleElement) constanceLibelleElement.textContent = '—';
+
+      mettreAJourAnneauConstanceV12(constanceCercle, 0);
+      mettreAJourBarresEntrainementsV12([]);
+      rendreEvolutionSeriesV12([]);
       return;
     }
 
-    const debut = obtenirDebutSemaine(new Date());
-    const fin = ajouterJours(debut, 6);
-    const debutCle = cleDate(debut);
-    const finCle = cleDate(fin);
+    const aujourdHui = normaliserDate(new Date());
 
-    const seancesSemaine = etatProgrammesV11.seances.filter(function (seance) {
+    /* 1. ENTRAÎNEMENTS — SEMAINE ACTUELLE */
+    const debutSemaine = obtenirDebutSemaine(aujourdHui);
+    const finSemaine = ajouterJours(debutSemaine, 6);
+    const debutCle = cleDate(debutSemaine);
+    const finCle = cleDate(finSemaine);
+
+    const seancesSemaine = seances.filter(function (seance) {
       return seance.date >= debutCle && seance.date <= finCle;
     });
 
-    const terminees = seancesSemaine.filter(function (seance) {
+    const seancesTermineesSemaine = seancesSemaine.filter(function (seance) {
+      return Boolean(seance.completedAt);
+    });
+
+    const totalSemaine = seancesSemaine.length;
+    const termineesSemaine = seancesTermineesSemaine.length;
+    const tauxSemaine = totalSemaine
+      ? Math.round((termineesSemaine / totalSemaine) * 100)
+      : 0;
+
+    if (seancesSemaineElement) {
+      seancesSemaineElement.textContent = totalSemaine
+        ? termineesSemaine + ' / ' + totalSemaine
+        : '—';
+    }
+
+    if (pourcentageElement) {
+      pourcentageElement.textContent = totalSemaine
+        ? tauxSemaine + '%'
+        : '—';
+    }
+
+    mettreAJourBarresEntrainementsV12(seancesSemaine);
+
+    /* 2. SÉRIES TOTALES — SEMAINE ACTUELLE */
+    const seriesParJour = Array(7).fill(0);
+
+    seancesTermineesSemaine.forEach(function (seance) {
+      const date = normaliserDate(seance.date + 'T12:00:00');
+      const indexJour = (date.getDay() + 6) % 7;
+      seriesParJour[indexJour] += compterSeriesSeanceV12(seance);
+    });
+
+    const seriesSemaine = seriesParJour.reduce(function (total, valeur) {
+      return total + valeur;
+    }, 0);
+
+    if (seriesTotalesElement) {
+      seriesTotalesElement.textContent = String(seriesSemaine);
+    }
+
+    rendreEvolutionSeriesV12(seriesParJour);
+
+    const debutSemainePrecedente = ajouterJours(debutSemaine, -7);
+    const finSemainePrecedente = ajouterJours(debutSemaine, -1);
+    const debutPrecedentCle = cleDate(debutSemainePrecedente);
+    const finPrecedentCle = cleDate(finSemainePrecedente);
+
+    const seancesPrecedentesTerminees = seances.filter(function (seance) {
+      return (
+        seance.date >= debutPrecedentCle &&
+        seance.date <= finPrecedentCle &&
+        Boolean(seance.completedAt)
+      );
+    });
+
+    const seriesPrecedentes = seancesPrecedentesTerminees.reduce(function (total, seance) {
+      return total + compterSeriesSeanceV12(seance);
+    }, 0);
+
+    if (seriesComparaisonElement) {
+      if (seriesPrecedentes > 0) {
+        const variation = ((seriesSemaine - seriesPrecedentes) / seriesPrecedentes) * 100;
+        const variationArrondie = Math.round(variation);
+
+        if (variationArrondie > 0) {
+          seriesComparaisonElement.textContent = '+' + variationArrondie + '% vs semaine dernière';
+        } else if (variationArrondie < 0) {
+          seriesComparaisonElement.textContent =
+            '−' + Math.abs(variationArrondie) + '% vs semaine dernière';
+        } else {
+          seriesComparaisonElement.textContent = 'Stable vs semaine dernière';
+        }
+      } else if (seriesSemaine > 0) {
+        seriesComparaisonElement.textContent = 'Première semaine suivie';
+      } else {
+        seriesComparaisonElement.textContent = 'Aucune série terminée cette semaine';
+      }
+    }
+
+    /* 3. CONSTANCE — SÉANCES ÉCHUES */
+    const aujourdHuiCle = cleDate(aujourdHui);
+
+    const seancesEchues = seances.filter(function (seance) {
+      return seance.date <= aujourdHuiCle;
+    });
+
+    const seancesEchuesTerminees = seancesEchues.filter(function (seance) {
+      return Boolean(seance.completedAt);
+    });
+
+    const tauxConstance = seancesEchues.length
+      ? Math.round((seancesEchuesTerminees.length / seancesEchues.length) * 100)
+      : 0;
+
+    if (constanceValeurElement) {
+      constanceValeurElement.textContent = seancesEchues.length
+        ? tauxConstance + '%'
+        : '—';
+    }
+
+    if (constanceLibelleElement) {
+      constanceLibelleElement.textContent =
+        libelleConstanceV12(tauxConstance, seancesEchues.length);
+    }
+
+    mettreAJourAnneauConstanceV12(
+      constanceCercle,
+      seancesEchues.length ? tauxConstance : 0
+    );
+
+    /* 4. PROGRESSION GLOBALE DU PROGRAMME */
+    const totalSeancesProgramme = seances.length;
+    const totalSeancesTerminees = seances.filter(function (seance) {
       return Boolean(seance.completedAt);
     }).length;
 
-    progression.textContent = seancesSemaine.length
-      ? terminees + ' / ' + seancesSemaine.length
-      : '—';
+    if (dureeProgrammeElement) {
+      if (!totalSeancesProgramme) {
+        dureeProgrammeElement.textContent = '—';
+      } else {
+        const progressionProgramme = Math.round(
+          (totalSeancesTerminees / totalSeancesProgramme) * 100
+        );
 
-    const actif = etatProgrammesV11.programmeActif;
-
-    if (!actif || !actif.programme) {
-      discipline.textContent = '—';
-      return;
+        dureeProgrammeElement.textContent =
+          progressionProgramme +
+          '% · ' +
+          totalSeancesTerminees +
+          ' / ' +
+          totalSeancesProgramme +
+          ' séances';
+      }
     }
-
-    const totalSemaines = Number(actif.programme.duration_weeks) || 0;
-
-    if (!totalSemaines || !actif.start_date) {
-      discipline.textContent = totalSemaines
-        ? totalSemaines + ' semaines'
-        : '—';
-      return;
-    }
-
-    const debutProgramme = normaliserDate(actif.start_date + 'T12:00:00');
-    const aujourdHui = normaliserDate(new Date());
-    const ecartJours = Math.floor(
-      (aujourdHui - debutProgramme) / 86400000
-    );
-
-    const semaineCourante = Math.max(
-      1,
-      Math.min(
-        totalSemaines,
-        Math.floor(Math.max(ecartJours, 0) / 7) + 1
-      )
-    );
-
-    discipline.textContent =
-      'Semaine ' + semaineCourante + ' / ' + totalSemaines;
   }
 
-  function ouvrirModalPoidsV11() {
+  function compterSeriesSeanceV12(seance) {
+    return (seance.exercices || []).reduce(function (total, exercice) {
+      const series = Number(exercice.sets);
+      return total + (Number.isFinite(series) && series > 0 ? series : 0);
+    }, 0);
+  }
+
+  function mettreAJourBarresEntrainementsV12(seancesSemaine) {
+    const jours = document.querySelectorAll(
+      '#programme-entrainements-graphique .programme-entrainement-jour'
+    );
+
+    const debutSemaine = obtenirDebutSemaine(new Date());
+
+    jours.forEach(function (element, index) {
+      element.classList.remove('is-planifie', 'is-started', 'is-completed');
+
+      const dateJour = ajouterJours(debutSemaine, index);
+      const cleJour = cleDate(dateJour);
+
+      const seance = seancesSemaine.find(function (item) {
+        return item.date === cleJour;
+      });
+
+      const barre = element.querySelector('.programme-entrainement-barre');
+
+      if (!barre) return;
+
+      if (!seance) {
+        barre.style.height = '14%';
+        barre.style.opacity = '.28';
+        return;
+      }
+
+      element.classList.add('is-planifie');
+      barre.style.opacity = '1';
+
+      if (seance.completedAt) {
+        element.classList.add('is-completed');
+        barre.style.height = '100%';
+      } else if (seance.startedAt) {
+        element.classList.add('is-started');
+        barre.style.height = '72%';
+      } else {
+        barre.style.height = '48%';
+      }
+    });
+  }
+
+  function mettreAJourAnneauConstanceV12(cercle, pourcentage) {
+    if (!cercle) return;
+
+    const rayon = 54;
+    const circonference = 2 * Math.PI * rayon;
+    const valeur = Math.max(0, Math.min(100, Number(pourcentage) || 0));
+    const decalage = circonference - (valeur / 100) * circonference;
+
+    cercle.style.strokeDasharray = circonference.toFixed(3);
+    cercle.style.strokeDashoffset = decalage.toFixed(3);
+  }
+
+  function libelleConstanceV12(pourcentage, totalEchu) {
+    if (!totalEchu) return 'Le suivi commencera avec ta première séance.';
+    if (pourcentage >= 90) return 'Excellente constance';
+    if (pourcentage >= 75) return 'Très bonne constance';
+    if (pourcentage >= 60) return 'Bonne dynamique';
+    if (pourcentage >= 40) return 'Continue à construire ta régularité';
+    return 'Chaque séance compte';
+  }
+
+  function rendreEvolutionSeriesV12(valeurs) {
+    const ligne = document.getElementById('programme-series-ligne');
+    const groupePoints = document.getElementById('programme-series-points');
+
+    if (!ligne || !groupePoints) return;
+
+    ligne.setAttribute('points', '');
+    ligne.hidden = true;
+    groupePoints.innerHTML = '';
+
+    if (!Array.isArray(valeurs) || !valeurs.length) return;
+
+    const max = Math.max.apply(null, valeurs);
+    if (max <= 0) return;
+
+    const largeur = 200;
+    const hauteur = 48;
+    const margeX = 10;
+    const margeY = 10;
+
+    const coords = valeurs.map(function (valeur, index) {
+      const x = margeX + (index * largeur) / Math.max(valeurs.length - 1, 1);
+      const y = margeY + hauteur - (Number(valeur || 0) / max) * hauteur;
+
+      return {
+        x: x,
+        y: y,
+        valeur: Number(valeur || 0)
+      };
+    });
+
+    ligne.setAttribute(
+      'points',
+      coords.map(function (point) {
+        return point.x.toFixed(1) + ',' + point.y.toFixed(1);
+      }).join(' ')
+    );
+
+    ligne.hidden = false;
+
+    coords.forEach(function (point) {
+      if (point.valeur <= 0) return;
+
+      const cercle = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'circle'
+      );
+
+      cercle.setAttribute('cx', point.x.toFixed(1));
+      cercle.setAttribute('cy', point.y.toFixed(1));
+      cercle.setAttribute('r', '3');
+      cercle.setAttribute('class', 'programme-series-point');
+
+      groupePoints.appendChild(cercle);
+    });
+  }
+
+  function ouvrirModalPoidsV11(mesureAEditer) {
     if (!etatProgrammesV11.userId) {
       afficherToast('Connecte-toi pour enregistrer ton poids.', 'info');
       return;
@@ -1231,17 +1519,36 @@ document.addEventListener('DOMContentLoaded', function () {
     const date = modal.querySelector('#programme-poids-date-v11');
     const poids = modal.querySelector('#programme-poids-valeur-v11');
     const erreur = modal.querySelector('#programme-poids-erreur-v11');
+    const titre = modal.querySelector('#programme-poids-modal-titre-v11');
+    const bouton = modal.querySelector('button[type="submit"]');
 
-    date.value = cleDate(new Date());
-    poids.value = '';
+    const estEdition =
+      mesureAEditer &&
+      mesureAEditer.date &&
+      Number.isFinite(Number(mesureAEditer.poids));
+
+    modal.dataset.mode = estEdition ? 'edition' : 'ajout';
+    modal.dataset.dateOriginale = estEdition ? mesureAEditer.date : '';
+
+    date.value = estEdition ? mesureAEditer.date : cleDate(new Date());
+    poids.value = estEdition ? String(mesureAEditer.poids) : '';
     erreur.textContent = '';
     erreur.hidden = true;
+
+    if (titre) {
+      titre.textContent = estEdition ? 'Modifier ma pesée' : 'Ajouter mon poids';
+    }
+
+    if (bouton) {
+      bouton.textContent = estEdition ? 'Enregistrer la modification' : 'Enregistrer';
+    }
 
     modal.hidden = false;
     document.body.classList.add('programme-modal-ouvert');
 
     window.setTimeout(function () {
       poids.focus();
+      poids.select();
     }, 0);
   }
 
@@ -1313,18 +1620,36 @@ document.addEventListener('DOMContentLoaded', function () {
         erreur.hidden = true;
 
         try {
-          const { error } = await supabase
-            .from('weight_entries')
-            .upsert(
-              {
-                user_id: etatProgrammesV11.userId,
+          const estEdition = modal.dataset.mode === 'edition';
+          const dateOriginale = modal.dataset.dateOriginale;
+
+          let requete;
+
+          if (estEdition && dateOriginale) {
+            requete = supabase
+              .from('weight_entries')
+              .update({
                 measured_on: date.value,
                 weight_kg: valeur
-              },
-              {
-                onConflict: 'user_id,measured_on'
-              }
-            );
+              })
+              .eq('user_id', etatProgrammesV11.userId)
+              .eq('measured_on', dateOriginale);
+          } else {
+            requete = supabase
+              .from('weight_entries')
+              .upsert(
+                {
+                  user_id: etatProgrammesV11.userId,
+                  measured_on: date.value,
+                  weight_kg: valeur
+                },
+                {
+                  onConflict: 'user_id,measured_on'
+                }
+              );
+          }
+
+          const { error } = await requete;
 
           if (error) {
             throw error;
@@ -1342,7 +1667,10 @@ document.addEventListener('DOMContentLoaded', function () {
           );
 
           fermer();
-          afficherToast('Poids enregistré.', 'succes');
+          afficherToast(
+            estEdition ? 'Pesée modifiée.' : 'Poids enregistré.',
+            'succes'
+          );
         } catch (error) {
           console.error('[TRIÈDRE] Enregistrement du poids :', error);
           erreur.textContent =
@@ -1357,56 +1685,489 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function rendreCourbePoidsV10(mesures) {
-    const ligne = document.getElementById('programme-courbe-ligne');
-    const points = document.getElementById('programme-courbe-points');
+    let ligne = document.getElementById('programme-courbe-ligne');
+    const groupePoints = document.getElementById('programme-courbe-points');
+    const groupeGrille = document.getElementById('programme-courbe-grille');
+    const axeY = document.getElementById('programme-courbe-axe-y');
+    const axeX = document.getElementById('programme-courbe-axe-x');
     const vide = document.getElementById('programme-courbe-vide');
     const poidsActuel = document.getElementById('programme-poids-actuel');
     const evolution = document.getElementById('programme-poids-evolution');
+    const conteneur = document.getElementById('programme-courbe-poids');
 
-    if (!ligne || !points || !vide || !poidsActuel || !evolution) {
+    if (
+      !ligne ||
+      !groupePoints ||
+      !vide ||
+      !poidsActuel ||
+      !evolution ||
+      !conteneur
+    ) {
       return;
     }
 
-    ligne.setAttribute('points', '');
-    ligne.hidden = true;
-    points.innerHTML = '';
+    if (ligne.tagName && ligne.tagName.toLowerCase() !== 'path') {
+      const nouveauChemin = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'path'
+      );
 
-    if (!Array.isArray(mesures) || mesures.length === 0) {
+      nouveauChemin.setAttribute('id', 'programme-courbe-ligne');
+      ligne.parentNode.replaceChild(nouveauChemin, ligne);
+      ligne = nouveauChemin;
+    }
+
+    const mesuresValides = (Array.isArray(mesures) ? mesures : [])
+      .map(function (mesure) {
+        const poidsBrut =
+          mesure.weight_kg !== undefined
+            ? mesure.weight_kg
+            : mesure.poids;
+
+        const dateBrute =
+          mesure.measured_on !== undefined
+            ? mesure.measured_on
+            : mesure.date;
+
+        const poids = Number(poidsBrut);
+        const date = dateBrute
+          ? normaliserDate(dateBrute + 'T12:00:00')
+          : null;
+
+        if (!Number.isFinite(poids) || !date || Number.isNaN(date.getTime())) {
+          return null;
+        }
+
+        return {
+          poids: poids,
+          date: date,
+          cle: dateBrute
+        };
+      })
+      .filter(Boolean)
+      .sort(function (a, b) {
+        return a.date - b.date;
+      });
+
+    ligne.setAttribute('d', '');
+    ligne.setAttribute('fill', 'none');
+    ligne.setAttribute('stroke', '#d4af37');
+    ligne.setAttribute('stroke-width', '4');
+    ligne.setAttribute('stroke-linecap', 'round');
+    ligne.setAttribute('stroke-linejoin', 'round');
+    ligne.setAttribute('vector-effect', 'non-scaling-stroke');
+    ligne.setAttribute('pointer-events', 'none');
+    ligne.setAttribute('visibility', 'visible');
+    ligne.removeAttribute('hidden');
+
+    groupePoints.innerHTML = '';
+    if (groupeGrille) groupeGrille.innerHTML = '';
+    if (axeY) axeY.innerHTML = '';
+    if (axeX) axeX.innerHTML = '';
+
+    const ancienneBulle = conteneur.querySelector('.programme-poids-bulle-v13');
+    if (ancienneBulle) ancienneBulle.remove();
+
+    if (!mesuresValides.length) {
+      ligne.setAttribute('d', '');
+      ligne.setAttribute('visibility', 'hidden');
       poidsActuel.textContent = '— kg';
       evolution.textContent = 'Évolution du poids';
       vide.hidden = false;
       return;
     }
 
-    const valeurs = mesures.map(function (item) {
-      return Number(item.poids);
-    }).filter(Number.isFinite);
-
-    if (!valeurs.length) {
-      return;
-    }
-
-    const min = Math.min.apply(null, valeurs);
-    const max = Math.max.apply(null, valeurs);
-    const amplitude = Math.max(max - min, 1);
-
-    const coords = valeurs.map(function (valeur, index) {
-      const x = 45 + (index * 530) / Math.max(valeurs.length - 1, 1);
-      const y = 155 - ((valeur - min) / amplitude) * 105;
-      return { x: x, y: y };
-    });
-
-    ligne.setAttribute(
-      'points',
-      coords.map(function (point) {
-        return point.x.toFixed(1) + ',' + point.y.toFixed(1);
-      }).join(' ')
-    );
-
-    ligne.hidden = false;
     vide.hidden = true;
 
-    coords.forEach(function (point) {
+    const premiere = mesuresValides[0];
+    const derniere = mesuresValides[mesuresValides.length - 1];
+
+    poidsActuel.textContent =
+      derniere.poids.toLocaleString('fr-FR', {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      }) + ' kg';
+
+    const delta = derniere.poids - premiere.poids;
+    const signe = delta > 0 ? '+' : delta < 0 ? '−' : '±';
+
+    evolution.textContent =
+      signe +
+      ' ' +
+      Math.abs(delta).toLocaleString('fr-FR', {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      }) +
+      ' kg depuis le début';
+
+    const largeurSvg = 620;
+    const hauteurSvg = 220;
+    const margeGauche = 58;
+    const margeDroite = 18;
+    const margeHaut = 18;
+    const margeBas = 42;
+
+    const largeurTrace = largeurSvg - margeGauche - margeDroite;
+    const hauteurTrace = hauteurSvg - margeHaut - margeBas;
+
+    const poidsMin = Math.min.apply(
+      null,
+      mesuresValides.map(function (item) {
+        return item.poids;
+      })
+    );
+
+    const poidsMax = Math.max.apply(
+      null,
+      mesuresValides.map(function (item) {
+        return item.poids;
+      })
+    );
+
+    let yMin = Math.floor((poidsMin - 5) / 5) * 5;
+    let yMax = Math.ceil((poidsMax + 5) / 5) * 5;
+
+    if (yMin === yMax) {
+      yMin -= 5;
+      yMax += 5;
+    }
+
+    while (yMax - yMin < 15) {
+      yMin -= 5;
+      yMax += 5;
+    }
+
+    yMin = Math.max(0, yMin);
+
+    const plageY = Math.max(yMax - yMin, 5);
+
+    const versY = function (poids) {
+      return margeHaut + ((yMax - poids) / plageY) * hauteurTrace;
+    };
+
+    for (let valeur = yMin; valeur <= yMax; valeur += 5) {
+      const y = versY(valeur);
+
+      if (groupeGrille) {
+        const grille = document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'line'
+        );
+
+        grille.setAttribute('x1', String(margeGauche));
+        grille.setAttribute('x2', String(margeGauche + largeurTrace));
+        grille.setAttribute('y1', y.toFixed(1));
+        grille.setAttribute('y2', y.toFixed(1));
+        grille.setAttribute(
+          'class',
+          'programme-courbe-grille-ligne programme-courbe-grille-h'
+        );
+
+        groupeGrille.appendChild(grille);
+      }
+
+      if (axeY) {
+        const texte = document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'text'
+        );
+
+        texte.setAttribute('x', String(margeGauche - 10));
+        texte.setAttribute('y', (y + 4).toFixed(1));
+        texte.setAttribute('text-anchor', 'end');
+        texte.textContent = valeur + ' kg';
+        axeY.appendChild(texte);
+      }
+    }
+
+    const tempsMin = premiere.date.getTime();
+    const tempsMax = derniere.date.getTime();
+    const plageTemps = Math.max(tempsMax - tempsMin, 1);
+
+    const versX = function (date) {
+      if (mesuresValides.length === 1) {
+        return margeGauche + largeurTrace / 2;
+      }
+
+      return (
+        margeGauche +
+        ((date.getTime() - tempsMin) / plageTemps) * largeurTrace
+      );
+    };
+
+    const moisCourts = [
+      'JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUIN',
+      'JUIL', 'AOÛT', 'SEPT', 'OCT', 'NOV', 'DÉC'
+    ];
+
+    const coordonnees = mesuresValides.map(function (item, index) {
+      const x = versX(item.date);
+      const y = versY(item.poids);
+
+      if (groupeGrille) {
+        const verticale = document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'line'
+        );
+
+        verticale.setAttribute('x1', x.toFixed(1));
+        verticale.setAttribute('x2', x.toFixed(1));
+        verticale.setAttribute('y1', String(margeHaut));
+        verticale.setAttribute('y2', String(margeHaut + hauteurTrace));
+        verticale.setAttribute(
+          'class',
+          'programme-courbe-grille-ligne programme-courbe-grille-v'
+        );
+
+        groupeGrille.appendChild(verticale);
+      }
+
+      if (axeX) {
+        const texte = document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'text'
+        );
+
+        texte.setAttribute('x', x.toFixed(1));
+        texte.setAttribute('y', String(hauteurSvg - 12));
+        texte.setAttribute('text-anchor', 'middle');
+        texte.textContent =
+          String(item.date.getDate()).padStart(2, '0') +
+          ' ' +
+          moisCourts[item.date.getMonth()];
+
+        axeX.appendChild(texte);
+      }
+
+      return {
+        x: x,
+        y: y,
+        poids: item.poids,
+        date: item.cle,
+        dateObjet: item.date,
+        index: index
+      };
+    });
+
+    const construireCheminLisse = function (points) {
+      if (points.length < 2) {
+        return '';
+      }
+
+      if (points.length === 2) {
+        return (
+          'M ' +
+          points[0].x.toFixed(1) +
+          ' ' +
+          points[0].y.toFixed(1) +
+          ' L ' +
+          points[1].x.toFixed(1) +
+          ' ' +
+          points[1].y.toFixed(1)
+        );
+      }
+
+      const tension = 0.18;
+      let d = 'M ' + points[0].x.toFixed(1) + ' ' + points[0].y.toFixed(1);
+
+      for (let i = 0; i < points.length - 1; i += 1) {
+        const p0 = points[i - 1] || points[i];
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        const p3 = points[i + 2] || p2;
+
+        const cp1x = p1.x + (p2.x - p0.x) * tension;
+        const cp1y = p1.y + (p2.y - p0.y) * tension;
+        const cp2x = p2.x - (p3.x - p1.x) * tension;
+        const cp2y = p2.y - (p3.y - p1.y) * tension;
+
+        d +=
+          ' C ' +
+          cp1x.toFixed(1) +
+          ' ' +
+          cp1y.toFixed(1) +
+          ', ' +
+          cp2x.toFixed(1) +
+          ' ' +
+          cp2y.toFixed(1) +
+          ', ' +
+          p2.x.toFixed(1) +
+          ' ' +
+          p2.y.toFixed(1);
+      }
+
+      return d;
+    };
+
+    if (coordonnees.length >= 2) {
+      ligne.setAttribute('d', construireCheminLisse(coordonnees));
+      ligne.setAttribute('visibility', 'visible');
+    } else {
+      ligne.setAttribute('d', '');
+      ligne.setAttribute('visibility', 'hidden');
+    }
+
+    const fermerBulle = function () {
+      const bulle = conteneur.querySelector('.programme-poids-bulle-v13');
+      if (bulle) bulle.remove();
+    };
+
+    const afficherBulle = function (point) {
+      fermerBulle();
+
+      const bulle = document.createElement('div');
+      bulle.className = 'programme-poids-bulle-v13';
+
+      const dateLisible = point.dateObjet.toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+
+      const poidsLisible = point.poids.toLocaleString('fr-FR', {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      }) + ' kg';
+
+      const precedent =
+        point.index > 0 ? coordonnees[point.index - 1] : null;
+
+      let variationHtml = '<small>Première pesée</small>';
+
+      if (precedent) {
+        const ecart = point.poids - precedent.poids;
+        const signeEcart = ecart > 0 ? '+' : ecart < 0 ? '−' : '±';
+
+        variationHtml =
+          '<small>' +
+          signeEcart +
+          ' ' +
+          Math.abs(ecart).toLocaleString('fr-FR', {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1
+          }) +
+          ' kg vs la pesée précédente</small>';
+      }
+
+      bulle.innerHTML = `
+        <div class="programme-poids-bulle-contenu">
+          <div class="programme-poids-bulle-infos">
+            <strong>${dateLisible}</strong>
+            <span>${poidsLisible}</span>
+            ${variationHtml}
+          </div>
+
+          <div class="programme-poids-bulle-actions">
+            <button type="button" data-action="modifier" aria-label="Modifier cette pesée">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15.5V20h4.5L19 9.5 14.5 5 4 15.5Zm12.8-11.3 2.5 2.5c.4.4.4 1 0 1.4l-1.3 1.3-3.9-3.9 1.3-1.3c.4-.4 1-.4 1.4 0Z"/></svg>
+            </button>
+            <button type="button" data-action="supprimer" aria-label="Supprimer cette pesée">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm1 6h2v8h-2V9Zm4 0h2v8h-2V9ZM7 9h2v8H7V9Zm-1 10h12l1-12H5l1 12Z"/></svg>
+            </button>
+          </div>
+        </div>
+      `;
+
+      const rectSvg = conteneur.querySelector('svg').getBoundingClientRect();
+      const rectConteneur = conteneur.getBoundingClientRect();
+
+      const xPixels =
+        ((point.x / largeurSvg) * rectSvg.width) +
+        (rectSvg.left - rectConteneur.left);
+
+      const yPixels =
+        ((point.y / hauteurSvg) * rectSvg.height) +
+        (rectSvg.top - rectConteneur.top);
+
+      bulle.style.left = xPixels + 'px';
+      bulle.style.top = yPixels + 'px';
+
+      bulle.querySelector('[data-action="modifier"]')
+        .addEventListener('click', function () {
+          fermerBulle();
+          ouvrirModalPoidsV11({
+            date: point.date,
+            poids: point.poids
+          });
+        });
+
+      bulle.querySelector('[data-action="supprimer"]')
+        .addEventListener('click', async function () {
+          const confirmation = window.confirm(
+            'Supprimer la pesée du ' + dateLisible + ' ?'
+          );
+
+          if (!confirmation) return;
+
+          try {
+            const { error } = await supabase
+              .from('weight_entries')
+              .delete()
+              .eq('user_id', etatProgrammesV11.userId)
+              .eq('measured_on', point.date);
+
+            if (error) throw error;
+
+            await chargerMesuresPoidsV11();
+
+            rendreCourbePoidsV10(
+              etatProgrammesV11.mesures.map(function (mesure) {
+                return {
+                  poids: mesure.weight_kg,
+                  date: mesure.measured_on
+                };
+              })
+            );
+
+            afficherToast('Pesée supprimée.', 'succes');
+          } catch (error) {
+            console.error('[TRIÈDRE] Suppression de la pesée :', error);
+            afficherToast(
+              'Impossible de supprimer cette pesée pour le moment.',
+              'erreur'
+            );
+          }
+        });
+
+      conteneur.appendChild(bulle);
+
+      window.requestAnimationFrame(function () {
+        const largeurBulle = bulle.offsetWidth;
+        const demi = largeurBulle / 2;
+        const marge = 10;
+        let left = xPixels;
+
+        if (left - demi < marge) {
+          left = demi + marge;
+        }
+
+        if (left + demi > conteneur.clientWidth - marge) {
+          left = conteneur.clientWidth - demi - marge;
+        }
+
+        bulle.style.left = left + 'px';
+      });
+    };
+
+    coordonnees.forEach(function (point, index) {
+      const estDernierPoint = index === coordonnees.length - 1;
+
+      const halo = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'circle'
+      );
+
+      halo.setAttribute('cx', point.x.toFixed(1));
+      halo.setAttribute('cy', point.y.toFixed(1));
+      halo.setAttribute('r', estDernierPoint ? '10' : '8');
+      halo.setAttribute(
+        'class',
+        estDernierPoint
+          ? 'programme-courbe-point-halo programme-courbe-point-halo--current'
+          : 'programme-courbe-point-halo'
+      );
+      groupePoints.appendChild(halo);
+
       const cercle = document.createElementNS(
         'http://www.w3.org/2000/svg',
         'circle'
@@ -1414,25 +2175,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
       cercle.setAttribute('cx', point.x.toFixed(1));
       cercle.setAttribute('cy', point.y.toFixed(1));
-      cercle.setAttribute('r', '6');
-      cercle.setAttribute('class', 'programme-courbe-point');
-      points.appendChild(cercle);
+      cercle.setAttribute('r', estDernierPoint ? '6.5' : '5.5');
+      cercle.setAttribute(
+        'class',
+        estDernierPoint
+          ? 'programme-courbe-point programme-courbe-point--current'
+          : 'programme-courbe-point'
+      );
+      cercle.setAttribute('tabindex', '0');
+      cercle.setAttribute('role', 'button');
+      cercle.setAttribute('data-poids-point', 'true');
+      cercle.setAttribute(
+        'aria-label',
+        point.poids.toLocaleString('fr-FR', {
+          minimumFractionDigits: 1,
+          maximumFractionDigits: 1
+        }) +
+        ' kg le ' +
+        point.dateObjet.toLocaleDateString('fr-FR')
+      );
+
+      cercle.addEventListener('click', function (event) {
+        event.stopPropagation();
+        afficherBulle(point);
+      });
+
+      cercle.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          afficherBulle(point);
+        }
+      });
+
+      groupePoints.appendChild(cercle);
     });
 
-    const premier = valeurs[0];
-    const dernier = valeurs[valeurs.length - 1];
-    const delta = dernier - premier;
-
-    poidsActuel.textContent =
-      dernier.toFixed(1).replace('.', ',') + ' kg';
-
-    evolution.textContent =
-      (delta === 0
-        ? '± 0'
-        : (delta > 0 ? '+ ' : '− ') +
-          Math.abs(delta).toFixed(1).replace('.', ',')
-      ) +
-      ' kg depuis le début';
+    conteneur.onclick = function (event) {
+      if (
+        !event.target.closest('.programme-poids-bulle-v13') &&
+        !event.target.closest('[data-poids-point="true"]')
+      ) {
+        fermerBulle();
+      }
+    };
   }
 
   function obtenirDebutSemaine(date) {
@@ -2045,11 +2830,72 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!boutonMesInformations || !zoneInformations || !formulaireMesInformations) return;
 
     boutonMesInformations.addEventListener('click', ouvrirInformations);
+
     boutonRetourDashboard.addEventListener('click', function () {
-      zoneInformations.hidden = true;
-      zoneConnectee.hidden = false;
-      reinitialiserMessagesInformations();
+      retournerTableauMembre();
     });
+
+    if (boutonAnnulerInformations) {
+      boutonAnnulerInformations.addEventListener('click', function () {
+        retournerTableauMembre();
+      });
+    }
+
+    if (boutonOuvrirMotDePasse && zoneMotDePasse) {
+      boutonOuvrirMotDePasse.addEventListener('click', function () {
+        zoneMotDePasse.hidden = false;
+        boutonOuvrirMotDePasse.setAttribute('aria-expanded', 'true');
+
+        if (boutonSauvegarderMotDePasse) {
+          boutonSauvegarderMotDePasse.hidden = false;
+        }
+
+        if (boutonAnnulerMotDePasse) {
+          boutonAnnulerMotDePasse.hidden = false;
+        }
+
+        reinitialiserMotDePasse();
+
+        window.setTimeout(function () {
+          if (champMotDePasseActuel) champMotDePasseActuel.focus();
+        }, 50);
+      });
+    }
+
+    if (boutonAnnulerMotDePasse) {
+      boutonAnnulerMotDePasse.addEventListener('click', function () {
+        fermerModificationMotDePasse();
+      });
+    }
+
+    document.querySelectorAll('[data-toggle-password]').forEach(function (bouton) {
+      bouton.addEventListener('click', function () {
+        const idChamp = bouton.getAttribute('data-toggle-password');
+        const champ = document.getElementById(idChamp);
+
+        if (!champ) return;
+
+        const afficher = champ.type === 'password';
+
+        champ.type = afficher ? 'text' : 'password';
+        bouton.classList.toggle('mot-de-passe-visible', afficher);
+        bouton.setAttribute('aria-pressed', afficher ? 'true' : 'false');
+        bouton.setAttribute(
+          'aria-label',
+          afficher ? 'Masquer le mot de passe' : 'Afficher le mot de passe'
+        );
+        bouton.setAttribute(
+          'title',
+          afficher ? 'Masquer le mot de passe' : 'Afficher le mot de passe'
+        );
+      });
+    });
+
+    if (boutonSauvegarderMotDePasse) {
+      boutonSauvegarderMotDePasse.addEventListener('click', async function () {
+        await modifierMotDePasse();
+      });
+    }
 
     formulaireMesInformations.addEventListener('submit', async function (event) {
       event.preventDefault();
@@ -2058,18 +2904,56 @@ document.addEventListener('DOMContentLoaded', function () {
       const prenom = champProfilPrenom.value.trim();
       const nom = champProfilNom.value.trim();
       const sexe = obtenirSexeSelectionne();
-      const dateNaissance = champProfilDateNaissance.value || null;
+      const dateNaissance = champProfilDateNaissance.value;
       const telephone = champProfilTelephone.value.trim();
+      const email = champProfilEmail.value.trim();
       const nomComplet = composerNomComplet(prenom, nom);
 
-      if (prenom.length < 2) { afficherErreurInformations('Entre un prénom valide.', champProfilPrenom); return; }
-      if (nom.length < 2) { afficherErreurInformations('Entre un nom valide.', champProfilNom); return; }
+      if (prenom.length < 2) {
+        afficherErreurInformations('Entre un prénom valide.', champProfilPrenom);
+        return;
+      }
+
+      if (nom.length < 2) {
+        afficherErreurInformations('Entre un nom valide.', champProfilNom);
+        return;
+      }
+
+      if (!dateNaissance) {
+        afficherErreurInformations(
+          'Indique ta date de naissance.',
+          champProfilDateNaissance
+        );
+        return;
+      }
+
+      if (!telephone) {
+        afficherErreurInformations(
+          'Indique ton numéro de téléphone.',
+          champProfilTelephone
+        );
+        return;
+      }
+
+      if (!email) {
+        afficherErreurInformations(
+          'Ton adresse e-mail est requise.',
+          champProfilEmail
+        );
+        return;
+      }
 
       boutonEnregistrerInformations.disabled = true;
 
       try {
-        const { data: { user }, error: erreurUtilisateur } = await supabase.auth.getUser();
-        if (erreurUtilisateur || !user) throw erreurUtilisateur || new Error('SESSION_INVALIDE');
+        const {
+          data: { user },
+          error: erreurUtilisateur
+        } = await supabase.auth.getUser();
+
+        if (erreurUtilisateur || !user) {
+          throw erreurUtilisateur || new Error('SESSION_INVALIDE');
+        }
 
         const donneesProfil = {
           full_name: nomComplet,
@@ -2077,26 +2961,193 @@ document.addEventListener('DOMContentLoaded', function () {
           last_name: nom,
           gender: sexe || null,
           birth_date: dateNaissance,
-          phone: telephone || null
+          phone: telephone
         };
 
-        const { error: erreurProfil } = await supabase.from('profiles').update(donneesProfil).eq('id', user.id);
+        const { error: erreurProfil } = await supabase
+          .from('profiles')
+          .update(donneesProfil)
+          .eq('id', user.id);
+
         if (erreurProfil) throw erreurProfil;
 
-        const { error: erreurMetadata } = await supabase.auth.updateUser({ data: donneesProfil });
-        if (erreurMetadata) console.warn('[TRIÈDRE] Métadonnées Auth non synchronisées :', erreurMetadata);
+        const { error: erreurMetadata } = await supabase.auth.updateUser({
+          data: donneesProfil
+        });
 
-        majEnteteCompte({ email: user.email || '', prenom: prenom, nomComplet: nomComplet });
-        succesMesInformations.textContent = 'Tes informations ont été mises à jour.';
-        succesMesInformations.hidden = false;
+        if (erreurMetadata) {
+          console.warn(
+            '[TRIÈDRE] Métadonnées Auth non synchronisées :',
+            erreurMetadata
+          );
+        }
+
+        majEnteteCompte({
+          email: user.email || '',
+          prenom: prenom,
+          nomComplet: nomComplet
+        });
+
+        retournerTableauMembre();
+        afficherToast('Tes informations ont été sauvegardées.', 'succes');
       } catch (error) {
         console.error('[TRIÈDRE] Mise à jour du profil :', error);
-        erreurMesInformations.textContent = 'Impossible d’enregistrer tes modifications pour le moment.';
+        erreurMesInformations.textContent =
+          'Impossible de sauvegarder tes modifications pour le moment.';
         erreurMesInformations.hidden = false;
       } finally {
         boutonEnregistrerInformations.disabled = false;
       }
     });
+  }
+
+  function retournerTableauMembre() {
+    fermerModificationMotDePasse();
+    zoneInformations.hidden = true;
+    zoneConnectee.hidden = false;
+    reinitialiserMessagesInformations();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function fermerModificationMotDePasse() {
+    if (!zoneMotDePasse) return;
+
+    zoneMotDePasse.hidden = true;
+
+    if (boutonOuvrirMotDePasse) {
+      boutonOuvrirMotDePasse.setAttribute('aria-expanded', 'false');
+    }
+
+    if (boutonSauvegarderMotDePasse) {
+      boutonSauvegarderMotDePasse.hidden = true;
+    }
+
+    if (boutonAnnulerMotDePasse) {
+      boutonAnnulerMotDePasse.hidden = true;
+    }
+
+    reinitialiserMotDePasse();
+  }
+
+  function reinitialiserMotDePasse() {
+    if (champMotDePasseActuel) {
+      champMotDePasseActuel.value = '';
+      champMotDePasseActuel.type = 'password';
+    }
+
+    if (champNouveauMotDePasse) {
+      champNouveauMotDePasse.value = '';
+      champNouveauMotDePasse.type = 'password';
+    }
+
+    if (champConfirmationMotDePasse) {
+      champConfirmationMotDePasse.value = '';
+      champConfirmationMotDePasse.type = 'password';
+    }
+
+    document.querySelectorAll('[data-toggle-password]').forEach(function (bouton) {
+      bouton.classList.remove('mot-de-passe-visible');
+      bouton.setAttribute('aria-pressed', 'false');
+      bouton.setAttribute('aria-label', 'Afficher le mot de passe');
+      bouton.setAttribute('title', 'Afficher le mot de passe');
+    });
+
+    if (erreurMotDePasse) {
+      erreurMotDePasse.hidden = true;
+      erreurMotDePasse.textContent = '';
+    }
+  }
+
+  async function modifierMotDePasse() {
+    if (
+      !champMotDePasseActuel ||
+      !champNouveauMotDePasse ||
+      !champConfirmationMotDePasse ||
+      !boutonSauvegarderMotDePasse
+    ) {
+      return;
+    }
+
+    const actuel = champMotDePasseActuel.value;
+    const nouveau = champNouveauMotDePasse.value;
+    const confirmation = champConfirmationMotDePasse.value;
+
+    if (!actuel) {
+      afficherErreurMotDePasse(
+        'Entre ton mot de passe actuel.',
+        champMotDePasseActuel
+      );
+      return;
+    }
+
+    if (nouveau.length < 8) {
+      afficherErreurMotDePasse(
+        'Le nouveau mot de passe doit contenir au moins 8 caractères.',
+        champNouveauMotDePasse
+      );
+      return;
+    }
+
+    if (nouveau !== confirmation) {
+      afficherErreurMotDePasse(
+        'Les deux nouveaux mots de passe ne correspondent pas.',
+        champConfirmationMotDePasse
+      );
+      return;
+    }
+
+    boutonSauvegarderMotDePasse.disabled = true;
+
+    try {
+      const {
+        data: { user },
+        error: erreurUtilisateur
+      } = await supabase.auth.getUser();
+
+      if (erreurUtilisateur || !user || !user.email) {
+        throw erreurUtilisateur || new Error('SESSION_INVALIDE');
+      }
+
+      const { error: erreurConnexion } =
+        await supabase.auth.signInWithPassword({
+          email: user.email,
+          password: actuel
+        });
+
+      if (erreurConnexion) {
+        afficherErreurMotDePasse(
+          'Le mot de passe actuel est incorrect.',
+          champMotDePasseActuel
+        );
+        return;
+      }
+
+      const { error: erreurMiseAJour } = await supabase.auth.updateUser({
+        password: nouveau
+      });
+
+      if (erreurMiseAJour) throw erreurMiseAJour;
+
+      fermerModificationMotDePasse();
+      retournerTableauMembre();
+      afficherToast('Ton mot de passe a été modifié.', 'succes');
+    } catch (error) {
+      console.error('[TRIÈDRE] Modification du mot de passe :', error);
+      afficherErreurMotDePasse(
+        'Impossible de modifier ton mot de passe pour le moment.'
+      );
+    } finally {
+      boutonSauvegarderMotDePasse.disabled = false;
+    }
+  }
+
+  function afficherErreurMotDePasse(texte, champ) {
+    if (!erreurMotDePasse) return;
+
+    erreurMotDePasse.textContent = texte;
+    erreurMotDePasse.hidden = false;
+
+    if (champ) champ.focus();
   }
 
   async function ouvrirInformations() {
@@ -3012,6 +4063,41 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+
+  function appliquerNavigationAdmin() {
+    const liste = document.querySelector('.main-nav ul');
+
+    if (!liste) {
+      return;
+    }
+
+    const chemin = window.location.pathname.replace(/\/+$/, '') || '/';
+
+    const liens = [
+      { href: '/', label: 'Accueil', path: '/' },
+      { href: '/membre', label: 'Espace membre', path: '/membre' },
+      { href: '/coach', label: 'Tableau Coach', path: '/coach' },
+      { href: '/admin', label: 'Admin', path: '/admin' }
+    ];
+
+    liste.innerHTML = '';
+
+    liens.forEach(function (item) {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+
+      a.href = item.href;
+      a.textContent = item.label;
+
+      if (chemin === item.path) {
+        a.classList.add('active');
+      }
+
+      li.appendChild(a);
+      liste.appendChild(li);
+    });
+  }
+
   async function afficherAccesEspaceStaff() {
     if (!btnDeconnexion) {
       return;
@@ -3034,6 +4120,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const acces = Array.isArray(contexte) ? contexte[0] : contexte;
       const role = acces && acces.role ? acces.role : 'member';
+
+      if (role === 'admin') {
+        appliquerNavigationAdmin();
+      }
 
       if (role !== 'coach' && role !== 'admin') {
         return;
@@ -3066,6 +4156,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function afficherConnecte(user) {
     authZone.hidden = true;
+    if (navigationMembre) navigationMembre.hidden = false;
     zoneReset.hidden = true;
     zoneInformations.hidden = true;
     zoneConnectee.hidden = false;
@@ -3082,6 +4173,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function afficherDeconnecte(effacerEmail) {
     retirerAccesEspaceStaff();
+    if (navigationMembre) navigationMembre.hidden = true;
+    fermerMenusNavigationMembre();
     zoneConnectee.hidden = true;
     zoneInformations.hidden = true;
     zonePreferences.hidden = true;
@@ -3105,6 +4198,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function afficherReset() {
     authZone.hidden = true;
+    if (navigationMembre) navigationMembre.hidden = true;
     zoneConnectee.hidden = true;
     zoneInformations.hidden = true;
     zonePreferences.hidden = true;

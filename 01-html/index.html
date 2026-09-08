@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-  <title>TRIÈDRE — Deviens Plus</title>
+  <title>TRIÈDRE - Deviens Plus</title>
   <link rel="stylesheet" href="../02-css/style.css">
 </head>
 <body>
@@ -130,32 +130,24 @@
     </section>
 
     <!-- Section Univers -->
-    <section class="univers">
-
+    <section class="univers univers-home-v2">
       <div class="univers-text">
         <p class="section-eyebrow">L'univers Trièdre</p>
-
-        <h2>
-          Un univers. <span class="accent">Une vision.</span>
-        </h2>
-
+        <h2>Un univers. <span class="accent">Une vision.</span></h2>
         <p>
           TRIÈDRE rassemble ceux qui cherchent plus qu'un entraînement.
           Un état d'esprit. Un mode de vie.
           L'univers <strong>ATHLETIC</strong> est le premier chapitre.
           D'autres univers verront le jour.
         </p>
-
-        <a href="univers" class="btn btn-primary">
-          Découvrir l'univers
-        </a>
+        <a href="univers" class="btn btn-primary">Découvrir l'univers</a>
       </div>
 
-      <div class="univers-cards">
+      <div class="univers-cards univers-cards-home-v2">
 
         <a href="univers" class="univers-card univers-card-active">
           <img
-            src="../05-images/univers/univers-athletic.png"
+            src="../05-images/univers/univers-athletic-v2.png"
             alt="Univers Athletic"
           >
 
@@ -193,132 +185,99 @@
     </section>
 
     <!-- Section Produits -->
-    <section class="produits">
-
+    <section class="produits produits-home-v2">
       <div class="produits-intro">
         <p class="section-eyebrow">Apparel</p>
-
-        <h2>
-          Conçu pour <span
-          class="accent">performer.</span>
-        </h2>
-
+        <h2>Conçu pour <span class="accent">performer.</span></h2>
         <p>
           Des vêtements pensés pour l'entraînement.
           Créés pour le quotidien.
           Un style sobre. Une qualité exceptionnelle.
         </p>
-
-        <a href="boutique" class="btn btn-primary">
-          Voir la boutique
-        </a>
+        <a href="boutique" class="btn btn-primary">Voir la boutique</a>
       </div>
 
-      <ul class="produits-grid">
+      <div class="home-produits-carousel" data-home-products-carousel>
+        <button type="button" class="home-produits-fleche home-produits-fleche--gauche" data-home-products-prev aria-label="Voir les produits précédents">&#8249;</button>
+        <div class="home-produits-viewport">
+          <ul class="produits-grid home-produits-track">
+            <li class="produit-card"><a href="produit?id=hoodie-performance"><img src="../05-images/produits/produit-hoodie-noir-face.png" alt="Hoodie Performance TRIÈDRE"><h3>Hoodie Performance</h3><span class="prix">49,00 $</span></a></li>
+            <li class="produit-card"><a href="produit?id=tshirt-athletic"><img src="../05-images/produits/produit-tshirt-sauge-face.png" alt="T-shirt Athletic TRIÈDRE"><h3>T-shirt Athletic</h3><span class="prix">29,00 $</span></a></li>
+            <li class="produit-card"><a href="produit?id=brassiere-active"><img src="../05-images/produits/produit-brassiere-taupe-face.png" alt="Brassière Active TRIÈDRE"><h3>Brassière Active</h3><span class="prix">40,00 $</span></a></li>
+            <li class="produit-card"><a href="produit?id=leggings-essentiel"><img src="../05-images/produits/produit-leggings-taupe-face.png" alt="Leggings Essentiel TRIÈDRE"><h3>Leggings Essentiel</h3><span class="prix">59,00 $</span></a></li>
+            <li class="produit-card"><a href="produit?id=veste-legere"><img src="../05-images/produits/produit-veste-sauge-face.png" alt="Veste légère TRIÈDRE"><h3>Veste légère</h3><span class="prix">69,00 $</span></a></li>
+             <li class="produit-card"><a href="produit?id=casquette-triedre"><img src="../05-images/produits/produit-casquette-noir-face.png" alt="Casquette TRIÈDRE"><h3>Casquette Trièdre</h3><span class="prix">35,00 $</span></a></li>
+          </ul>
+        </div>
+        <button type="button" class="home-produits-fleche home-produits-fleche--droite" data-home-products-next aria-label="Voir les produits suivants">&#8250;</button>
+        <div class="home-produits-pagination" aria-hidden="true"><span class="active"></span><span></span><span></span><span></span></div>
+      </div>
+    </section>
 
-        <li class="produit-card">
-          <a href="produit?id=hoodie-performance">
-            <img
-              src="../05-images/produits/produit-hoodie-noir-face.png"
-              alt="Hoodie Performance TRIÈDRE"
-            >
-            <h3>Hoodie Performance</h3>
-            <span class="prix">49,00 $</span>
-          </a>
-        </li>
+    <!-- Section Progression -->
+    <section class="home-progression">
+      <div class="home-progression-manifeste">
+        <p class="section-eyebrow">Tableau de progression</p>
+        <h2>Progression.<br><span class="accent">Discipline.</span><br>Résultats.</h2>
+        <p>
+          Chaque effort compte. Chaque choix te rapproche de la meilleure version de toi-même.
+          Avec TRIÈDRE, ta progression devient visible, mesurable et motivante.
+        </p>
+        <a href="membre" class="btn btn-primary">Découvrir l'espace membre</a>
+      </div>
 
-        <li class="produit-card">
-          <a href="produit?id=tshirt-athletic">
-            <img
-              src="../05-images/produits/produit-tshirt-sauge-face.png"
-              alt="T-shirt Athletic TRIÈDRE"
-            >
-            <h3>T-shirt Athletic</h3>
-            <span class="prix">29,00 $</span>
-          </a>
-        </li>
+      <a
+        href="membre"
+        class="home-progression-demo home-progression-demo-link"
+        aria-label="Connecte-toi à ton espace membre TRIÈDRE"
+      >
+        <article class="home-progress-card home-progress-card--training">
+          <div class="home-progress-header"><div><p class="home-progress-kicker">Entraînements</p><span>Cette semaine</span></div><strong>100%</strong></div>
+          <div class="home-training-bars" aria-hidden="true"><span style="height:100%"></span><span style="height:18%"></span><span style="height:100%"></span><span style="height:18%"></span><span style="height:100%"></span><span style="height:18%"></span><span style="height:18%"></span></div>
+          <div class="home-training-days" aria-hidden="true"><small>LUN</small><small>MAR</small><small>MER</small><small>JEU</small><small>VEN</small><small>SAM</small><small>DIM</small></div>
+          <div class="home-progress-footer"><strong>3 / 3</strong><span>Séances terminées</span></div>
+        </article>
 
-        <li class="produit-card">
-          <a href="produit?id=casquette-triedre">
-            <img
-              src="../05-images/produits/produit-casquette-noir-face.png"
-              alt="Casquette TRIÈDRE"
-            >
-            <h3>Casquette Trièdre</h3>
-            <span class="prix">35,00 $</span>
-          </a>
-        </li>
+        <article class="home-progress-card home-progress-card--series">
+          <div><p class="home-progress-kicker">Séries totales</p><span>Cette semaine</span></div>
+          <strong class="home-series-value">36</strong>
+          <svg class="home-series-chart" viewBox="0 0 220 70" aria-hidden="true"><path d="M10 57 C45 54 58 34 82 41 C110 48 120 25 146 30 C174 36 190 14 210 20"></path></svg>
+          <small>+20% vs semaine dernière</small>
+        </article>
 
-        <li class="produit-card">
-          <a href="produit?id=brassiere-active">
-            <img
-              src="../05-images/produits/produit-brassiere-taupe-face.png"
-              alt="Brassière Active TRIÈDRE"
-            >
-            <h3>Brassière Active</h3>
-            <span class="prix">40,00 $</span>
-          </a>
-        </li>
+        <article class="home-progress-card home-progress-card--constance">
+          <div><p class="home-progress-kicker">Constance</p><span>Depuis le début du programme</span></div>
+          <div class="home-constance-ring"><svg viewBox="0 0 140 140" aria-hidden="true"><circle class="home-constance-bg" cx="70" cy="70" r="54"></circle><circle class="home-constance-progress" cx="70" cy="70" r="54"></circle></svg><strong>100%</strong></div>
+          <small>Excellente constance</small>
+        </article>
 
-        <li class="produit-card">
-          <a href="produit?id=leggings-essentiel">
-            <img
-              src="../05-images/produits/produit-leggings-taupe-face.png"
-              alt="Leggings Essentiel TRIÈDRE"
-            >
-            <h3>Leggings Essentiel</h3>
-            <span class="prix">59,00 $</span>
-          </a>
-        </li>
+        <div class="home-progression-signature">
+          <div><span>✓</span><strong>Planifier</strong></div>
+          <div><span>◯</span><strong>S'entraîner</strong></div>
+          <div><span>↗</span><strong>Progresser</strong></div>
+          <div><span>△</span><strong>Devenir plus</strong></div>
+        </div>
 
-        <li class="produit-card">
-          <a href="produit?id=veste-legere">
-            <img
-              src="../05-images/produits/produit-veste-sauge-face.png"
-              alt="Veste légère TRIÈDRE"
-            >
-            <h3>Veste légère</h3>
-            <span class="prix">69,00 $</span>
-          </a>
-        </li>
-
-      </ul>
+        <div class="home-progression-connect">
+          Connecte-toi à ton espace <span>→</span>
+        </div>
+      </a>
     </section>
 
     <!-- Section Espace Membre -->
-    <section class="membre">
+    <section class="membre membre-home-v2">
+      <div class="membre-content">
+        <p class="section-eyebrow">Espace Membre</p>
+        <h2>Plus qu'un compte.<br><span class="accent">Une communauté.</span></h2>
+        <p>Rejoins l'espace membre TRIÈDRE et accède à du contenu exclusif, des programmes, des avantages et plus encore.</p>
+        <a href="membre" class="btn btn-primary">Créer un compte</a>
+      </div>
 
       <div class="membre-image">
-        <video 
-          class="membre-video"
-          autoplay
-          muted
-          loop
-          playsinline
-          poster="../05-images/membre/membre-hoodie-nuit.png"
-          >
+        <video class="membre-video" autoplay muted loop playsinline poster="../05-images/membre/membre-hoodie-nuit.png">
           <source src="../05-images/membre/membre-video.mp4" type="video/mp4">
         </video>
       </div>
-
-      <div class="membre-content">
-        <p class="section-eyebrow">Espace Membre</p>
-
-        <h2>
-          Plus qu'un compte.<br>
-          <span class="accent">Une communauté.</span>
-        </h2>
-
-        <p>
-          Rejoins l'espace membre TRIÈDRE et accède à du contenu exclusif,
-          des programmes, des avantages et plus encore.
-        </p>
-
-        <a href="inscription" class="btn btn-primary">
-          Créer un compte
-        </a>
-      </div>
-
     </section>
 
   </main>
@@ -419,12 +378,14 @@
 
   </footer>
 
+  <script src="../03-js/modal.js"></script>
   <script src="../03-js/panier.js"></script>
   <script src="../03-js/recherche.js"></script>
   <script src="../03-js/prix-sync.js"></script>
   <script src="../03-js/main.js"></script>
   <script src="../03-js/navigation.js"></script>
   <script src="../03-js/banniere-promo.js"></script>
+  <script src="../03-js/home.js"></script>
 
 </body>
 </html>

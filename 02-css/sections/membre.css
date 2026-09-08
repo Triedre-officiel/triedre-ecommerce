@@ -1,47 +1,29 @@
 /* ==========================================================================
-   TRIÈDRE — Section Espace Membre
+   TRIÈDRE — Section Espace Membre — Home V2
+   ========================================================================== */
+.membre{display:flex;align-items:center;gap:clamp(2rem,5vw,5rem);max-width:var(--container-max-width);margin:0 auto;padding:var(--space-2xl) var(--container-padding)}
+.membre-home-v2 .membre-content{order:1;flex:.82;min-width:280px;max-width:470px}.membre-home-v2 .membre-image{order:2;flex:1.18;min-width:320px;aspect-ratio:16/9;overflow:hidden;border-radius:var(--radius-md)}.membre-video{width:100%;height:100%;object-fit:cover;border-radius:var(--radius-md)}.membre-content p:not(.section-eyebrow){margin:var(--space-md) 0 var(--space-lg);color:var(--color-text-secondary);line-height:1.7}
+@media(max-width:900px){.membre{flex-direction:column;text-align:center}.membre-home-v2 .membre-content,.membre-home-v2 .membre-image{order:initial;width:100%;max-width:none;min-width:0}}
+
+
+/* ==========================================================================
+   TRIÈDRE — Home V2.2 — Espace membre proportions mockup
    ========================================================================== */
 
-.membre {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xl);
-  max-width: var(--container-max-width);
-  margin: 0 auto;
-  padding: var(--space-xs) var(--container-padding);
+.membre-home-v2 .membre-content {
+  flex: .72;
+  max-width: 430px;
 }
 
-.membre-image {
-  flex: 1;
-  min-width: 280px;
+.membre-home-v2 .membre-image {
+  flex: 1.28;
+  aspect-ratio: 16 / 8.6;
 }
 
-.membre-image {
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  border-radius: var(--radius-md);
-}
-
-.membre-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: var(--radius-md);
-}
-
-.membre-content {
-  flex: 1;
-  min-width: 280px;
-}
-
-.membre-content p:not(.section-eyebrow) {
-  margin: var(--space-md) 0 var(--space-lg);
-}
-
-/* ---- Responsive ---- */
 @media (max-width: 900px) {
-  .membre {
-    flex-direction: column-reverse;
-    text-align: center;
+  .membre-home-v2 .membre-content,
+  .membre-home-v2 .membre-image {
+    flex: initial;
+    max-width: none;
   }
 }

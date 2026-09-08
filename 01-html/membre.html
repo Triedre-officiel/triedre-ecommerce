@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>Espace Membre — TRIÈDRE</title>
+  <title>Espace Membre - TRIÈDRE</title>
   <link rel="stylesheet" href="../02-css/style.css">
   <link rel="stylesheet" href="../02-css/sections/membre-auth.css">
 </head>
@@ -184,87 +184,58 @@
           </form>
         </div>
 
-        <section id="membre-connecte" class="membre-connecte" hidden>
-          <div class="membre-dashboard-entete">
+        <nav id="membre-navigation-connectee" class="membre-nav-premium" aria-label="Navigation de l’espace membre" hidden>
+          <button type="button" class="membre-nav-marque" id="membre-retour-accueil" aria-label="Accueil de l’espace membre">
+            <span class="membre-nav-marque-logo">TRIÈDRE</span>
+            <small>Espace membre</small>
+          </button>
+
+          <div class="membre-nav-groupes">
+            <details class="membre-nav-groupe">
+              <summary>Mon compte</summary>
+              <div class="membre-nav-menu">
+                <button type="button" id="ouvrir-mes-informations">Mes informations</button>
+                <button type="button" id="ouvrir-mes-adresses">Mes adresses</button>
+                <button type="button" id="ouvrir-mes-preferences">Mes préférences</button>
+                <button type="button" data-fonction-future>Mes avantages</button>
+              </div>
+            </details>
+
+            <details class="membre-nav-groupe">
+              <summary>Mon activité</summary>
+              <div class="membre-nav-menu">
+                <button type="button" id="ouvrir-mes-commandes">Mes commandes</button>
+                <button type="button" id="ouvrir-mes-favoris">Mes favoris</button>
+                <button type="button" id="ouvrir-mes-abonnements">Mes abonnements</button>
+                <button type="button" id="ouvrir-mes-programmes">Mes programmes</button>
+              </div>
+            </details>
+
+            <button type="button" class="membre-nav-direct" id="ouvrir-communaute">Communauté</button>
+          </div>
+
+          <button type="button" class="membre-nav-deconnexion" id="membre-deconnexion">Se déconnecter</button>
+        </nav>
+
+        <section id="membre-connecte" class="membre-connecte membre-accueil-premium" hidden>
+          <header class="membre-accueil-hero">
             <div>
-              <p class="section-eyebrow">TRIÈDRE</p>
-              <h2>Bienvenue <span class="accent" id="membre-prenom"></span></h2>
+              <p class="section-eyebrow">Espace membre</p>
+              <h2>Bonjour <span class="accent" id="membre-prenom"></span></h2>
               <p class="membre-dashboard-email" id="membre-email"></p>
+              <p class="membre-accueil-intro">Ton espace TRIÈDRE réunit ton compte, tes achats, tes favoris, tes programmes et ton parcours au même endroit.</p>
             </div>
+          </header>
 
-            <button type="button" class="membre-deconnexion-haut" id="membre-deconnexion">
-              Se déconnecter
-            </button>
+          <div class="membre-accueil-grid" aria-label="Accès rapides">
+            <button type="button" class="membre-accueil-carte" data-membre-raccourci="commandes"><span class="membre-accueil-carte-kicker">Apparel</span><strong>Mes commandes</strong><small>Retrouve tes achats et leur statut.</small><span class="membre-accueil-carte-action">Consulter →</span></button>
+            <button type="button" class="membre-accueil-carte" data-membre-raccourci="favoris"><span class="membre-accueil-carte-kicker">Sélection</span><strong>Mes favoris</strong><small>Garde tes pièces TRIÈDRE à portée de main.</small><span class="membre-accueil-carte-action">Découvrir →</span></button>
+            <button type="button" class="membre-accueil-carte" data-membre-raccourci="programmes"><span class="membre-accueil-carte-kicker">Athletic</span><strong>Mes programmes</strong><small>Entraînements, progression et suivi personnel.</small><span class="membre-accueil-carte-action">Progresser →</span></button>
+            <button type="button" class="membre-accueil-carte" data-membre-raccourci="informations"><span class="membre-accueil-carte-kicker">Profil</span><strong>Mon compte</strong><small>Gère tes informations et tes préférences.</small><span class="membre-accueil-carte-action">Gérer →</span></button>
           </div>
 
-          <div class="membre-dashboard-section">
-            <h3>Mon activité</h3>
-
-            <button type="button" class="membre-dashboard-lien" id="ouvrir-mes-commandes">
-              <span>Mes commandes</span>
-              <span aria-hidden="true">›</span>
-            </button>
-
-            <button type="button" class="membre-dashboard-lien" id="ouvrir-mes-favoris">
-              <span>Mes favoris</span>
-              <span aria-hidden="true">›</span>
-            </button>
-
-            <button type="button" class="membre-dashboard-lien" id="ouvrir-mes-abonnements">
-              <span>Mes abonnements</span>
-              <span aria-hidden="true">›</span>
-            </button>
-
-            <button type="button" class="membre-dashboard-lien" id="ouvrir-mes-programmes">
-              <span>Mes programmes</span>
-              <span aria-hidden="true">›</span>
-            </button>
-          </div>
-
-          <div class="membre-dashboard-section">
-            <h3>Mon compte</h3>
-
-            <button type="button" class="membre-dashboard-lien" id="ouvrir-mes-informations">
-              <span>Mes informations</span>
-              <span aria-hidden="true">›</span>
-            </button>
-
-            <button type="button" class="membre-dashboard-lien" id="ouvrir-mes-adresses">
-              <span>Mes adresses</span>
-              <span aria-hidden="true">›</span>
-            </button>
-
-            <button type="button" class="membre-dashboard-lien" id="ouvrir-mes-preferences">
-              <span>Mes préférences</span>
-              <span aria-hidden="true">›</span>
-            </button>
-
-            <button type="button" class="membre-dashboard-lien" data-fonction-future>
-              <span>Mes avantages</span>
-              <span aria-hidden="true">›</span>
-            </button>
-          </div>
-
-          <div class="membre-dashboard-section membre-dashboard-aide">
-            <h3>Aide</h3>
-
-            <button type="button" class="membre-dashboard-lien" id="ouvrir-communaute">
-              <span>Communauté</span>
-              <span aria-hidden="true">›</span>
-            </button>
-
-            <a href="contact" class="membre-dashboard-lien">
-              <span>Aide &amp; contact</span>
-              <span aria-hidden="true">›</span>
-            </a>
-
-            <button type="button" class="membre-dashboard-lien membre-suppression-compte" id="ouvrir-suppression-compte">
-              <span>Supprimer mon compte</span>
-            </button>
-          </div>
+          <div class="membre-accueil-signature"><span>Corps.</span><span>Mental.</span><span>Confiance.</span><strong>Deviens plus.</strong></div>
         </section>
-
-
 
 
         <section id="membre-abonnements" class="membre-abonnements" hidden>
@@ -359,58 +330,45 @@
               </div>
             </section>
 
-            <section class="programme-progression" aria-labelledby="programme-progression-titre">
-              <div class="programme-section-entete programme-section-entete--progression">
-                <div>
+            <section class="programme-progression programme-progression-v12" aria-labelledby="programme-progression-titre">
+              <div class="programme-progression-layout">
+                <div class="programme-progression-manifeste">
                   <p class="section-eyebrow">Tableau de progression</p>
-                  <h3 id="programme-progression-titre">Progression. Discipline. Résultats.</h3>
+                  <h3 id="programme-progression-titre">PROGRESSION.<br><span class="accent">DISCIPLINE.</span><br>RÉSULTATS.</h3>
+                  <p class="programme-progression-manifeste-texte">Chaque effort compte.<br>Chaque choix te rapproche<br>de la meilleure version de toi-même.</p>
+                  <div class="programme-progression-programme"><span>Progression du programme</span><strong id="programme-duree-programme">—</strong></div>
+                </div>
+
+                <div class="programme-progression-dashboard">
+                  <article class="programme-progress-card programme-progress-card--entrainements">
+                    <div class="programme-progress-card-entete"><div><p class="programme-indicateur-kicker">Entraînements</p><span>Cette semaine</span></div><strong id="programme-entrainements-pourcentage">—</strong></div>
+                    <div class="programme-entrainements-graphique" id="programme-entrainements-graphique" aria-label="Entraînements terminés cette semaine">
+                      <div class="programme-entrainement-jour" data-jour="1"><span class="programme-entrainement-barre"></span><small>LUN</small></div><div class="programme-entrainement-jour" data-jour="2"><span class="programme-entrainement-barre"></span><small>MAR</small></div><div class="programme-entrainement-jour" data-jour="3"><span class="programme-entrainement-barre"></span><small>MER</small></div><div class="programme-entrainement-jour" data-jour="4"><span class="programme-entrainement-barre"></span><small>JEU</small></div><div class="programme-entrainement-jour" data-jour="5"><span class="programme-entrainement-barre"></span><small>VEN</small></div><div class="programme-entrainement-jour" data-jour="6"><span class="programme-entrainement-barre"></span><small>SAM</small></div><div class="programme-entrainement-jour" data-jour="7"><span class="programme-entrainement-barre"></span><small>DIM</small></div>
+                    </div>
+                    <div class="programme-progress-card-pied"><strong id="programme-seances-semaine">—</strong><span>Séances terminées</span></div>
+                  </article>
+
+                  <article class="programme-progress-card programme-progress-card--series">
+                    <div><p class="programme-indicateur-kicker">Séries totales</p><span>Cette semaine</span></div>
+                    <strong class="programme-series-total" id="programme-series-totales">—</strong>
+                    <div class="programme-series-evolution" id="programme-series-evolution" aria-label="Évolution des séries réalisées"><svg viewBox="0 0 220 70" role="img" aria-label="Évolution des séries"><polyline id="programme-series-ligne" points="" hidden></polyline><g id="programme-series-points"></g></svg></div>
+                    <span class="programme-series-comparaison" id="programme-series-comparaison">—</span>
+                  </article>
+
+                  <article class="programme-progress-card programme-progress-card--constance">
+                    <div><p class="programme-indicateur-kicker">Constance</p><span>Depuis le début du programme</span></div>
+                    <div class="programme-constance-anneau" id="programme-constance-anneau" aria-label="Taux de constance"><svg viewBox="0 0 140 140" role="img"><circle class="programme-constance-fond" cx="70" cy="70" r="54"></circle><circle class="programme-constance-progression" id="programme-constance-progression" cx="70" cy="70" r="54"></circle></svg><strong id="programme-constance-valeur">—</strong></div>
+                    <span class="programme-constance-libelle" id="programme-constance-libelle">—</span>
+                  </article>
+
+                  <article class="programme-poids-carte">
+                    <div class="programme-resultats-entete"><div><p class="programme-indicateur-kicker">Évolution du poids</p><strong id="programme-poids-actuel">— kg</strong></div><span id="programme-poids-evolution">Évolution du poids</span></div>
+                    <div class="programme-courbe programme-courbe-v12" id="programme-courbe-poids" aria-label="Évolution du poids"><svg viewBox="0 0 620 220" role="img" aria-labelledby="programme-courbe-titre"><title id="programme-courbe-titre">Courbe d’évolution du poids</title><g id="programme-courbe-grille" class="programme-courbe-grille" aria-hidden="true"></g><g id="programme-courbe-axe-y" class="programme-courbe-axe programme-courbe-axe-y"></g><g id="programme-courbe-axe-x" class="programme-courbe-axe programme-courbe-axe-x"></g><polyline id="programme-courbe-ligne" points="" hidden></polyline><g id="programme-courbe-points"></g></svg><p class="programme-courbe-vide" id="programme-courbe-vide">Ajoute une première mesure de poids pour commencer ton suivi.</p></div>
+                    <button type="button" class="programme-ajouter-poids" id="programme-ajouter-poids">Ajouter mon poids</button>
+                  </article>
                 </div>
               </div>
-
-              <div class="programme-progression-grid">
-                <article class="programme-indicateur">
-                  <p class="programme-indicateur-kicker">Progression</p>
-                  <strong id="programme-seances-semaine">—</strong>
-                  <span>Séances cette semaine</span>
-                </article>
-
-                <article class="programme-indicateur">
-                  <p class="programme-indicateur-kicker">Discipline</p>
-                  <strong id="programme-duree-programme">—</strong>
-                  <span>Durée du programme</span>
-                </article>
-
-                <article class="programme-resultats">
-                  <div class="programme-resultats-entete">
-                    <div>
-                      <p class="programme-indicateur-kicker">Résultats</p>
-                      <strong id="programme-poids-actuel">— kg</strong>
-                    </div>
-                    <span id="programme-poids-evolution">Évolution du poids</span>
-                  </div>
-
-                  <div class="programme-courbe" id="programme-courbe-poids" aria-label="Évolution du poids">
-                    <svg viewBox="0 0 620 190" role="img" aria-labelledby="programme-courbe-titre">
-                      <title id="programme-courbe-titre">Courbe d’évolution du poids</title>
-                      <g class="programme-courbe-grille" aria-hidden="true">
-                        <line x1="30" y1="35" x2="590" y2="35"></line>
-                        <line x1="30" y1="80" x2="590" y2="80"></line>
-                        <line x1="30" y1="125" x2="590" y2="125"></line>
-                        <line x1="30" y1="170" x2="590" y2="170"></line>
-                      </g>
-                      <polyline id="programme-courbe-ligne" points="" hidden></polyline>
-                      <g id="programme-courbe-points"></g>
-                    </svg>
-                    <p class="programme-courbe-vide" id="programme-courbe-vide">
-                      Ajoute une première mesure de poids pour commencer ton suivi.
-                    </p>
-                  </div>
-
-                  <button type="button" class="programme-ajouter-poids" id="programme-ajouter-poids">
-                    Ajouter mon poids
-                  </button>
-                </article>
-              </div>
+              <div class="programme-progression-piliers"><div class="programme-pilier"><span class="programme-pilier-icone">✓</span><div><strong>Planifier</strong><small>Fixe tes objectifs</small></div></div><div class="programme-pilier"><span class="programme-pilier-icone">◯</span><div><strong>S’entraîner</strong><small>Donne le meilleur</small></div></div><div class="programme-pilier"><span class="programme-pilier-icone">↗</span><div><strong>Progresser</strong><small>Dépasse tes limites</small></div></div><div class="programme-pilier"><span class="programme-pilier-icone">△</span><div><strong>Devenir plus</strong><small>Vis ta meilleure version</small></div></div></div>
             </section>
           </div>
         </section>
@@ -527,70 +485,273 @@
           <p id="commandes-erreur" class="membre-modal-erreur" hidden></p>
         </section>
 
-        <section id="membre-informations" class="membre-informations" hidden>
-          <div class="membre-souspage-entete">
-            <button type="button" class="membre-retour" id="retour-tableau-de-bord" aria-label="Retour à mon compte">
-              <span aria-hidden="true">‹</span>
-              <span>Mon compte</span>
+<section id="membre-informations" class="membre-informations" hidden>
+  <div class="membre-souspage-entete">
+    <button
+      type="button"
+      class="membre-retour"
+      id="retour-tableau-de-bord"
+      aria-label="Retour à mon compte"
+    >
+      <span aria-hidden="true">‹</span>
+      <span>Mon compte</span>
+    </button>
+
+    <p class="section-eyebrow">Données du compte</p>
+    <h2>Mes informations</h2>
+  </div>
+
+  <form id="formulaire-mes-informations" class="membre-informations-form" novalidate>
+    <div class="membre-profil-grille">
+      <div class="champ-groupe">
+        <label for="profil-prenom">
+          Prénom <span class="champ-obligatoire" aria-hidden="true">*</span>
+        </label>
+        <input
+          type="text"
+          id="profil-prenom"
+          name="first_name"
+          autocomplete="given-name"
+          required
+        >
+      </div>
+
+      <div class="champ-groupe">
+        <label for="profil-nom">
+          Nom <span class="champ-obligatoire" aria-hidden="true">*</span>
+        </label>
+        <input
+          type="text"
+          id="profil-nom"
+          name="last_name"
+          autocomplete="family-name"
+          required
+        >
+      </div>
+
+      <div class="champ-groupe champ-groupe-large">
+        <label for="profil-sexe">Genre</label>
+        <select id="profil-sexe" name="profil-sexe">
+          <option value="">Sélectionner</option>
+          <option value="masculin">Homme</option>
+          <option value="feminin">Femme</option>
+          <option value="autre">Autre</option>
+          <option value="non_reponse">Je préfère ne pas répondre</option>
+        </select>
+      </div>
+
+      <div class="champ-groupe">
+        <label for="profil-date-naissance">
+          Date de naissance
+          <span class="champ-obligatoire" aria-hidden="true">*</span>
+        </label>
+        <input
+          type="date"
+          id="profil-date-naissance"
+          name="birth_date"
+          autocomplete="bday"
+          required
+        >
+      </div>
+
+      <div class="champ-groupe">
+        <label for="profil-telephone">
+          Téléphone <span class="champ-obligatoire" aria-hidden="true">*</span>
+        </label>
+        <input
+          type="tel"
+          id="profil-telephone"
+          name="phone"
+          autocomplete="tel"
+          inputmode="tel"
+          placeholder="+1 514 000 0000"
+          required
+        >
+      </div>
+
+      <div class="champ-groupe champ-groupe-large">
+        <label for="profil-email">
+          E-mail <span class="champ-obligatoire" aria-hidden="true">*</span>
+        </label>
+        <input
+          type="email"
+          id="profil-email"
+          autocomplete="email"
+          readonly
+          required
+          aria-readonly="true"
+        >
+        <small class="membre-champ-note">
+          L'adresse e-mail est liée à ton compte TRIÈDRE.
+        </small>
+      </div>
+    </div>
+
+    <section class="membre-mot-de-passe">
+      <div class="membre-mot-de-passe-grille">
+        <div class="membre-mot-de-passe-colonne membre-mot-de-passe-colonne-champs">
+          <p class="section-eyebrow">Sécurité</p>
+
+          <div
+            id="zone-modification-mot-de-passe"
+            class="membre-mot-de-passe-form"
+            hidden
+          >
+            <div class="champ-groupe champ-groupe-large">
+              <label for="mot-de-passe-actuel">
+                Mot de passe actuel
+                <span class="champ-obligatoire" aria-hidden="true">*</span>
+              </label>
+
+              <div class="champ-mot-de-passe">
+                <input
+                  type="password"
+                  id="mot-de-passe-actuel"
+                  autocomplete="current-password"
+                >
+                <button
+                  type="button"
+                  class="mot-de-passe-afficher"
+                  data-toggle-password="mot-de-passe-actuel"
+                  aria-pressed="false"
+                 aria-label="Afficher le mot de passe" title="Afficher le mot de passe">
+              <svg class="icone-oeil icone-oeil-visible" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2.25 12s3.5-6 9.75-6 9.75 6 9.75 6-3.5 6-9.75 6S2.25 12 2.25 12Z"></path>
+                <circle cx="12" cy="12" r="2.75"></circle>
+              </svg>
+              <svg class="icone-oeil icone-oeil-masque" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 3l18 18"></path>
+                <path d="M10.6 6.2A10.7 10.7 0 0 1 12 6c6.25 0 9.75 6 9.75 6a17.7 17.7 0 0 1-3.1 3.65"></path>
+                <path d="M6.1 6.1C3.55 8 2.25 12 2.25 12S5.75 18 12 18a10.8 10.8 0 0 0 3.9-.72"></path>
+              </svg>
             </button>
+              </div>
+            </div>
 
-            <p class="section-eyebrow">Données du compte</p>
-            <h2>Mes informations</h2>
+            <div class="champ-groupe champ-groupe-large">
+              <label for="nouveau-mot-de-passe">
+                Nouveau mot de passe
+                <span class="champ-obligatoire" aria-hidden="true">*</span>
+              </label>
+
+              <div class="champ-mot-de-passe">
+                <input
+                  type="password"
+                  id="nouveau-mot-de-passe"
+                  autocomplete="new-password"
+                >
+                <button
+                  type="button"
+                  class="mot-de-passe-afficher"
+                  data-toggle-password="nouveau-mot-de-passe"
+                  aria-pressed="false"
+                 aria-label="Afficher le mot de passe" title="Afficher le mot de passe">
+              <svg class="icone-oeil icone-oeil-visible" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2.25 12s3.5-6 9.75-6 9.75 6 9.75 6-3.5 6-9.75 6S2.25 12 2.25 12Z"></path>
+                <circle cx="12" cy="12" r="2.75"></circle>
+              </svg>
+              <svg class="icone-oeil icone-oeil-masque" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 3l18 18"></path>
+                <path d="M10.6 6.2A10.7 10.7 0 0 1 12 6c6.25 0 9.75 6 9.75 6a17.7 17.7 0 0 1-3.1 3.65"></path>
+                <path d="M6.1 6.1C3.55 8 2.25 12 2.25 12S5.75 18 12 18a10.8 10.8 0 0 0 3.9-.72"></path>
+              </svg>
+            </button>
+              </div>
+            </div>
+
+            <div class="champ-groupe champ-groupe-large">
+              <label for="confirmation-mot-de-passe">
+                Confirmation du mot de passe
+                <span class="champ-obligatoire" aria-hidden="true">*</span>
+              </label>
+
+              <div class="champ-mot-de-passe">
+                <input
+                  type="password"
+                  id="confirmation-mot-de-passe"
+                  autocomplete="new-password"
+                >
+                <button
+                  type="button"
+                  class="mot-de-passe-afficher"
+                  data-toggle-password="confirmation-mot-de-passe"
+                  aria-pressed="false"
+                 aria-label="Afficher le mot de passe" title="Afficher le mot de passe">
+              <svg class="icone-oeil icone-oeil-visible" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2.25 12s3.5-6 9.75-6 9.75 6 9.75 6-3.5 6-9.75 6S2.25 12 2.25 12Z"></path>
+                <circle cx="12" cy="12" r="2.75"></circle>
+              </svg>
+              <svg class="icone-oeil icone-oeil-masque" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 3l18 18"></path>
+                <path d="M10.6 6.2A10.7 10.7 0 0 1 12 6c6.25 0 9.75 6 9.75 6a17.7 17.7 0 0 1-3.1 3.65"></path>
+                <path d="M6.1 6.1C3.55 8 2.25 12 2.25 12S5.75 18 12 18a10.8 10.8 0 0 0 3.9-.72"></path>
+              </svg>
+            </button>
+              </div>
+            </div>
+
+            <p
+              class="membre-modal-erreur"
+              id="mot-de-passe-erreur"
+              hidden
+            ></p>
           </div>
+        </div>
 
-          <form id="formulaire-mes-informations" class="membre-informations-form" novalidate>
-            <div class="membre-profil-grille">
-              <div class="champ-groupe">
-                <label for="profil-prenom">Prénom</label>
-                <input type="text" id="profil-prenom" name="first_name" autocomplete="given-name" required>
-              </div>
+        <div class="membre-mot-de-passe-colonne membre-mot-de-passe-colonne-actions">
+          <button
+            type="button"
+            class="membre-action-texte membre-action-principale"
+            id="modifier-mot-de-passe"
+            aria-expanded="false"
+            aria-controls="zone-modification-mot-de-passe"
+          >
+            Modifier mot de passe
+          </button>
 
-              <div class="champ-groupe">
-                <label for="profil-nom">Nom</label>
-                <input type="text" id="profil-nom" name="last_name" autocomplete="family-name" required>
-              </div>
+          <button
+            type="button"
+            class="btn btn-primary"
+            id="sauvegarder-mot-de-passe"
+            hidden
+          >
+            Sauvegarder
+          </button>
 
-              <fieldset class="membre-sexe champ-groupe-large">
-                <legend>Sexe</legend>
-                <div class="membre-sexe-options">
-                  <label class="membre-radio">
-                    <input type="radio" name="profil-sexe" value="masculin">
-                    <span>Masculin</span>
-                  </label>
-                  <label class="membre-radio">
-                    <input type="radio" name="profil-sexe" value="feminin">
-                    <span>Féminin</span>
-                  </label>
-                </div>
-              </fieldset>
+          <button
+            type="button"
+            class="btn btn-secondaire"
+            id="annuler-mot-de-passe"
+            hidden
+          >
+            Annuler
+          </button>
+        </div>
+      </div>
+    </section>
 
-              <div class="champ-groupe">
-                <label for="profil-date-naissance">Date de naissance</label>
-                <input type="date" id="profil-date-naissance" name="birth_date" autocomplete="bday">
-              </div>
+    <p class="membre-modal-erreur" id="mes-informations-erreur" hidden></p>
+    <p class="membre-modal-succes" id="mes-informations-succes" hidden></p>
 
-              <div class="champ-groupe">
-                <label for="profil-telephone">Téléphone</label>
-                <input type="tel" id="profil-telephone" name="phone" autocomplete="tel" inputmode="tel" placeholder="+1 514 000 0000">
-              </div>
+    <div class="membre-informations-actions membre-informations-actions-v15">
+      <button
+        type="button"
+        class="btn btn-secondaire"
+        id="annuler-mes-informations"
+      >
+        Annuler
+      </button>
 
-              <div class="champ-groupe champ-groupe-large">
-                <label for="profil-email">E-mail</label>
-                <input type="email" id="profil-email" autocomplete="email" readonly aria-readonly="true">
-                <small class="membre-champ-note">L'adresse e-mail est liée à ton compte TRIÈDRE.</small>
-              </div>
-            </div>
-
-            <p class="membre-modal-erreur" id="mes-informations-erreur" hidden></p>
-            <p class="membre-modal-succes" id="mes-informations-succes" hidden></p>
-
-            <div class="membre-informations-actions">
-              <button type="submit" class="btn btn-primary" id="enregistrer-mes-informations">
-                Enregistrer les modifications
-              </button>
-            </div>
-          </form>
-        </section>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        id="enregistrer-mes-informations"
+      >
+        Sauvegarder
+      </button>
+    </div>
+  </form>
+</section>
 
         <section id="membre-preferences" class="membre-preferences" hidden>
           <div class="membre-souspage-entete">
@@ -928,6 +1089,7 @@
   <script src="../03-js/main.js"></script>
   <script src="../03-js/navigation.js"></script>
   <script src="../03-js/banniere-promo.js"></script>
+  <script src="../03-js/modal.js"></script>
   <script src="../03-js/membre.js"></script>
 </body>
 </html>

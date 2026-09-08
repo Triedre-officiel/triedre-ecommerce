@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-  <title>La Marque — TRIÈDRE</title>
+  <title>La Marque - TRIÈDRE</title>
   <link rel="stylesheet" href="../02-css/style.css">
 </head>
 <body>
@@ -45,8 +45,8 @@
 
   <main>
 
-    <!-- Hero de la page -->
-    <section class="marque-hero">
+    <!-- 1. Notre histoire — validée, on garde cette composition -->
+    <section class="marque-hero marque-hero-v3">
       <div class="marque-hero-content">
         <p class="section-eyebrow">La Marque</p>
         <h1>Notre <span class="accent">histoire.</span></h1>
@@ -56,55 +56,126 @@
           Un mode de vie. Une discipline. Une seule direction.
         </p>
       </div>
+
       <div class="marque-hero-image">
-        <img src="../05-images/hero/hero-athlete.png" alt="Athlète TRIÈDRE à l'entraînement">
+        <img
+          src="../05-images/hero/hero-athlete.png"
+          alt="Athlète TRIÈDRE à l'entraînement"
+        >
       </div>
     </section>
 
-    <!-- Les trois piliers -->
-    <section class="marque-piliers">
-      <p class="section-eyebrow">Trois piliers</p>
-      <h2>Corps. Mental. <span class="accent">Confiance.</span></h2>
+    <!-- 2. Trois piliers — fusion simplifiée -->
+    <section class="marque-piliers marque-piliers-v3">
 
-      <ul class="piliers-grille">
-        <li class="pilier-carte">
+      <div class="marque-piliers-entete-v3">
+        <div class="marque-piliers-entete-gauche">
+          <p class="section-eyebrow">Trois piliers</p>
+          <h2>
+            Corps. Mental. <span class="accent">Confiance.</span>
+          </h2>
+        </div>
+
+        <div class="marque-piliers-entete-centre">
+          <p class="marque-piliers-progression">
+            3 axes. <span class="accent">Une progression.</span>
+          </p>
+        </div>
+
+        <div class="marque-piliers-entete-droite">
+          <p class="marque-piliers-direction">
+            Une méthode. <span class="accent">Une direction.</span>
+          </p>
+        </div>
+      </div>
+
+      <ul class="piliers-grille piliers-grille-v3">
+        <li class="pilier-carte pilier-carte-v3">
           <span class="pilier-numero">01</span>
           <h3>Corps</h3>
-          <p>La discipline physique comme fondation. S'entraîner n'est pas une contrainte, c'est un choix quotidien envers soi-même.</p>
+          <p>
+            La discipline physique comme fondation.
+            S'entraîner n'est pas une contrainte,
+            c'est un choix quotidien envers soi-même.
+          </p>
         </li>
-        <li class="pilier-carte">
+
+        <li class="pilier-carte pilier-carte-v3">
           <span class="pilier-numero">02</span>
           <h3>Mental</h3>
-          <p>La force ne se voit pas toujours. Elle se construit dans la constance, la résilience et la clarté d'esprit.</p>
+          <p>
+            La force ne se voit pas toujours.
+            Elle se construit dans la constance,
+            la résilience et la clarté d'esprit.
+          </p>
         </li>
-        <li class="pilier-carte">
+
+        <li class="pilier-carte pilier-carte-v3">
           <span class="pilier-numero">03</span>
           <h3>Confiance</h3>
-          <p>Le résultat naturel des deux premiers piliers. Une confiance qui se porte, au sens propre comme au figuré.</p>
+          <p>
+            Le résultat naturel des deux premiers piliers.
+            Une confiance qui se porte,
+            au sens propre comme au figuré.
+          </p>
         </li>
       </ul>
     </section>
 
-    <!-- Mission -->
-    <section class="marque-mission">
+    <!-- 3. Mission — nouvelle image Apparel -->
+    <section class="marque-mission marque-mission-v3">
       <div class="marque-mission-image">
-        <img src="../05-images/univers/univers-athletic.png" alt="Univers Athletic TRIÈDRE">
+        <img
+          src="../05-images/boutique/marque-apparel.png"
+          alt="Collection TRIÈDRE Apparel homme et femme"
+        >
       </div>
+
       <div class="marque-mission-content">
         <p class="section-eyebrow">Notre mission</p>
-        <h2>Des vêtements pensés pour <span class="accent">durer.</span></h2>
+
+        <h2>
+          Des vêtements pensés pour
+          <span class="accent">durer.</span>
+        </h2>
+
         <p>
           Chaque pièce TRIÈDRE est conçue pour accompagner l'entraînement
-          d'aujourd'hui et le quotidien de demain. Pas de tendance éphémère —
-          des matières durables, une coupe sobre, une qualité qui résiste
-          au temps.
+          d'aujourd'hui et le quotidien de demain.
+          Pas de tendance éphémère — des matières durables,
+          une coupe sobre, une qualité qui résiste au temps.
         </p>
+
         <p>
           Fondée à Montréal, TRIÈDRE grandit avec l'ambition de bâtir
-          bien plus qu'une marque de vêtements : une communauté qui partage
-          les mêmes valeurs.
+          bien plus qu'une marque de vêtements :
+          une communauté qui partage les mêmes valeurs.
         </p>
-        <a href="boutique" class="btn btn-primary">Découvrir la boutique</a>
+
+        <a href="boutique" class="btn btn-primary marque-cta">
+          Découvrir la boutique
+        </a>
+      </div>
+    </section>
+
+    <!-- 4. Devenir plus — 2 colonnes -->
+    <section class="marque-final marque-final-v3">
+      <div class="marque-final-gauche">
+        <p class="section-eyebrow">TRIÈDRE</p>
+
+        <h2>
+          Devenir <span class="accent">plus.</span>
+        </h2>
+
+        <p class="marque-final-phrase">
+          La discipline est un mode de vie.
+        </p>
+      </div>
+
+      <div class="marque-final-droite">
+        <a href="univers" class="btn btn-primary marque-cta">
+          Découvrir l'univers
+        </a>
       </div>
     </section>
 
@@ -156,6 +227,7 @@
     <p class="footer-copyright">© 2026 Trièdre Athletic. Tous droits réservés.</p>
   </footer>
 
+  <script src="../03-js/modal.js"></script>
   <script src="../03-js/panier.js"></script>
   <script src="../03-js/recherche.js"></script>
   <script src="../03-js/main.js"></script>

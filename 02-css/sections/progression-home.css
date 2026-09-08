@@ -1,0 +1,181 @@
+/* ==========================================================================
+   TRIÈDRE — Progression / Discipline / Résultats — Home V2
+   ========================================================================== */
+.home-progression{
+  display:grid;
+  grid-template-columns:minmax(280px,.78fr) minmax(0,1.22fr);
+  align-items:center;
+  gap:clamp(1.5rem,3.2vw,3.5rem);
+  max-width:var(--container-max-width);
+  margin:0 auto;
+  padding:clamp(2rem,3.2vw,3.5rem) var(--container-padding)
+}.home-progression-manifeste{max-width:470px}.home-progression-manifeste h2{margin:var(--space-xs) 0 var(--space-md);line-height:.98}.home-progression-manifeste>p:not(.section-eyebrow){max-width:440px;margin:0 0 var(--space-lg);color:var(--color-text-secondary);line-height:1.7}
+.home-progression-demo{display:grid;grid-template-columns:1.45fr .78fr .78fr;gap:.75rem;min-width:0;padding:1rem;border:1px solid rgba(255,255,255,.10);border-radius:14px;background:radial-gradient(circle at top left,rgba(212,175,55,.06),transparent 34%),linear-gradient(180deg,rgba(20,20,20,.98),rgba(10,10,10,.98))}.home-progress-card{min-width:0;min-height:205px;display:flex;flex-direction:column;padding:.95rem;border:1px solid rgba(255,255,255,.08);border-radius:11px;background:rgba(255,255,255,.025)}.home-progress-header{display:flex;justify-content:space-between;gap:.65rem}.home-progress-header>strong,.home-series-value{color:var(--color-accent);font-family:var(--font-heading)}.home-progress-header>strong{font-size:1.35rem}.home-progress-kicker{margin:0;font-family:var(--font-heading);font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.045em}.home-progress-card span,.home-progress-card small{color:var(--color-text-secondary);font-size:.67rem}
+.home-training-bars{flex:1;display:grid;grid-template-columns:repeat(7,1fr);align-items:end;gap:.45rem;min-height:105px;margin-top:.7rem}.home-training-bars span{display:block;min-height:12px;border-radius:4px 4px 1px 1px;background:linear-gradient(180deg,#dfbb50,#94701e)}.home-training-bars span:nth-child(even),.home-training-bars span:nth-child(6),.home-training-bars span:nth-child(7){background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.06))}.home-training-days{display:grid;grid-template-columns:repeat(7,1fr);gap:.45rem;text-align:center;margin-top:.35rem}.home-progress-footer{display:flex;justify-content:space-between;align-items:baseline;gap:.6rem;margin-top:.7rem;padding-top:.65rem;border-top:1px solid rgba(255,255,255,.07)}.home-progress-footer strong{font-family:var(--font-heading)}
+.home-series-value{display:block;margin:auto 0 .2rem;font-size:2.8rem;line-height:1}.home-series-chart{width:100%;height:58px;overflow:visible}.home-series-chart path{fill:none;stroke:var(--color-accent);stroke-width:3;stroke-linecap:round}.home-progress-card--constance{align-items:center;text-align:center}.home-progress-card--constance>div:first-child{align-self:stretch}.home-constance-ring{position:relative;width:118px;height:118px;display:grid;place-items:center;margin:auto}.home-constance-ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}.home-constance-bg,.home-constance-progress{fill:none;stroke-width:9}.home-constance-bg{stroke:rgba(255,255,255,.08)}.home-constance-progress{stroke:var(--color-accent);stroke-linecap:round;stroke-dasharray:339.292;stroke-dashoffset:0}.home-constance-ring strong{position:relative;z-index:1;font-family:var(--font-heading);font-size:1.55rem}
+.home-progression-signature{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:.65rem;padding-top:.8rem;border-top:1px solid rgba(255,255,255,.08)}.home-progression-signature div{display:flex;align-items:center;gap:.45rem;min-width:0}.home-progression-signature span{width:30px;height:30px;flex:0 0 auto;display:grid;place-items:center;border:1px solid rgba(212,175,55,.52);border-radius:50%;color:var(--color-accent);font-size:.75rem}.home-progression-signature strong{font-family:var(--font-heading);font-size:.7rem;text-transform:uppercase;letter-spacing:.035em}
+@media(max-width:1050px){.home-progression{grid-template-columns:1fr}.home-progression-manifeste{max-width:720px;margin:0 auto;text-align:center}.home-progression-manifeste>p:not(.section-eyebrow){max-width:680px;margin-inline:auto}}@media(max-width:760px){.home-progression-demo{grid-template-columns:1fr 1fr}.home-progress-card--training{grid-column:1/-1}.home-progression-signature{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.home-progression{padding-block:var(--space-xl)}.home-progression-demo{grid-template-columns:1fr}.home-progress-card--training{grid-column:auto}.home-progression-signature{grid-template-columns:1fr 1fr}}
+
+
+/* ==========================================================================
+   TRIÈDRE — Home V2.1 — Démo progression cliquable
+   ========================================================================== */
+
+.home-progression-demo-link {
+  position: relative;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    box-shadow .2s ease,
+    background .2s ease;
+}
+
+.home-progression-demo-link:hover,
+.home-progression-demo-link:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(212, 175, 55, .72);
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, .12),
+    0 18px 42px rgba(0, 0, 0, .22);
+  background:
+    radial-gradient(circle at top left, rgba(212,175,55,.10), transparent 38%),
+    linear-gradient(180deg, rgba(22,22,22,.99), rgba(10,10,10,.99));
+}
+
+.home-progression-demo-link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+
+.home-progression-connect {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  margin-top: -.1rem;
+  padding: .72rem .9rem;
+  border-top: 1px solid rgba(255,255,255,.08);
+  color: var(--color-text-secondary);
+  font-family: var(--font-heading);
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  transition: color .2s ease;
+}
+
+.home-progression-connect span {
+  color: var(--color-accent);
+  font-size: 1rem;
+  transition: transform .2s ease;
+}
+
+.home-progression-demo-link:hover .home-progression-connect,
+.home-progression-demo-link:focus-visible .home-progression-connect {
+  color: var(--color-accent);
+}
+
+.home-progression-demo-link:hover .home-progression-connect span,
+.home-progression-demo-link:focus-visible .home-progression-connect span {
+  transform: translateX(4px);
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Home V2.2 — Rythme vertical premium / sections rapprochées
+   ========================================================================== */
+
+.univers-home-v2,
+.produits-home-v2,
+.home-progression,
+.membre-home-v2 {
+  padding-top: 1.15rem !important;
+  padding-bottom: 1.15rem !important;
+  min-height: 0;
+}
+
+.univers-home-v2 + .produits-home-v2,
+.produits-home-v2 + .home-progression,
+.home-progression + .membre-home-v2 {
+  margin-top: 0 !important;
+}
+
+.univers-home-v2 .univers-text > p:not(.section-eyebrow),
+.produits-home-v2 .produits-intro p:not(.section-eyebrow),
+.home-progression-manifeste > p:not(.section-eyebrow),
+.membre-home-v2 .membre-content p:not(.section-eyebrow) {
+  margin-bottom: 1rem !important;
+}
+
+.home-progression {
+  border-top: 1px solid rgba(255,255,255,.04);
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+
+.membre-home-v2 {
+  border-top: 1px solid rgba(255,255,255,.055);
+}
+
+@media (max-width: 900px) {
+  .univers-home-v2,
+  .produits-home-v2,
+  .home-progression,
+  .membre-home-v2 {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+}
+
+/* ==========================================================================
+   TRIÈDRE — Home V2.2 — CTA dorés pleins
+   ========================================================================== */
+
+.univers-home-v2 .btn.btn-primary,
+.produits-home-v2 .btn.btn-primary,
+.home-progression-manifeste .btn.btn-primary,
+.membre-home-v2 .btn.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: .78rem 1.25rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 2px;
+  background: var(--color-accent);
+  color: #111;
+  font-weight: 700;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: none;
+  transition:
+    transform var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.univers-home-v2 .btn.btn-primary:hover,
+.univers-home-v2 .btn.btn-primary:focus-visible,
+.produits-home-v2 .btn.btn-primary:hover,
+.produits-home-v2 .btn.btn-primary:focus-visible,
+.home-progression-manifeste .btn.btn-primary:hover,
+.home-progression-manifeste .btn.btn-primary:focus-visible,
+.membre-home-v2 .btn.btn-primary:hover,
+.membre-home-v2 .btn.btn-primary:focus-visible {
+  transform: translateY(-1px);
+  background: #e2be50;
+  border-color: #e2be50;
+  color: #0d0d0d;
+}
+
+.univers-home-v2 .btn.btn-primary:focus-visible,
+.produits-home-v2 .btn.btn-primary:focus-visible,
+.home-progression-manifeste .btn.btn-primary:focus-visible,
+.membre-home-v2 .btn.btn-primary:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}

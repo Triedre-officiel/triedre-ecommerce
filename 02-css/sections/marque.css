@@ -1,129 +1,453 @@
 /* ==========================================================================
-   TRIÈDRE — Page La Marque
+   TRIÈDRE — Page La Marque — V3
+   Cohérente avec la nouvelle home.
    ========================================================================== */
 
-/* ---- Hero ---- */
-.marque-hero {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xl);
+/* --------------------------------------------------------------------------
+   Rythme global compact
+   -------------------------------------------------------------------------- */
+
+.marque-hero-v3,
+.marque-piliers-v3,
+.marque-mission-v3,
+.marque-final-v3 {
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: 1.5rem var(--container-padding) var(--space-2xl);
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+}
+
+.marque-hero-v3,
+.marque-piliers-v3,
+.marque-mission-v3,
+.marque-final-v3 {
+  padding-top: 1.15rem;
+  padding-bottom: 1.15rem;
+}
+
+/* --------------------------------------------------------------------------
+   1. Notre histoire — conservée
+   -------------------------------------------------------------------------- */
+
+.marque-hero-v3 {
+  display: grid;
+  grid-template-columns: minmax(280px, .75fr) minmax(0, 1.25fr);
+  align-items: center;
+  gap: clamp(1.5rem, 3.2vw, 3.5rem);
 }
 
 .marque-hero-content {
-  flex: 1;
-  min-width: 280px;
+  min-width: 0;
+  max-width: 470px;
+}
+
+.marque-hero-content h1 {
+  margin: var(--space-xs) 0 var(--space-md);
 }
 
 .marque-hero-content p:not(.section-eyebrow) {
-  margin-top: var(--space-md);
-  max-width: 460px;
+  max-width: 450px;
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.72;
 }
 
 .marque-hero-image {
-  flex: 1;
-  min-width: 280px;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--radius-md);
 }
 
 .marque-hero-image img {
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 16 / 10;
   object-fit: cover;
-  object-position: right top;
-  border-radius: var(--radius-md);
+  object-position: center 18%;
+  border-radius: inherit;
 }
 
-/* ---- Trois piliers ---- */
-.marque-piliers {
-  max-width: var(--container-max-width);
-  margin: 0 auto;
-  padding: var(--space-2xl) var(--container-padding);
-  text-align: center;
-  border-top: 1px solid var(--color-border);
+/* --------------------------------------------------------------------------
+   2. Trois piliers
+   -------------------------------------------------------------------------- */
+
+.marque-piliers-v3 {
+  border-top: 1px solid rgba(255,255,255,.055);
+  border-bottom: 1px solid rgba(255,255,255,.055);
 }
 
-.marque-piliers h2 {
-  margin: var(--space-xs) 0 var(--space-lg);
-}
-
-.piliers-grille {
+.marque-piliers-entete-v3 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-lg);
-  text-align: left;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, .78fr);
+  align-items: end;
+  gap: clamp(1.2rem, 3vw, 3rem);
+  margin-bottom: .9rem;
 }
 
-.pilier-carte {
-  background-color: var(--color-bg-secondary);
-  border-radius: var(--radius-md);
-  padding: var(--space-lg);
+.marque-piliers-entete-gauche h2 {
+  margin: var(--space-xs) 0 0;
+  font-size: clamp(1.45rem, 2.5vw, 2.45rem);
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+.marque-piliers-entete-droite {
+  text-align: right;
+}
+
+.marque-piliers-direction {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(1.1rem, 2vw, 1.85rem);
+  line-height: 1.08;
+  text-transform: uppercase;
+  letter-spacing: .025em;
+  white-space: nowrap;
+}
+
+.piliers-grille-v3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pilier-carte-v3 {
+  min-width: 0;
+  padding: 1rem 1.25rem 1.05rem;
+  background: transparent;
+  border-radius: 0;
+}
+
+.pilier-carte-v3 + .pilier-carte-v3 {
+  border-left: 1px solid rgba(255,255,255,.10);
 }
 
 .pilier-numero {
   display: block;
-  font-family: var(--font-heading);
-  font-size: 2rem;
+  margin-bottom: .42rem;
   color: var(--color-accent);
-  margin-bottom: var(--space-sm);
+  font-family: var(--font-heading);
+  font-size: clamp(1.85rem, 2.8vw, 2.9rem);
+  line-height: 1;
 }
 
-.pilier-carte h3 {
-  margin-bottom: var(--space-sm);
+.pilier-carte-v3 h3 {
+  margin: 0 0 .48rem;
+  font-family: var(--font-heading);
+  font-size: .95rem;
+  text-transform: uppercase;
+  letter-spacing: .055em;
 }
 
-/* ---- Mission ---- */
-.marque-mission {
-  display: flex;
+.pilier-carte-v3 p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   3. Mission / Apparel
+   -------------------------------------------------------------------------- */
+
+.marque-mission-v3 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(280px, .82fr);
   align-items: center;
-  gap: var(--space-xl);
-  max-width: var(--container-max-width);
-  margin: 0 auto;
-  padding: var(--space-2xl) var(--container-padding);
-  border-top: 1px solid var(--color-border);
+  gap: clamp(1.5rem, 3.2vw, 3.5rem);
 }
 
 .marque-mission-image {
-  flex: 1;
-  min-width: 280px;
-}
-
-.marque-mission-image img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  object-position: center 1%;
+  min-width: 0;
+  overflow: hidden;
   border-radius: var(--radius-md);
 }
 
+.marque-mission-image img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: center center;
+  border-radius: inherit;
+}
+
 .marque-mission-content {
-  flex: 1;
-  min-width: 280px;
+  min-width: 0;
+  max-width: 500px;
+}
+
+.marque-mission-content h2 {
+  margin: var(--space-xs) 0 var(--space-md);
 }
 
 .marque-mission-content p:not(.section-eyebrow) {
-  margin: var(--space-md) 0;
+  margin: 0 0 .85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.66;
 }
 
-.marque-mission-content .btn {
-  margin-top: var(--space-sm);
+/* --------------------------------------------------------------------------
+   CTA dorés pleins
+   -------------------------------------------------------------------------- */
+
+.marque-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  margin-top: .25rem;
+  padding: .78rem 1.25rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 2px;
+  background: var(--color-accent);
+  color: #111;
+  font-weight: 700;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    transform var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
-/* ---- Responsive ---- */
-@media (max-width: 900px) {
-  .marque-hero,
-  .marque-mission {
-    flex-direction: column;
+.marque-cta:hover,
+.marque-cta:focus-visible {
+  transform: translateY(-1px);
+  background: #e2be50;
+  border-color: #e2be50;
+  color: #0d0d0d;
+}
+
+/* --------------------------------------------------------------------------
+   4. Final — Devenir plus à gauche / Découvrir l'univers à droite
+   -------------------------------------------------------------------------- */
+
+.marque-final-v3 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  border-top: 1px solid rgba(255,255,255,.055);
+}
+
+.marque-final-gauche h2 {
+  margin: .15rem 0 0;
+  font-size: clamp(2rem, 4vw, 4.35rem);
+  line-height: .98;
+  text-transform: uppercase;
+}
+
+.marque-final-phrase {
+  margin: .48rem 0 0;
+  color: var(--color-text-secondary);
+  font-size: clamp(.9rem, 1.2vw, 1rem);
+}
+
+.marque-final-droite {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.marque-final-droite .marque-cta {
+  margin-top: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 980px) {
+  .marque-piliers-entete-v3 {
+    grid-template-columns: 1fr;
     text-align: center;
   }
 
-  .marque-mission {
-    flex-direction: column-reverse;
+  .marque-piliers-entete-droite {
+    text-align: center;
   }
 
-  .piliers-grille {
+  .marque-piliers-entete-gauche h2,
+  .marque-piliers-direction {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 900px) {
+  .marque-hero-v3,
+  .marque-mission-v3 {
     grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .marque-hero-content,
+  .marque-mission-content {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .piliers-grille-v3 {
+    grid-template-columns: 1fr;
+  }
+
+  .pilier-carte-v3 {
+    padding: 1rem 0 1.05rem;
+    text-align: center;
+  }
+
+  .pilier-carte-v3 + .pilier-carte-v3 {
+    border-left: 0;
+    border-top: 1px solid rgba(255,255,255,.10);
+  }
+}
+
+@media (max-width: 760px) {
+  .marque-final-v3 {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .marque-final-droite {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .marque-hero-v3,
+  .marque-piliers-v3,
+  .marque-mission-v3,
+  .marque-final-v3 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .marque-hero-image img,
+  .marque-mission-image img {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Page La Marque — V3.1
+   Deux derniers correctifs : image Apparel + titre mission sur une ligne
+   ========================================================================== */
+
+.marque-mission-v3 {
+  grid-template-columns: minmax(0, .92fr) minmax(430px, 1.08fr);
+  gap: clamp(1.25rem, 2.4vw, 2.4rem);
+}
+
+.marque-mission-content {
+  max-width: 590px;
+}
+
+.marque-mission-content h2 {
+  font-size: clamp(1.45rem, 2.15vw, 2.35rem);
+  white-space: nowrap;
+}
+
+@media (max-width: 1050px) {
+  .marque-mission-v3 {
+    grid-template-columns: minmax(0, .88fr) minmax(390px, 1.12fr);
+    gap: 1.25rem;
+  }
+
+  .marque-mission-content h2 {
+    font-size: clamp(1.3rem, 2vw, 2rem);
+  }
+}
+
+@media (max-width: 900px) {
+  .marque-mission-v3 {
+    grid-template-columns: 1fr;
+  }
+
+  .marque-mission-content h2 {
+    white-space: normal;
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — Page La Marque — V3.2
+   Trois piliers : 3 messages alignés sur une seule ligne
+   ========================================================================== */
+
+.marque-piliers-entete-v3 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(190px, .8fr) minmax(0, 1.05fr);
+  align-items: end;
+  gap: clamp(.8rem, 1.8vw, 1.8rem);
+  margin-bottom: .9rem;
+}
+
+.marque-piliers-entete-gauche h2 {
+  font-size: clamp(1.35rem, 2.15vw, 2.15rem);
+  white-space: nowrap;
+}
+
+.marque-piliers-entete-centre {
+  text-align: center;
+}
+
+.marque-piliers-progression {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(1rem, 1.65vw, 1.55rem);
+  line-height: 1.08;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  white-space: nowrap;
+}
+
+.marque-piliers-entete-droite {
+  text-align: right;
+}
+
+.marque-piliers-direction {
+  font-size: clamp(1rem, 1.65vw, 1.55rem);
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .marque-piliers-entete-v3 {
+    grid-template-columns: minmax(0, 1.2fr) minmax(170px, .75fr) minmax(0, 1fr);
+    gap: .9rem;
+  }
+
+  .marque-piliers-entete-gauche h2 {
+    font-size: clamp(1.2rem, 2vw, 1.9rem);
+  }
+
+  .marque-piliers-progression {
+    font-size: clamp(.82rem, 1.2vw, 1rem);
+  }
+
+  .marque-piliers-direction {
+    font-size: clamp(.92rem, 1.5vw, 1.35rem);
+  }
+}
+
+@media (max-width: 900px) {
+  .marque-piliers-entete-v3 {
+    grid-template-columns: 1fr;
+    gap: .35rem;
+    text-align: center;
+  }
+
+  .marque-piliers-entete-gauche h2,
+  .marque-piliers-progression,
+  .marque-piliers-direction {
+    white-space: normal;
+  }
+
+  .marque-piliers-entete-centre,
+  .marque-piliers-entete-droite {
     text-align: center;
   }
 }

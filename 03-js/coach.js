@@ -1,11 +1,46 @@
 document.addEventListener('DOMContentLoaded', function () {
   'use strict';
 
+  function appliquerNavigationAdmin() {
+    const liste = document.querySelector('.main-nav ul');
+
+    if (!liste) {
+      return;
+    }
+
+    const chemin = window.location.pathname.replace(/\/+$/, '') || '/';
+
+    const liens = [
+      { href: '/', label: 'Accueil', path: '/' },
+      { href: '/membre', label: 'Espace membre', path: '/membre' },
+      { href: '/coach', label: 'Tableau Coach', path: '/coach' },
+      { href: '/admin', label: 'Admin', path: '/admin' }
+    ];
+
+    liste.innerHTML = '';
+
+    liens.forEach(function (item) {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+
+      a.href = item.href;
+      a.textContent = item.label;
+
+      if (chemin === item.path) {
+        a.classList.add('active');
+      }
+
+      li.appendChild(a);
+      liste.appendChild(li);
+    });
+  }
+
+
   const supabase = window.triedreSupabase;
 
   if (!supabase) {
     console.error(
-      '[TRIÈDRE] Client Supabase indisponible.'
+      '[TRIÈDRE] Client Supabase indisponible dans le tableau coach.'
     );
     return;
   }
@@ -56,13 +91,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
       etat.user = user;
 
-      const { data: estStaff, error: erreurStaff } = await supabase.rpc(
-        'is_triedre_staff'
+      const { data: contexteAcces, error: erreurContexte } = await supabase.rpc(
+        'get_my_access_context'
       );
 
-      if (erreurStaff) {
-        throw erreurStaff;
+      if (erreurContexte) {
+        throw erreurContexte;
       }
+
+      const accesCompte = Array.isArray(contexteAcces)
+        ? contexteAcces[0]
+        : contexteAcces;
+
+      const roleCompte =
+        accesCompte && accesCompte.role ? accesCompte.role : 'member';
+
+      if (roleCompte === 'admin') {
+        appliquerNavigationAdmin();
+      }
+
+      const estStaff = roleCompte === 'coach' || roleCompte === 'admin';
 
       if (!estStaff) {
         acces.innerHTML =
@@ -72,9 +120,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
       acces.hidden = true;
       acces.style.display = 'none';
-
       zone.hidden = false;
-      zone.style.display ='';
+      zone.style.display = '';
 
       await Promise.all([
         chargerMembres(),

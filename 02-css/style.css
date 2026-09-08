@@ -23,6 +23,7 @@
 @import url('sections/hero.css');
 @import url('sections/univers.css');
 @import url('sections/produits.css');
+@import url('sections/progression-home.css');
 @import url('sections/membre.css');
 @import url('sections/avantages.css');
 @import url('sections/boutique.css');
@@ -45,3 +46,6 @@
 @import url('sections/coach.css');
 @import url('sections/admin.css');
 @import url('sections/membre-staff.css');
+@import url('components/modal.css');
+@import url('sections/membre-informations.css');
+@import url('sections/calendrier-global.css');

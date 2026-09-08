@@ -4,51 +4,166 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>Administration — TRIÈDRE</title>
+  <title>Administration - TRIÈDRE</title>
   <link rel="stylesheet" href="../02-css/style.css">
   <link rel="stylesheet" href="../02-css/sections/admin.css">
 </head>
 <body>
+
+  <div class="top-banner">
+    <p>TRIÈDRE ATHLETIC - ESPACE ADMIN</p>
+  </div>
+
+  <header class="site-header">
+    <a href="/" class="logo">
+      <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+      <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
+    </a>
+
+    <nav class="main-nav">
+      <ul>
+        <li><a href="/">Accueil</a></li>
+        <li><a href="/membre">Espace membre</a></li>
+        <li><a href="/coach">Tableau coach</a></li>
+        <li><a href="/admin" class="active">Admin</a></li>
+      </ul>
+    </nav>
+
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="header-icons">
+      <a href="/membre" aria-label="Mon compte">
+        <img src="../05-images/icons/icon-account.svg" alt="">
+      </a>
+    </div>
+  </header>
+
   <main class="admin-page">
     <section class="admin-hero">
       <p class="section-eyebrow">TRIÈDRE ATHLETIC</p>
       <h1>ESPACE <span class="accent">ADMIN.</span></h1>
-      <p>Gestion centrale de TRIÈDRE.</p>
+      <p>Gère l’équipe de coachs, les affectations et la continuité du suivi des abonnés.</p>
     </section>
 
-    <section id="admin-acces" class="admin-card">
+    <div id="admin-message" class="admin-message" hidden aria-live="polite"></div>
+
+    <section id="admin-acces" class="admin-card admin-acces">
       <p>Vérification de l’accès administrateur…</p>
     </section>
 
-    <section id="admin-zone" class="admin-grid" hidden>
-      <article class="admin-card">
-        <p class="section-eyebrow">Équipe</p>
-        <h2>COACHS</h2>
-        <p>Gestion des comptes coach et de leurs accès.</p>
-      </article>
+    <div id="admin-zone" hidden>
+      <section class="admin-resume">
+        <article class="admin-kpi">
+          <span>Coachs actifs</span>
+          <strong id="admin-kpi-coachs">—</strong>
+        </article>
+        <article class="admin-kpi">
+          <span>Membres suivis</span>
+          <strong id="admin-kpi-membres">—</strong>
+        </article>
+        <article class="admin-kpi">
+          <span>Couvertures temporaires</span>
+          <strong id="admin-kpi-temporaires">—</strong>
+        </article>
+      </section>
 
-      <article class="admin-card">
-        <p class="section-eyebrow">Membres</p>
-        <h2>CLIENTS & ABONNÉS</h2>
-        <p>Vue d’ensemble des membres TRIÈDRE.</p>
-      </article>
+      <section class="admin-card">
+        <div class="admin-section-heading">
+          <div>
+            <p class="section-eyebrow">Équipe</p>
+            <h2>GESTION DES COACHS</h2>
+          </div>
+          <a class="btn btn-secondaire" href="/coach">Ouvrir le tableau Coach</a>
+        </div>
 
-      <article class="admin-card">
-        <p class="section-eyebrow">Athletic</p>
-        <h2>PROGRAMMES</h2>
-        <p>Supervision des programmes attribués.</p>
-      </article>
+        <form id="admin-form-coach" class="admin-inline-form">
+          <label class="admin-field">
+            <span>Adresse courriel du compte TRIÈDRE</span>
+            <input
+              id="admin-coach-email"
+              type="email"
+              autocomplete="email"
+              placeholder="coach@exemple.com"
+              required
+            >
+          </label>
+          <button type="submit" class="btn btn-primary">Activer comme coach</button>
+        </form>
 
-      <article class="admin-card">
-        <p class="section-eyebrow">Commerce</p>
-        <h2>COMMANDES</h2>
-        <p>Administration des commandes et opérations futures.</p>
-      </article>
-    </section>
+        <p class="admin-note">
+          Le compte doit déjà exister comme compte TRIÈDRE. Les rôles administrateur restent attribués uniquement par SQL.
+        </p>
+
+        <div id="admin-coachs" class="admin-list">
+          <p class="admin-empty">Chargement des coachs…</p>
+        </div>
+      </section>
+
+      <section class="admin-card">
+        <div class="admin-section-heading">
+          <div>
+            <p class="section-eyebrow">Suivi</p>
+            <h2>MEMBRES & AFFECTATIONS</h2>
+          </div>
+          <button id="admin-refresh" type="button" class="btn btn-secondaire">Actualiser</button>
+        </div>
+
+        <label class="admin-search">
+          <span>Rechercher un membre</span>
+          <input id="admin-member-search" type="search" placeholder="Nom ou courriel…">
+        </label>
+
+        <div id="admin-membres" class="admin-members">
+          <p class="admin-empty">Chargement des membres…</p>
+        </div>
+      </section>
+
+      <section class="admin-card">
+        <div class="admin-section-heading">
+          <div>
+            <p class="section-eyebrow">Traçabilité</p>
+            <h2>HISTORIQUE DES AFFECTATIONS</h2>
+          </div>
+        </div>
+
+        <div id="admin-historique" class="admin-list">
+          <p class="admin-empty">Aucun historique chargé.</p>
+        </div>
+      </section>
+    </div>
   </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+      <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
+      <p>Corps. Mental. Confiance.<br>Un mode de vie. Une discipline.<br>Une seule direction.</p>
+    </div>
+
+    <nav class="footer-nav">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="/">Accueil</a></li>
+        <li><a href="/membre">Espace membre</a></li>
+        <li><a href="/coach">Tableau coach</a></li>
+      </ul>
+    </nav>
+
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p>Montréal, Québec, Canada</p>
+      <p><a href="mailto:info@triedreofficiel.com">info@triedreofficiel.com</a></p>
+    </div>
+
+    <p class="footer-copyright">© 2026 Trièdre Athletic. Tous droits réservés.</p>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../03-js/supabase-config.js"></script>
+  <script src="../03-js/navigation.js"></script>
+  <script src="../03-js/modal.js"></script>
   <script src="../03-js/admin.js"></script>
 </body>
 </html>

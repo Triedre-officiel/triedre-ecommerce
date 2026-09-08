@@ -1,5 +1,5 @@
 /* ==========================================================================
-   TRIÈDRE — V13 — Espace Admin
+   TRIÈDRE — Espace Admin
    ========================================================================== */
 
 .admin-page {
@@ -9,7 +9,7 @@
 }
 
 .admin-hero {
-  max-width: 720px;
+  max-width: 820px;
   margin-bottom: var(--space-lg);
 }
 
@@ -17,25 +17,396 @@
   margin: var(--space-xs) 0 var(--space-sm);
 }
 
-.admin-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-md);
-}
-
 .admin-card {
-  padding: var(--space-md);
+  margin-top: var(--space-md);
+  padding: clamp(1rem, 2vw, 1.5rem);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-bg-secondary);
 }
 
-.admin-card h2 {
-  margin: .2rem 0 .45rem;
+.admin-acces {
+  min-height: 90px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.admin-acces[hidden],
+#admin-zone[hidden],
+.admin-message[hidden] {
+  display: none !important;
+}
+
+.admin-message {
+  margin: var(--space-sm) 0;
+  padding: .85rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-secondary);
+}
+
+.admin-message.is-error {
+  border-color: rgba(255, 92, 92, .65);
+}
+
+.admin-message.is-success {
+  border-color: rgba(201, 162, 39, .75);
+}
+
+.admin-resume {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.admin-kpi {
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+}
+
+.admin-kpi span {
+  display: block;
+  margin-bottom: .2rem;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+}
+
+.admin-kpi strong {
+  color: var(--color-accent);
+  font-family: var(--font-heading);
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
+}
+
+.admin-section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.admin-section-heading h2 {
+  margin-top: .15rem;
+}
+
+.admin-inline-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-sm);
+  align-items: end;
+}
+
+.admin-field,
+.admin-search {
+  display: grid;
+  gap: .35rem;
+}
+
+.admin-field > span,
+.admin-search > span {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+}
+
+.admin-field input,
+.admin-field select,
+.admin-search input,
+.admin-member-actions select,
+.admin-member-actions input {
+  width: 100%;
+  min-width: 0;
+  padding: .72rem .8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font: inherit;
+}
+
+.admin-field input:focus,
+.admin-field select:focus,
+.admin-search input:focus,
+.admin-member-actions select:focus,
+.admin-member-actions input:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.admin-note {
+  margin: .75rem 0 var(--space-md);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+}
+
+.admin-list,
+.admin-members {
+  display: grid;
+  gap: .7rem;
+}
+
+.admin-coach,
+.admin-member,
+.admin-history-item {
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, .10);
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, .12);
+}
+
+.admin-coach {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.admin-coach-main strong,
+.admin-member-main strong {
+  display: block;
+  margin-bottom: .15rem;
+}
+
+.admin-coach-main small,
+.admin-member-main small,
+.admin-history-item small {
+  color: var(--color-text-secondary);
+}
+
+.admin-coach-stats {
+  display: flex;
+  gap: .55rem;
+  flex-wrap: wrap;
+  margin-top: .55rem;
+}
+
+.admin-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: .25rem .55rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 999px;
+  color: var(--color-text-secondary);
+  font-size: .76rem;
+}
+
+.admin-chip.is-active {
+  border-color: rgba(201, 162, 39, .65);
+  color: var(--color-accent);
+}
+
+.admin-member {
+  display: grid;
+  gap: .8rem;
+}
+
+.admin-member-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-sm);
+  align-items: start;
+}
+
+.admin-member-status {
+  text-align: right;
+}
+
+.admin-member-status strong {
+  display: block;
+  color: var(--color-accent);
+  font-size: .82rem;
+}
+
+.admin-member-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: .6rem;
+  align-items: end;
+}
+
+.admin-member-actions .admin-action-wide {
+  grid-column: 1 / -1;
+}
+
+.admin-member-actions label {
+  display: grid;
+  gap: .3rem;
+}
+
+.admin-member-actions label > span {
+  color: var(--color-text-secondary);
+  font-size: .75rem;
+}
+
+.admin-actions-row {
+  display: flex;
+  gap: .55rem;
+  flex-wrap: wrap;
+}
+
+.admin-empty {
+  color: var(--color-text-secondary);
+}
+
+.admin-history-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-sm);
+}
+
+.admin-history-kind {
+  color: var(--color-accent);
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .admin-resume {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-member-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-member-actions .admin-action-wide {
+    grid-column: auto;
+  }
 }
 
 @media (max-width: 700px) {
-  .admin-grid {
+  .admin-section-heading,
+  .admin-coach,
+  .admin-member-top,
+  .admin-history-item,
+  .admin-inline-form {
     grid-template-columns: 1fr;
+  }
+
+  .admin-section-heading {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .admin-member-status {
+    text-align: left;
+  }
+
+  .admin-inline-form .btn,
+  .admin-section-heading .btn {
+    width: 100%;
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — V14.2 — Historique sécurisé
+   ========================================================================== */
+
+.admin-history-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .7rem;
+  flex-wrap: wrap;
+}
+
+.admin-history-delete {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: .78rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.admin-history-delete:hover {
+  color: var(--color-accent);
+}
+
+.admin-last-deletion {
+  display: flex;
+  align-items: baseline;
+  gap: .55rem;
+  flex-wrap: wrap;
+  margin-bottom: .8rem;
+  padding: .75rem .9rem;
+  border: 1px solid rgba(255, 255, 255, .10);
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, .12);
+}
+
+.admin-last-deletion span {
+  color: var(--color-accent);
+  font-size: .76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.admin-last-deletion small {
+  color: var(--color-text-secondary);
+}
+
+.admin-reauth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, .72);
+  backdrop-filter: blur(4px);
+}
+
+.admin-reauth-dialog {
+  width: min(100%, 480px);
+  padding: 1.4rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .45);
+}
+
+.admin-reauth-dialog h2 {
+  margin: .15rem 0 .55rem;
+}
+
+.admin-reauth-dialog > p:not(.section-eyebrow) {
+  margin-bottom: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.admin-reauth-error {
+  margin-top: .55rem;
+  color: #ffb4b4;
+  font-size: var(--font-size-small);
+}
+
+.admin-reauth-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .6rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 600px) {
+  .admin-history-actions,
+  .admin-reauth-actions {
+    justify-content: flex-start;
+  }
+
+  .admin-reauth-actions {
+    flex-direction: column-reverse;
+  }
+
+  .admin-reauth-actions .btn {
+    width: 100%;
   }
 }
