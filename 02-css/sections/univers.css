@@ -184,8 +184,8 @@
 .univers-page-hero,
 .univers-page-athletic,
 .univers-page-future {
-  padding-top: 1.2rem;
-  padding-bottom: 1.2rem;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
 }
 
 /* --------------------------------------------------------------------------
@@ -296,11 +296,8 @@
 }
 
 .univers-page-future-intro {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, .7fr);
-  align-items: end;
-  gap: clamp(1.2rem, 3vw, 3rem);
-  margin-bottom: 1rem;
+  display: block;
+  margin-bottom: 2rem;
 }
 
 .univers-page-future-intro h2 {
@@ -308,10 +305,11 @@
 }
 
 .univers-page-future-intro > p {
-  margin: 0;
+  max-width: 720px;
+  margin: 0.75rem 0 0;
   color: var(--color-text-secondary);
   line-height: 1.65;
-  text-align: right;
+  text-align: left;
 }
 
 .univers-page-cards {

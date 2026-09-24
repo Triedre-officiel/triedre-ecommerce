@@ -5,7 +5,7 @@
 .univers-hero {
   max-width: 720px;
   margin: 0 auto;
-  padding: 1.5rem var(--container-padding) 8.5rem;
+  padding: 1rem var(--container-padding) 8.5rem;
   text-align: center;
 }
 

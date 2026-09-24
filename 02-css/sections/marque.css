@@ -17,12 +17,24 @@
   padding-right: var(--container-padding);
 }
 
-.marque-hero-v3,
-.marque-piliers-v3,
-.marque-mission-v3,
-.marque-final-v3 {
+.marque-hero-v3 {
   padding-top: 1.15rem;
-  padding-bottom: 1.15rem;
+  padding-bottom: 2.5rem;
+}
+
+.marque-piliers-v3 {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.marque-mission-v3 {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.marque-final-v3 {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
 }
 
 /* --------------------------------------------------------------------------

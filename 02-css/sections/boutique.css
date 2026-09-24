@@ -6,7 +6,7 @@
   max-width: var(--container-max-width);
   margin: 0 auto;
   padding: 1.5rem var(--container-padding) var(--space-lg);
-  text-align: center;
+  text-align: left;
 }
 
 .boutique-header h1 {
@@ -14,8 +14,8 @@
 }
 
 .boutique-header p:not(.section-eyebrow) {
-  max-width: 500px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
 }
 
 /* ---- Filtres ---- */
