@@ -92,8 +92,8 @@
 .produits-home-v2,
 .home-progression,
 .membre-home-v2 {
-  padding-top: 1.15rem !important;
-  padding-bottom: 1.15rem !important;
+  padding-top: 2.5rem !important;
+  padding-bottom: 2.5rem !important;
   min-height: 0;
 }
 
@@ -101,6 +101,13 @@
 .produits-home-v2 + .home-progression,
 .home-progression + .membre-home-v2 {
   margin-top: 0 !important;
+}
+
+/* Séparation Univers → Apparel */
+.univers-home-v2 + .produits-home-v2 {
+  margin-top: 0rem !important;
+  padding-top: 2.5rem !important;
+  border-top: 1px solid rgba(255,255,255,.055);
 }
 
 .univers-home-v2 .univers-text > p:not(.section-eyebrow),
