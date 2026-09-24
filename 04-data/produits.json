@@ -38,7 +38,7 @@
           "prix": 48.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 650,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-hoodie-noir-face.png"
@@ -52,7 +52,7 @@
           "prix": 48.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 650,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-hoodie-noir-face.png"
@@ -66,7 +66,7 @@
           "prix": 48.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 650,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-hoodie-noir-face.png"
@@ -80,7 +80,7 @@
           "prix": 48.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 650,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-hoodie-noir-face.png"
@@ -94,7 +94,7 @@
           "prix": 48.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 650,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-hoodie-taupe-face.png"
@@ -108,7 +108,7 @@
           "prix": 48.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 650,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-hoodie-taupe-face.png"
@@ -122,7 +122,7 @@
           "prix": 48.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 650,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-hoodie-taupe-face.png"
@@ -136,7 +136,7 @@
           "prix": 48.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 650,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-hoodie-taupe-face.png"
@@ -150,7 +150,7 @@
           "prix": 48.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 650,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-hoodie-sauge-face.png"
@@ -164,7 +164,7 @@
           "prix": 48.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 650,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-hoodie-sauge-face.png"
@@ -178,7 +178,7 @@
           "prix": 48.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 650,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-hoodie-sauge-face.png"
@@ -192,7 +192,7 @@
           "prix": 48.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 650,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-hoodie-sauge-face.png"
@@ -224,7 +224,7 @@
           "prix": 28.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 200,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-tshirt-noir-face.png"
@@ -238,7 +238,7 @@
           "prix": 28.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 200,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-tshirt-noir-face.png"
@@ -252,7 +252,7 @@
           "prix": 28.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 200,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-tshirt-noir-face.png"
@@ -266,7 +266,7 @@
           "prix": 28.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 200,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-tshirt-noir-face.png"
@@ -280,7 +280,7 @@
           "prix": 28.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 200,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-tshirt-taupe-face.png"
@@ -294,7 +294,7 @@
           "prix": 28.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 200,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-tshirt-taupe-face.png"
@@ -308,7 +308,7 @@
           "prix": 28.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 200,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-tshirt-taupe-face.png"
@@ -322,7 +322,7 @@
           "prix": 28.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 200,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-tshirt-taupe-face.png"
@@ -336,7 +336,7 @@
           "prix": 28.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 200,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-tshirt-sauge-face.png"
@@ -350,7 +350,7 @@
           "prix": 28.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 200,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-tshirt-sauge-face.png"
@@ -364,7 +364,7 @@
           "prix": 28.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 200,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-tshirt-sauge-face.png"
@@ -378,7 +378,7 @@
           "prix": 28.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 200,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-tshirt-sauge-face.png"
@@ -410,7 +410,7 @@
           "prix": 34.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 110,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-casquette-noir-face.png"
@@ -424,7 +424,7 @@
           "prix": 34.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 110,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-casquette-taupe-face.png"
@@ -438,7 +438,7 @@
           "prix": 34.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 110,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-casquette-sauge-face.png"
@@ -470,7 +470,7 @@
           "prix": 39.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 150,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-brassiere-noir-face.png"
@@ -484,7 +484,7 @@
           "prix": 39.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 150,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-brassiere-noir-face.png"
@@ -498,7 +498,7 @@
           "prix": 39.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 150,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-brassiere-noir-face.png"
@@ -512,7 +512,7 @@
           "prix": 39.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 150,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-brassiere-noir-face.png"
@@ -526,7 +526,7 @@
           "prix": 39.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 150,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-brassiere-taupe-face.png"
@@ -540,7 +540,7 @@
           "prix": 39.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 150,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-brassiere-taupe-face.png"
@@ -554,7 +554,7 @@
           "prix": 39.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 150,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-brassiere-taupe-face.png"
@@ -568,7 +568,7 @@
           "prix": 39.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 150,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-brassiere-taupe-face.png"
@@ -582,7 +582,7 @@
           "prix": 39.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 150,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-brassiere-sauge-face.png"
@@ -596,7 +596,7 @@
           "prix": 39.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 150,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-brassiere-sauge-face.png"
@@ -610,7 +610,7 @@
           "prix": 39.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 150,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-brassiere-sauge-face.png"
@@ -624,7 +624,7 @@
           "prix": 39.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 150,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-brassiere-sauge-face.png"
@@ -656,7 +656,7 @@
           "prix": 58.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 220,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-leggings-noir-face.png"
@@ -670,7 +670,7 @@
           "prix": 58.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 220,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-leggings-noir-face.png"
@@ -684,7 +684,7 @@
           "prix": 58.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 220,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-leggings-noir-face.png"
@@ -698,7 +698,7 @@
           "prix": 58.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 220,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-leggings-noir-face.png"
@@ -712,7 +712,7 @@
           "prix": 58.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 220,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-leggings-taupe-face.png"
@@ -726,7 +726,7 @@
           "prix": 58.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 220,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-leggings-taupe-face.png"
@@ -740,7 +740,7 @@
           "prix": 58.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 220,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-leggings-taupe-face.png"
@@ -754,7 +754,7 @@
           "prix": 58.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 220,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-leggings-taupe-face.png"
@@ -768,7 +768,7 @@
           "prix": 58.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 220,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-leggings-sauge-face.png"
@@ -782,7 +782,7 @@
           "prix": 58.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 220,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-leggings-sauge-face.png"
@@ -796,7 +796,7 @@
           "prix": 58.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 220,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-leggings-sauge-face.png"
@@ -810,7 +810,7 @@
           "prix": 58.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 220,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-leggings-sauge-face.png"
@@ -842,7 +842,7 @@
           "prix": 68.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 400,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-veste-noir-face.png"
@@ -856,7 +856,7 @@
           "prix": 68.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 400,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-veste-noir-face.png"
@@ -870,7 +870,7 @@
           "prix": 68.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 400,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-veste-noir-face.png"
@@ -884,7 +884,7 @@
           "prix": 68.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 400,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-veste-noir-face.png"
@@ -898,7 +898,7 @@
           "prix": 68.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 400,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-veste-taupe-face.png"
@@ -912,7 +912,7 @@
           "prix": 68.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 400,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-veste-taupe-face.png"
@@ -926,7 +926,7 @@
           "prix": 68.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 400,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-veste-taupe-face.png"
@@ -940,7 +940,7 @@
           "prix": 68.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 400,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-veste-taupe-face.png"
@@ -954,7 +954,7 @@
           "prix": 68.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 400,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-veste-sauge-face.png"
@@ -968,7 +968,7 @@
           "prix": 68.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 400,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-veste-sauge-face.png"
@@ -982,7 +982,7 @@
           "prix": 68.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 400,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-veste-sauge-face.png"
@@ -996,7 +996,7 @@
           "prix": 68.99,
           "devise": "CAD",
           "stock": null,
-          "poids_g": null,
+          "poids_g": 400,
           "tax_code": null,
           "actif": true,
           "photoFace": "produit-veste-sauge-face.png"

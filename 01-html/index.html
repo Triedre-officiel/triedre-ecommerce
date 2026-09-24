@@ -5,20 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
   <title>TRIÈDRE - Deviens Plus</title>
+  <link rel="icon" type="image/png" href="../05-images/icons/favicon-triedre.svg">
   <link rel="stylesheet" href="../02-css/style.css">
 </head>
 <body>
 
   <!-- Bandeau annonce -->
   <div class="top-banner">
-    <p>Livraison gratuite au Canada dès 150$</p>
+    <p>Livraison gratuite au Canada dès 100$</p>
   </div>
 
   <!-- En-tête / Navigation -->
   <header class="site-header">
     <a href="./" class="logo">
       <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
-      <span class="logo-text">TRIÈDRE <small>Deviens Plus.</small></span>
+      <span class="logo-text">
+      <span class="sr-only">TRIÈDRE</span><span aria-hidden="true">TRIΞDRΞ</span> <small>Deviens Plus.</small></span>
     </a>
 
     <nav class="main-nav">
@@ -63,8 +65,7 @@
         muted
         loop
         playsinline
-        poster="../05-images/hero/hero-athlete.png"
-      >
+        poster="../05-images/hero/hero-athlete.png">
         <source src="../05-images/hero/hero-video.mp4" type="video/mp4">
       </video>
 
@@ -259,7 +260,7 @@
         </div>
 
         <div class="home-progression-connect">
-          Connecte-toi à ton espace <span>→</span>
+          Connecte-toi à ton espace <span></span>
         </div>
       </a>
     </section>
@@ -274,8 +275,14 @@
       </div>
 
       <div class="membre-image">
-        <video class="membre-video" autoplay muted loop playsinline poster="../05-images/membre/membre-hoodie-nuit.png">
-          <source src="../05-images/membre/membre-video.mp4" type="video/mp4">
+        <video class="membre-video" 
+        autoplay 
+        muted 
+        loop 
+        playsinline
+        disablepictureinpicture
+        poster="../05-images/membre/membre-hoodie-nuit.png">
+        <source src="../05-images/membre/membre-video.mp4" type="video/mp4">
         </video>
       </div>
     </section>
@@ -286,56 +293,26 @@
   <footer class="site-footer">
 
     <div class="footer-brand">
-      <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+  <div class="footer-logo-ligne">
+    <img class="footer-logo-img" src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+    <span class="logo-text">
+    <span class="sr-only">TRIÈDRE</span><span aria-hidden="true">TRIΞDRΞ</span> <small>Deviens Plus.</small></span>
+  </div>
 
-      <span class="logo-text">
-        TRIÈDRE <small>Deviens Plus.</small>
-      </span>
+  <p>
+    Corps. Mental. Confiance.<br>
+    Un mode de vie. Une discipline.<br>
+    Une seule direction.
+  </p>
 
-      <p>
-        Corps. Mental. Confiance.<br>
-        Un mode de vie. Une discipline.<br>
-        Une seule direction.
-      </p>
+  <div class="social-links">
+    <a href="https://www.facebook.com/share/1KZvCWZQVM/" target="_blank" rel="noopener" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
+    <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" target="_blank" rel="noopener" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
+    <a href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4" target="_blank" rel="noopener" aria-label="TikTok"><img src="../05-images/icons/icon-tiktok.svg" alt=""></a>
+    <a href="#" target="_blank" rel="noopener" aria-label="YouTube"><img src="../05-images/icons/icon-youtube.svg" alt=""></a>
+  </div>
+  </div>
 
-      <div class="social-links">
-        <a
-          href="https://www.facebook.com/share/1KZvCWZQVM/"
-          target="_blank"
-          rel="noopener"
-          aria-label="Facebook"
-        >
-          <img src="../05-images/icons/icon-facebook.svg" alt="">
-        </a>
-
-        <a
-          href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5"
-          target="_blank"
-          rel="noopener"
-          aria-label="Instagram"
-        >
-          <img src="../05-images/icons/icon-instagram.svg" alt="">
-        </a>
-
-        <a
-          href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4"
-          target="_blank"
-          rel="noopener"
-          aria-label="TikTok"
-        >
-          <img src="../05-images/icons/icon-tiktok.svg" alt="">
-        </a>
-
-        <a
-          href="#"
-          target="_blank"
-          rel="noopener"
-          aria-label="YouTube"
-        >
-          <img src="../05-images/icons/icon-youtube.svg" alt="">
-        </a>
-      </div>
-    </div>
 
     <nav class="footer-nav">
       <h4>Navigation</h4>

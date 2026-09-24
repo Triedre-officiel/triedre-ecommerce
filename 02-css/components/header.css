@@ -28,30 +28,37 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 5px;
 }
 
 .logo img {
-  height: 40px;
+  height: 28px;
   width: auto;
+}
+
+.logo-text [aria-hidden="true"] {
+  letter-spacing: 6px;
 }
 
 .logo-text {
   font-family: var(--font-heading);
-  font-size: 1.1rem;
-  font-weight: var(--font-weight-bold);
-  letter-spacing: var(--letter-spacing-wide);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-text-primary);
-  line-height: 1.2;
+  line-height: 1.1;
+  text-align: center;
 }
 
 .logo-text small {
   display: block;
-  font-size: 0.6rem;
-  font-weight: var(--font-weight-regular);
-  letter-spacing: var(--letter-spacing-wide);
+  margin-top: 3px;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
   color: var(--color-accent);
+  text-align: center;
 }
 
 /* ---- Icônes (recherche, compte, panier) ---- */
@@ -103,5 +110,37 @@
 @media (max-width: 900px) {
   .site-header {
     padding: var(--space-sm) var(--container-padding);
+  }
+
+  .logo img {
+    height: 28px
+  }
+
+  .logo-text {
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+  }
+
+  .logo-text small {
+    font-size: 0.52rem;
+    letter-spacing: 0.1em;
+  }
+}
+
+@media (max-width: 480) {
+  .logo img {
+    height: 38px;
+  }
+  
+  .logo-text {
+    font-size: 0.88rem;
+  }
+
+  .logo-text small {
+    font-size: 0.48rem;
+  }
+
+  .logo {
+    gap: 4px;
   }
 }

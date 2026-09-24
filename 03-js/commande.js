@@ -1,12 +1,19 @@
 // ==========================================================================
-// TRIÈDRE — Page de commande (checkout simulé)
-// Choix du mode de commande + validation adaptative internationale
+// TRIÈDRE — Page de commande
+// Commande réelle + redirection Stripe Checkout
 // ==========================================================================
 
 document.addEventListener('DOMContentLoaded', function () {
 
   const conteneur = document.getElementById('commande-contenu');
   if (!conteneur) return;
+
+  const parametresUrl = new URLSearchParams(window.location.search);
+
+  if (parametresUrl.get('stripe') === 'success') {
+    verifierRetourStripe();
+    return;
+  }
 
   const provincesCanada = [
     'Alberta',
@@ -188,9 +195,15 @@ document.addEventListener('DOMContentLoaded', function () {
           <div class="commande-resume">
             <h2>Résumé</h2>
             <div class="commande-articles-liste">${articlesHTML}</div>
+
+            <div class="commande-livraison" id="commande-livraison">
+              <span>Livraison</span>
+              <span id="commande-livraison-valeur">Calculée après l’adresse</span>
+            </div>
+
             <div class="panier-total">
               <span>Total</span>
-              <span class="accent">${total} $</span>
+              <span class="accent" id="commande-total">${total} $</span>
             </div>
           </div>
         </div>
@@ -225,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
 
-    formulaire.addEventListener('submit', function (e) {
+    formulaire.addEventListener('submit', async function (e) {
       e.preventDefault();
 
       const nom = document.getElementById('cmd-nom');
@@ -234,6 +247,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const ville = document.getElementById('cmd-ville');
       const region = document.getElementById('cmd-region');
       const telephone = document.getElementById('cmd-telephone');
+      const bouton = formulaire.querySelector('.btn-confirmer-commande');
 
       if (!nom.value.trim()) {
         erreurChamp(nom, 'Indique ton nom complet.');
@@ -278,7 +292,196 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      afficherConfirmation();
+      const panier = getPanier();
+
+      if (!panier.length) {
+        afficherPanierVide();
+        return;
+      }
+
+      const libelleBouton = bouton ? bouton.textContent : '';
+
+      try {
+        const livraisonValeur = document.getElementById('commande-livraison-valeur');
+
+        if (livraisonValeur) {
+          livraisonValeur.textContent = 'Calcul en cours...';
+        }
+
+        const reponseLivraison = await fetch('/08-php/tarifs-postes-canada.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            client: {
+              pays: pays.value,
+              region: region.value.trim(),
+              ville: ville.value.trim(),
+              code_postal: postal.value.trim(),
+              adresse: adresse.value.trim()
+            },
+            panier: panier.map(function (item) {
+              return {
+                sku: item.sku,
+                quantite: Number(item.quantite)
+              };
+            })
+          })
+        });
+
+        const resultatLivraison = await lireJson(reponseLivraison);
+
+        if (!reponseLivraison.ok || resultatLivraison.success !== true) {
+          const detailPostesCanada =
+            resultatLivraison.provider?.detail ||
+            resultatLivraison.provider?.message ||
+            resultatLivraison.provider?.title ||
+            '';
+
+          throw new Error(
+            detailPostesCanada ||
+            resultatLivraison.error ||
+            resultatLivraison.message ||
+            'Impossible de calculer la livraison.'
+          );
+        }
+
+        const tarifsPostesCanada = extraireTarifsPostesCanada(resultatLivraison.canada_post);
+
+        if (!tarifsPostesCanada.length) {
+          throw new Error('Postes Canada n’a retourné aucun tarif de livraison.');
+        }
+
+        // V1 du checkout : on retient automatiquement le tarif disponible le moins cher.
+        // Le choix explicite du service pourra être ajouté ensuite.
+        tarifsPostesCanada.sort(function (a, b) {
+          return a.montant - b.montant;
+        });
+
+        const tarifLivraison = tarifsPostesCanada[0];
+        const totalAvecLivraison = Number(totalPanier()) + tarifLivraison.montant;
+
+        if (livraisonValeur) {
+          livraisonValeur.textContent =
+            tarifLivraison.service + ' — ' +
+            tarifLivraison.montant.toFixed(2) + ' $';
+        }
+
+        const totalCommande = document.getElementById('commande-total');
+        if (totalCommande) {
+          totalCommande.textContent = totalAvecLivraison.toFixed(2) + ' $';
+        }
+
+
+        if (bouton) {
+          bouton.disabled = true;
+          bouton.textContent = 'Préparation du paiement...';
+        }
+
+        const commandePayload = {
+          client: {
+            nom: nom.value.trim(),
+            email: email.value.trim(),
+            telephone: telephone.value.trim(),
+            pays: pays.value,
+            adresse: adresse.value.trim(),
+            ville: ville.value.trim(),
+            region: region.value.trim(),
+            code_postal: postal.value.trim()
+          },
+          panier: panier.map(function (item) {
+            return {
+              sku: item.sku,
+              quantite: Number(item.quantite)
+            };
+          })
+        };
+
+        const reponseCommande = await fetch('/08-php/creer-commande.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(commandePayload)
+        });
+
+        const resultatCommande = await lireJson(reponseCommande);
+
+        if (!reponseCommande.ok || resultatCommande.success === false) {
+          throw new Error(
+            resultatCommande.error ||
+            resultatCommande.message ||
+            'Impossible de créer la commande.'
+          );
+        }
+
+        const orderId =
+          resultatCommande.order_id ||
+          resultatCommande.id ||
+          resultatCommande.order?.id ||
+          resultatCommande.commande?.id;
+
+        if (!orderId) {
+          throw new Error('La commande a été créée, mais son identifiant est introuvable.');
+        }
+
+        if (bouton) {
+          bouton.textContent = 'Ouverture du paiement sécurisé...';
+        }
+
+        const reponseStripe = await fetch('/08-php/creer-checkout-stripe.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ order_id: orderId })
+        });
+
+        const resultatStripe = await lireJson(reponseStripe);
+
+        if (!reponseStripe.ok || resultatStripe.success === false) {
+          throw new Error(
+            resultatStripe.error ||
+            resultatStripe.message ||
+            'Impossible d’ouvrir le paiement Stripe.'
+          );
+        }
+
+        const checkoutUrl =
+          resultatStripe.url ||
+          resultatStripe.checkout_url ||
+          resultatStripe.session_url;
+
+        if (!checkoutUrl) {
+          throw new Error('Stripe n’a retourné aucune URL de paiement.');
+        }
+
+        window.location.assign(checkoutUrl);
+
+      } catch (erreur) {
+        const livraisonValeur = document.getElementById('commande-livraison-valeur');
+        if (livraisonValeur && livraisonValeur.textContent.includes('cours')) {
+          livraisonValeur.textContent = 'Non calculée';
+        }
+
+        console.error('[TRIÈDRE] Création de commande / Stripe :', erreur);
+
+        afficherToast(
+          erreur && erreur.message
+            ? erreur.message
+            : 'Impossible de préparer le paiement pour le moment.',
+          'avertissement'
+        );
+
+        if (bouton) {
+          bouton.disabled = false;
+          bouton.textContent = libelleBouton || 'Confirmer la commande';
+        }
+      }
     });
   }
 
@@ -416,20 +619,183 @@ document.addEventListener('DOMContentLoaded', function () {
     return 'Entre un numéro de téléphone valide de 10 à 15 chiffres, avec indicatif international si nécessaire.';
   }
 
-  function afficherConfirmation() {
-    const numeroCommande = 'TRD-' + Math.floor(100000 + Math.random() * 900000);
+  function extraireTarifsPostesCanada(donnees) {
+    if (!donnees || typeof donnees !== 'object') return [];
+
+    const candidats = [];
+
+    function parcourir(valeur) {
+      if (Array.isArray(valeur)) {
+        valeur.forEach(parcourir);
+        return;
+      }
+
+      if (!valeur || typeof valeur !== 'object') return;
+
+      const service =
+        valeur.serviceName ||
+        valeur.service ||
+        valeur.name ||
+        valeur.serviceCode ||
+        valeur.service_code ||
+        '';
+
+      const montantBrut =
+        valeur.totalPrice ??
+        valeur.price ??
+        valeur.amount ??
+        valeur.due ??
+        valeur.total ??
+        valeur.totalCharge ??
+        valeur.total_charge;
+
+      const montant = Number(montantBrut);
+
+      if (service && Number.isFinite(montant) && montant >= 0) {
+        candidats.push({
+          service: String(service),
+          montant: montant
+        });
+      }
+
+      Object.values(valeur).forEach(parcourir);
+    }
+
+    parcourir(donnees);
+
+    const uniques = [];
+    const vus = new Set();
+
+    candidats.forEach(function (tarif) {
+      const cle = tarif.service + '|' + tarif.montant.toFixed(2);
+      if (!vus.has(cle)) {
+        vus.add(cle);
+        uniques.push(tarif);
+      }
+    });
+
+    return uniques;
+  }
+
+  async function lireJson(response) {
+    const texte = await response.text();
+
+    if (!texte) return {};
+
+    try {
+      return JSON.parse(texte);
+    } catch (erreur) {
+      console.error('[TRIÈDRE] Réponse serveur non JSON :', texte);
+      throw new Error('Réponse inattendue du serveur.');
+    }
+  }
+
+  async function verifierRetourStripe() {
+    const sessionId = parametresUrl.get('session_id');
+
+    if (!sessionId) {
+      afficherEchecConfirmation(
+        'Impossible de vérifier ce paiement. L’identifiant de session est manquant.'
+      );
+      return;
+    }
+
+    afficherVerificationPaiement();
+
+    // Le webhook Stripe peut arriver quelques instants après le retour du client.
+    // On attend donc brièvement la confirmation serveur.
+    const maxTentatives = 8;
+
+    for (let tentative = 1; tentative <= maxTentatives; tentative += 1) {
+      try {
+        const reponse = await fetch(
+          '/08-php/verifier-paiement-stripe.php?session_id=' +
+          encodeURIComponent(sessionId),
+          {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json'
+            },
+            cache: 'no-store'
+          }
+        );
+
+        const resultat = await lireJson(reponse);
+
+        if (reponse.ok && resultat.success === true && resultat.paid === true) {
+          // Le panier est vidé UNIQUEMENT après confirmation serveur.
+          viderPanier();
+          afficherConfirmationPaiement(resultat.order_number || '');
+          return;
+        }
+
+        if (resultat.status === 'pending' && tentative < maxTentatives) {
+          await attendre(900);
+          continue;
+        }
+
+        throw new Error(
+          resultat.error ||
+          resultat.message ||
+          'La confirmation du paiement n’est pas encore disponible.'
+        );
+
+      } catch (erreur) {
+        if (tentative < maxTentatives) {
+          await attendre(900);
+          continue;
+        }
+
+        console.error('[TRIÈDRE] Vérification retour Stripe :', erreur);
+
+        afficherEchecConfirmation(
+          'Ton paiement est en cours de vérification. Actualise cette page dans quelques instants.'
+        );
+      }
+    }
+  }
+
+  function afficherVerificationPaiement() {
+    conteneur.innerHTML = `
+      <div class="commande-confirmation">
+        <p class="commande-confirmation-icone">✓</p>
+        <h2>Confirmation en cours...</h2>
+        <p>Nous vérifions ton paiement et finalisons ta commande.</p>
+      </div>
+    `;
+  }
+
+  function afficherConfirmationPaiement(numeroCommande) {
+    const reference = numeroCommande
+      ? `<p>Ta commande <strong>#${numeroCommande}</strong> est confirmée.</p>`
+      : '<p>Ta commande TRIÈDRE est confirmée.</p>';
 
     conteneur.innerHTML = `
       <div class="commande-confirmation">
         <p class="commande-confirmation-icone">✓</p>
         <h2>Merci pour ta commande !</h2>
-        <p>Ta commande <strong>#${numeroCommande}</strong> a bien été enregistrée.</p>
-        <p>Un courriel de confirmation te sera envoyé sous peu avec les détails de livraison.</p>
+        <p>Ton paiement a été traité avec succès.</p>
+        ${reference}
+        <p>Un courriel de confirmation arrive sous peu avec tous les détails.</p>
         <a href="./" class="btn btn-primary">Retour à l’accueil</a>
       </div>
     `;
+  }
 
-    viderPanier();
+  function afficherEchecConfirmation(message) {
+    conteneur.innerHTML = `
+      <div class="commande-confirmation">
+        <h2>Vérification du paiement</h2>
+        <p>${message}</p>
+        <a href="commande" class="btn btn-primary">Actualiser</a>
+      </div>
+    `;
+  }
+
+  function attendre(ms) {
+    return new Promise(function (resolve) {
+      window.setTimeout(resolve, ms);
+    });
   }
 
 });

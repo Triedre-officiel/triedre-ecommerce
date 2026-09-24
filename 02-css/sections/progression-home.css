@@ -179,3 +179,37 @@
   outline: 2px solid #fff;
   outline-offset: 3px;
 }
+
+@media (max-width: 520px) {
+  .home-progression {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .home-progression-demo {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .home-progress-card {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .home-progression-signature {
+    grid-template-columns: 1fr;
+  }
+
+  .home-progression-signature div {
+    min-width: 0;
+  }
+
+  .home-progression-connect {
+    text-align: center;
+  }
+}

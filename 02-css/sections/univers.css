@@ -75,16 +75,17 @@
   position: absolute;
   left: .7rem;
   right: .7rem;
-  bottom: .7rem;
+  bottom: .14rem;
   display: flex;
   align-items: baseline;
   justify-content: flex-start;
   gap: .45rem;
-  padding: .58rem .65rem;
-  border: 1px solid rgba(255,255,255,.10);
-  border-radius: 8px;
-  background: rgba(10,10,10,.74);
-  backdrop-filter: blur(8px);
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .univers-cards-home-v2 .univers-card-label h3 {
@@ -364,17 +365,17 @@
 
 .univers-page-card-label {
   position: absolute;
-  left: .7rem;
-  right: .7rem;
+  left: .85rem;
+  right: .85rem;
   bottom: .7rem;
   display: flex;
   align-items: baseline;
   gap: .45rem;
-  padding: .62rem .7rem;
-  border: 1px solid rgba(255,255,255,.10);
-  border-radius: 8px;
-  background: rgba(10,10,10,.76);
-  backdrop-filter: blur(8px);
+  padding: .48rem .65rem;
+  border: none;
+  border-radius: 6px;
+  background: rgba(8,8,8,.62);
+  backdrop-filter: blur(6px);
 }
 
 .univers-page-card-title {
