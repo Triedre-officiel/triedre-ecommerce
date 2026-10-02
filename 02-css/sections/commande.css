@@ -5,7 +5,7 @@
 .commande-page {
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: var(--space-2xl) var(--container-padding);
+  padding: var(--space-lg) var(--container-padding) var(--space-xl);
 }
 
 .commande-page h1 {
@@ -19,7 +19,7 @@
 }
 
 .commande-acces-intro {
-  max-width: 680px;
+  max-width: 900px;
   margin: 0 auto var(--space-xl);
   text-align: center;
 }
@@ -36,6 +36,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-md);
+  margin-top: -0.75rem;
 }
 
 .commande-acces-carte {

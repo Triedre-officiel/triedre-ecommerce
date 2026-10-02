@@ -207,9 +207,27 @@ curl_setopt_array($ch, [
     CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_SLASHES)
 ]);
 
+/* TEMPORAIRE — diagnostic Postes Canada */
+$responseHeaders = [];
+
+curl_setopt($ch, CURLOPT_HEADERFUNCTION, function ($curl, $headerLine) use (&$responseHeaders) {
+    $length = strlen($headerLine);
+    $header = explode(':', $headerLine, 2);
+
+    if (count($header) === 2) {
+        $responseHeaders[strtolower(trim($header[0]))] = trim($header[1]);
+    }
+
+    return $length;
+});
+
 $body = curl_exec($ch);
 $http = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curlError = curl_error($ch);
+
+$globalTransactionId = $responseHeaders['x-global-transaction-id'] ?? null;
+/* FIN TEMPORAIRE */
+
 curl_close($ch);
 
 if ($body === false || $http < 200 || $http >= 300) {
@@ -219,6 +237,7 @@ if ($body === false || $http < 200 || $http >= 300) {
         'success' => false,
         'error' => 'Postes Canada a refusé la tarification LIVE.',
         'provider_http' => $http,
+        'x_global_transaction_id' => $globalTransactionId,
         'provider' => is_array($provider) ? $provider : null,
         'provider_error' => $curlError ?: null
     ]);
