@@ -37,14 +37,14 @@
 }
 
 .logo-text [aria-hidden="true"] {
-  letter-spacing: 6px;
+  letter-spacing: 3px;
 }
 
 .logo-text {
   font-family: var(--font-heading);
   font-size: 1rem;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--color-text-primary);
   line-height: 1.1;
