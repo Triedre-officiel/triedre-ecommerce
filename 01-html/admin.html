@@ -48,7 +48,7 @@
     <section class="admin-hero">
       <p class="section-eyebrow">TRIÈDRE ATHLETIC</p>
       <h1>ESPACE <span class="accent">ADMIN.</span></h1>
-      <p>Gère l’équipe de coachs, les affectations et la continuité du suivi des abonnés.</p>
+      <p>Pilote les outils, les produits et les opérations de TRIÈDRE ATHLETIC.</p>
     </section>
 
     <div id="admin-message" class="admin-message" hidden aria-live="polite"></div>
@@ -58,7 +58,14 @@
     </section>
 
     <div id="admin-zone" hidden>
-      <section class="admin-resume">
+      <nav class="admin-tabs" aria-label="Sections de l’administration">
+        <button class="admin-tab is-active" type="button" data-admin-tab="dashboard" aria-selected="true">Tableau de bord</button>
+        <button class="admin-tab" type="button" data-admin-tab="produits" aria-selected="false">Produits & visuels</button>
+        <a class="admin-tab studio-tab-link" href="/admin-studio-mockup">Studio Mockup</a>
+        <button class="admin-tab" type="button" data-admin-tab="equipe" aria-selected="false">Équipe & membres</button>
+      </nav>
+
+      <section class="admin-resume" data-admin-group="dashboard">
         <article class="admin-kpi">
           <span>Coachs actifs</span>
           <strong id="admin-kpi-coachs">—</strong>
@@ -73,7 +80,24 @@
         </article>
       </section>
 
-      <section class="admin-card">
+      <!-- =========================================================
+           PRODUITS & VISUELS
+      ========================================================= -->
+      <section class="admin-card" data-admin-group="produits">
+        <div class="admin-section-heading">
+          <div>
+            <p class="section-eyebrow">Apparel</p>
+            <h2>PRODUITS & VISUELS</h2>
+          </div>
+          <a class="btn btn-primary" href="/admin-visuels">Gérer les visuels</a>
+        </div>
+
+        <p class="admin-note">
+          Crée, importe, contrôle et publie les visuels des produits TRIÈDRE.
+        </p>
+      </section>
+
+      <section class="admin-card" data-admin-group="equipe">
         <div class="admin-section-heading">
           <div>
             <p class="section-eyebrow">Équipe</p>
@@ -105,7 +129,7 @@
         </div>
       </section>
 
-      <section class="admin-card">
+      <section class="admin-card" data-admin-group="equipe">
         <div class="admin-section-heading">
           <div>
             <p class="section-eyebrow">Suivi</p>
@@ -124,7 +148,7 @@
         </div>
       </section>
 
-      <section class="admin-card">
+      <section class="admin-card" data-admin-group="equipe">
         <div class="admin-section-heading">
           <div>
             <p class="section-eyebrow">Traçabilité</p>
@@ -139,24 +163,55 @@
     </div>
   </main>
 
-  <footer class="site-footer">
+    <footer class="site-footer">
     <div class="footer-brand">
-      <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
-      <span class="logo-text">TRIÈDRE <small>Deviens Plus</small></span>
-      <p>Corps. Mental. Confiance.<br>Un mode de vie. Une discipline.<br>Une seule direction.</p>
+      <div class="footer-logo-ligne">
+        <img class="footer-logo-img" src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+        <span class="logo-text">
+          <span class="sr-only">TRIÈDRE</span><span aria-hidden="true">TRIΞDRΞ</span>
+          <small>Deviens Plus</small>
+        </span>
+      </div>
+
+      <p>
+        Corps. Mental. Confiance.<br>
+        Un mode de vie. Une discipline.<br>
+        Une seule direction.
+      </p>
+
+      <div class="social-links">
+        <a href="https://www.facebook.com/share/1KZvCWZQVM/" target="_blank" rel="noopener" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
+        <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" target="_blank" rel="noopener" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
+        <a href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4" target="_blank" rel="noopener" aria-label="TikTok"><img src="../05-images/icons/icon-tiktok.svg" alt=""></a>
+        <a href="#" target="_blank" rel="noopener" aria-label="YouTube"><img src="../05-images/icons/icon-youtube.svg" alt=""></a>
+      </div>
     </div>
 
     <nav class="footer-nav">
       <h4>Navigation</h4>
       <ul>
         <li><a href="/">Accueil</a></li>
-        <li><a href="/membre">Espace membre</a></li>
-        <li><a href="/coach">Tableau coach</a></li>
+        <li><a href="/marque">La Marque</a></li>
+        <li><a href="/univers">Univers</a></li>
+        <li><a href="/boutique">Boutique</a></li>
+        <li><a href="/membre">Espace Membre</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-aide">
+      <h4>Aide</h4>
+      <ul>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/livraison">Livraison</a></li>
+        <li><a href="/retours">Retours</a></li>
+        <li><a href="/conditions">Conditions</a></li>
+        <li><a href="/confidentialite">Confidentialité</a></li>
       </ul>
     </nav>
 
     <div class="footer-contact">
       <h4>Contact</h4>
+      <p><a href="/contact">Formulaire de contact</a></p>
       <p>Montréal, Québec, Canada</p>
       <p><a href="mailto:info@triedreofficiel.com">info@triedreofficiel.com</a></p>
     </div>
@@ -168,6 +223,18 @@
   <script src="../03-js/supabase-config.js"></script>
   <script src="../03-js/navigation.js"></script>
   <script src="../03-js/modal.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabs=[...document.querySelectorAll('[data-admin-tab]')];
+    const groups=[...document.querySelectorAll('[data-admin-group]')];
+    function openTab(name){
+      tabs.forEach(t=>{const on=t.dataset.adminTab===name;t.classList.toggle('is-active',on);t.setAttribute('aria-selected',on?'true':'false');});
+      groups.forEach(g=>g.hidden=g.dataset.adminGroup!==name);
+    }
+    tabs.forEach(t=>t.addEventListener('click',()=>openTab(t.dataset.adminTab)));
+    openTab(location.hash==='#equipe'?'equipe':'dashboard');
+  });
+  </script>
   <script src="../03-js/admin.js"></script>
 </body>
 </html>

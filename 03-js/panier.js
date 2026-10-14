@@ -210,7 +210,7 @@ function afficherAjoutPanierPremium(article) {
       '</div>' +
       '<div class="triedre-ajout-panier-actions">' +
         '<a href="panier" class="btn triedre-ajout-panier-voir">Afficher le panier</a>' +
-        '<a href="commande" class="btn btn-primary triedre-ajout-panier-paiement">Paiement</a>' +
+        '<a href="commande" class="btn btn-primary triedre-ajout-panier-paiement">Terminer ma commande</a>' +
       '</div>' +
     '</aside>';
 
@@ -408,7 +408,7 @@ async function afficherPagePanier() {
           '<div class="panier-total"><span>Total</span><span class="accent">' + total + ' $</span></div>' +
           '<button class="btn btn-primary btn-commander"' +
             (panierValide ? '' : ' disabled') +
-          '>Passer à la commande</button>' +
+          '>Terminer ma commande</button>' +
         '</div>' +
       '</div>' +
     '</div>';

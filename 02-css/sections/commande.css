@@ -246,3 +246,90 @@
     gap: var(--space-md);
   }
 }
+
+
+/* TRIÈDRE — Tunnel final : Panier → Adresse → Résumé → Paiement */
+.commande-layout-adresse {
+  display: block;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.commande-layout-adresse .commande-formulaire {
+  width: 100%;
+}
+.commande-resume-adresse-cache {
+  display: none;
+}
+.commande-etape-final {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.commande-etapes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+}
+.commande-etapes .is-complete,
+.commande-etapes .is-active {
+  color: var(--color-accent);
+}
+.commande-resume-final {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+}
+.commande-resume-entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+.commande-resume-entete h2 {
+  margin: 0;
+}
+.commande-lien-action {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-accent);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.commande-adresse-confirmee {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+}
+.commande-adresse-confirmee strong {
+  color: var(--color-text-primary);
+}
+.commande-ligne-final {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-sm) 0;
+  border-top: 1px solid var(--color-border);
+}
+.commande-total-final {
+  padding-top: var(--space-md);
+}
+#btn-resume-commande {
+  width: 100%;
+  margin-top: var(--space-lg);
+}
+
+/* Checkout membre — actions de confirmation */
+.commande-membre-actions { display:flex; flex-wrap:wrap; gap:14px; margin-top:24px; }
+.commande-membre-actions .btn { flex:1 1 210px; text-align:center; }

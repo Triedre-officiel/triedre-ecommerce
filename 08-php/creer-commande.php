@@ -293,14 +293,36 @@ unset($ligne);
 
 
 // ============================================================================
-// 8. Montants V1
+// 8. Montants de la commande
 //
-// Livraison et taxes seront branchées avant Stripe.
-// Pour ce test serveur :
-// total = sous-total.
+// Le client valide d'abord le tarif Postes Canada affiché dans le checkout.
+// Ce tarif est ensuite enregistré avec la commande et repris par Stripe.
 // ============================================================================
 
-$livraison = 0.00;
+$livraisonTransmise = is_array($donnees['livraison'] ?? null)
+    ? $donnees['livraison']
+    : [];
+
+$serviceLivraison = nettoyerTexte(
+    $livraisonTransmise['service'] ?? '',
+    120
+);
+
+$montantLivraisonBrut = $livraisonTransmise['montant'] ?? null;
+
+if (
+    $serviceLivraison === '' ||
+    !is_numeric($montantLivraisonBrut)
+) {
+    repondreErreur('Le tarif de livraison validé est manquant.', 422);
+}
+
+$livraison = arrondirMontant((float)$montantLivraisonBrut);
+
+if ($livraison < 0 || $livraison > 500) {
+    repondreErreur('Le tarif de livraison est invalide.', 422);
+}
+
 $taxes = 0.00;
 
 $total = arrondirMontant(
@@ -309,13 +331,62 @@ $total = arrondirMontant(
 
 
 // ============================================================================
-// 9. Utilisateur connecté optionnel
-//
-// V1 : on crée une commande invitée.
-// La liaison sécurisée au membre connecté sera ajoutée dans l'étape suivante.
+// 9. Identification sécurisée du membre (commande invitée toujours possible)
 // ============================================================================
 
 $userId = null;
+// Certains environnements Apache/PHP transmettent Authorization sous une autre forme.
+$authorization = trim((string)($_SERVER['HTTP_AUTHORIZATION'] ?? ''));
+if ($authorization === '') {
+    $authorization = trim((string)($_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? ''));
+}
+if ($authorization === '' && function_exists('getallheaders')) {
+    foreach (getallheaders() as $headerName => $headerValue) {
+        if (strcasecmp((string)$headerName, 'Authorization') === 0) {
+            $authorization = trim((string)$headerValue);
+            break;
+        }
+    }
+}
+if ($authorization === '' && function_exists('apache_request_headers')) {
+    foreach (apache_request_headers() as $headerName => $headerValue) {
+        if (strcasecmp((string)$headerName, 'Authorization') === 0) {
+            $authorization = trim((string)$headerValue);
+            break;
+        }
+    }
+}
+
+if ($authorization !== '') {
+    if (!preg_match('/^Bearer\s+([^\s]+)$/i', $authorization, $matches)) {
+        repondreErreur('Authentification membre invalide.', 401);
+    }
+    $token = $matches[1];
+    $curlAuth = curl_init($supabaseUrl . '/auth/v1/user');
+    if ($curlAuth === false) {
+        repondreErreur('Service d’authentification indisponible.', 503);
+    }
+    curl_setopt_array($curlAuth, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPGET => true,
+        CURLOPT_HTTPHEADER => [
+            'apikey: ' . $supabaseSecretKey,
+            'Authorization: Bearer ' . $token,
+            'Accept: application/json',
+        ],
+        CURLOPT_CONNECTTIMEOUT => 10,
+        CURLOPT_TIMEOUT => 20,
+    ]);
+    $authBody = curl_exec($curlAuth);
+    $authStatus = (int)curl_getinfo($curlAuth, CURLINFO_RESPONSE_CODE);
+    curl_close($curlAuth);
+    $authUser = is_string($authBody) ? json_decode($authBody, true) : null;
+    if ($authStatus !== 200 || !is_array($authUser) || !isset($authUser['id']) ||
+        !preg_match('/^[a-f0-9-]{36}$/i', (string)$authUser['id'])) {
+        repondreErreur('Session membre invalide ou expirée.', 401);
+    }
+    $userId = (string)$authUser['id'];
+}
 
 
 // ============================================================================
@@ -450,6 +521,7 @@ echo json_encode(
         'success' => true,
         'order_id' => $orderId,
         'order_number' => $numeroCommande,
+        'member_linked' => $userId !== null,
         'currency' => $deviseCommande,
         'subtotal' => $sousTotal,
         'shipping_amount' => $livraison,

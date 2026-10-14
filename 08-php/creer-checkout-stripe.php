@@ -63,7 +63,7 @@ $urlCommande =
     '?id=eq.' . rawurlencode($orderId) .
     '&select=id,order_number,status,payment_status,currency,' .
     'subtotal,shipping_amount,tax_amount,total_amount,customer_email,' .
-    'stripe_checkout_session_id';
+    'stripe_checkout_session_id,user_id';
 
 $commandes = requeteSupabase(
     'GET',
@@ -76,6 +76,14 @@ if (!is_array($commandes) || !isset($commandes[0])) {
 }
 
 $commande = $commandes[0];
+require_once __DIR__ . '/commandes-auth.php';
+$owner = (string)($commande['user_id'] ?? '');
+if ($owner !== '') {
+    $actor = membreAuthentifie($supabaseUrl, $supabaseSecretKey);
+    if ($actor === null) repondreErreur('Connexion membre requise.', 401);
+    if (!hash_equals($owner, $actor)) repondreErreur('Accès refusé.', 403);
+}
+
 
 
 // ============================================================================
@@ -207,6 +215,23 @@ foreach ($items as $index => $item) {
         ],
 
         'quantity' => (int)$item['quantity'],
+    ];
+}
+
+
+// Ajouter la livraison enregistrée dans la commande comme ligne Stripe distincte.
+$shippingAmount = round((float)($commande['shipping_amount'] ?? 0), 2);
+
+if ($shippingAmount > 0) {
+    $parametresStripe['line_items'][] = [
+        'price_data' => [
+            'currency' => $currency,
+            'unit_amount' => (int)round($shippingAmount * 100),
+            'product_data' => [
+                'name' => 'Livraison — Postes Canada',
+            ],
+        ],
+        'quantity' => 1,
     ];
 }
 

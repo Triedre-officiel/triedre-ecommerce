@@ -48,6 +48,37 @@ if ($clientId === '' || $clientSecret === '' || $customerNumber === '' || $origi
     ]);
 }
 
+/*
+ * Sécurité LIVE : ne jamais envoyer les valeurs d'exemple à Postes Canada.
+ * Les valeurs réelles restent privées et ne sont jamais renvoyées au navigateur.
+ */
+$placeholdersInterdits = [
+    'TON_NUMERO_CLIENT',
+    'TON_CODE_POSTAL'
+];
+
+if (in_array(strtoupper($customerNumber), $placeholdersInterdits, true)
+    || in_array(strtoupper($originPostalCode), $placeholdersInterdits, true)) {
+    sortir(500, [
+        'success' => false,
+        'error' => 'Configuration Postes Canada LIVE invalide : valeur d’exemple détectée.'
+    ]);
+}
+
+if (!preg_match('/^[A-Z0-9]+$/i', $customerNumber)) {
+    sortir(500, [
+        'success' => false,
+        'error' => 'Configuration Postes Canada LIVE invalide : numéro client mal formé.'
+    ]);
+}
+
+if (!preg_match('/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z]\d[ABCEGHJ-NPRSTV-Z]\d$/i', $originPostalCode)) {
+    sortir(500, [
+        'success' => false,
+        'error' => 'Configuration Postes Canada LIVE invalide : code postal d’origine mal formé.'
+    ]);
+}
+
 $input = json_decode((string)file_get_contents('php://input'), true);
 if (!is_array($input)) {
     sortir(400, ['success' => false, 'error' => 'Données JSON invalides.']);
@@ -179,7 +210,7 @@ $payload = [
     'quoteType' => 'commercial',
     'originPostalCode' => $originPostalCode,
     'parcelCharacteristics' => [
-        'weight' => number_format($poidsKg, 3, '.', ''),
+        'weight' => round($poidsKg, 3),
         'dimensions' => [
             'length' => 33.0,
             'width' => 25.4,
@@ -245,15 +276,52 @@ if ($body === false || $http < 200 || $http >= 300) {
 
 $data = json_decode((string)$body, true);
 if (!is_array($data)) {
-    sortir(502, ['success' => false, 'error' => 'Réponse Postes Canada invalide.']);
+    sortir(502, [
+        'success' => false,
+        'error' => 'Réponse Postes Canada invalide.',
+        'diagnostic' => [
+            'rating_http' => $http,
+            'x_global_transaction_id' => $globalTransactionId,
+            'json_valide' => false
+        ]
+    ]);
 }
 
 /*
- * On renvoie la réponse fournisseur au checkout sans acheter de label.
- * Le JS pourra ensuite normaliser/afficher les services réellement retournés.
+ * TEMPORAIRE — diagnostic sécurisé.
+ * Ne renvoie aucun identifiant, secret, token, numéro client
+ * ni code postal d'origine.
+ */
+$topLevelKeys = array_keys($data);
+$structure = [];
+
+foreach ($data as $key => $value) {
+    if (is_array($value)) {
+        $structure[$key] = [
+            'type' => 'array',
+            'count' => count($value),
+            'keys' => array_is_list($value) ? null : array_keys($value)
+        ];
+    } else {
+        $structure[$key] = [
+            'type' => gettype($value)
+        ];
+    }
+}
+
+/*
+ * On renvoie la réponse fournisseur au checkout sans acheter de label,
+ * plus un diagnostic temporaire non sensible.
  */
 sortir(200, [
     'success' => true,
+    'diagnostic' => [
+        'rating_http' => $http,
+        'x_global_transaction_id' => $globalTransactionId,
+        'json_valide' => true,
+        'cles_reponse' => $topLevelKeys,
+        'structure_reponse' => $structure
+    ],
     'colis' => [
         'nombre_articles' => $nombreArticles,
         'poids_total_g' => round($poidsTotalG, 1),

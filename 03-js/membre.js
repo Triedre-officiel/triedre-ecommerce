@@ -2637,6 +2637,7 @@ document.addEventListener('DOMContentLoaded', function () {
           id,
           order_number,
           status,
+          payment_status,
           currency,
           subtotal,
           shipping_amount,
@@ -2778,6 +2779,52 @@ document.addEventListener('DOMContentLoaded', function () {
       pied.appendChild(total);
       carte.appendChild(pied);
 
+      if (commande.status === 'pending' && commande.payment_status !== 'paid') {
+        const actions = document.createElement('div');
+        actions.className = 'membre-commande-actions';
+        const payer = document.createElement('button');
+        payer.type = 'button'; payer.className = 'membre-commande-action membre-commande-action-payer'; payer.textContent = 'Finaliser le paiement';
+        payer.addEventListener('click', async function () {
+          payer.disabled = true;
+          try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session?.access_token) throw new Error('Reconnecte-toi pour continuer.');
+            const response = await fetch('/08-php/creer-checkout-stripe.php', {
+              method: 'POST', headers: {'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+              body: JSON.stringify({order_id: commande.id})
+            });
+            const result = await response.json();
+            if (!response.ok || !result.checkout_url) throw new Error(result.message || 'Paiement indisponible.');
+            window.location.assign(result.checkout_url);
+          } catch (e) { afficherToast(e.message || 'Paiement indisponible.', 'avertissement'); payer.disabled = false; }
+        });
+        const annuler = document.createElement('button');
+        annuler.type = 'button'; annuler.className = 'membre-commande-action membre-commande-action-annuler'; annuler.textContent = 'Annuler la commande';
+        annuler.addEventListener('click', async function () {
+          const confirmation = await window.triedreModal.confirm({
+            eyebrow: 'MON ACTIVITÉ',
+            title: 'ANNULER CETTE COMMANDE ?',
+            message: 'La commande ' + commande.order_number + ' sera annulée, mais restera consultable dans ton historique TRIÈDRE.',
+            confirmText: 'Confirmer l’annulation',
+            cancelText: 'Conserver la commande'
+          });
+          if (!confirmation) return;
+          annuler.disabled = true;
+          try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session?.access_token) throw new Error('Reconnecte-toi pour continuer.');
+            const response = await fetch('/08-php/annuler-commande.php', {
+              method: 'POST', headers: {'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+              body: JSON.stringify({order_id: commande.id})
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) throw new Error(result.message || 'Annulation impossible.');
+            afficherToast('Commande annulée.', 'succes');
+            await ouvrirMesCommandes();
+          } catch (e) { afficherToast(e.message || 'Annulation impossible.', 'avertissement'); annuler.disabled = false; }
+        });
+        actions.append(payer, annuler); carte.appendChild(actions);
+      }
       listeCommandes.appendChild(carte);
     });
   }
@@ -3467,15 +3514,16 @@ document.addEventListener('DOMContentLoaded', function () {
           .eq('user_id', user.id);
         if (erreurCompteur) throw erreurCompteur;
 
-        const adresseParDefaut = veutDefaut || (!id && Number(count || 0) === 0);
-
-        if (adresseParDefaut) {
-          const { error: erreurResetDefaut } = await supabase
-            .from('member_addresses')
-            .update({ is_default: false })
-            .eq('user_id', user.id);
-          if (erreurResetDefaut) throw erreurResetDefaut;
+        // Une modification ordinaire ne doit pas effacer le statut par défaut.
+        let etaitDefaut = false;
+        if (id) {
+          const { data: existante, error: erreurExistante } = await supabase
+            .from('member_addresses').select('is_default')
+            .eq('id', id).eq('user_id', user.id).single();
+          if (erreurExistante) throw erreurExistante;
+          etaitDefaut = Boolean(existante && existante.is_default);
         }
+        const adresseParDefaut = veutDefaut || etaitDefaut || (!id && Number(count || 0) === 0);
 
         const donnees = {
           user_id: user.id,
@@ -3510,13 +3558,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (erreurSauvegarde) throw erreurSauvegarde;
 
+        // N'enlever le défaut aux autres adresses qu'après une sauvegarde réussie.
+        // La nouvelle adresse conserve ainsi son statut si l'écriture échoue.
+        if (adresseParDefaut) {
+          let requeteAutres = supabase.from('member_addresses')
+            .update({ is_default: false }).eq('user_id', user.id);
+          if (id) {
+            requeteAutres = requeteAutres.neq('id', id);
+          } else {
+            const { data: nouvelles, error: erreurNouvelles } = await supabase
+              .from('member_addresses').select('id').eq('user_id', user.id)
+              .eq('is_default', true).order('created_at', { ascending: false });
+            if (erreurNouvelles) throw erreurNouvelles;
+            const conserve = nouvelles && nouvelles[0] && nouvelles[0].id;
+            if (conserve) requeteAutres = requeteAutres.neq('id', conserve);
+          }
+          const { error: erreurAutres } = await requeteAutres;
+          if (erreurAutres) throw erreurAutres;
+        }
+
+
         adresseSucces.textContent = id ? 'Ton adresse a été mise à jour.' : 'Ton adresse a été enregistrée.';
         adresseSucces.hidden = false;
         await chargerAdresses();
 
-        window.setTimeout(function () {
-          fermerFormulaireAdresse();
-        }, 900);
+        fermerFormulaireAdresse();
+        afficherToast(id ? 'Adresse modifiée.' : 'Adresse enregistrée.', 'succes');
       } catch (error) {
         console.error('[TRIÈDRE] Enregistrement adresse :', error);
         adresseErreur.textContent = 'Impossible d’enregistrer cette adresse pour le moment.';
@@ -3676,18 +3743,19 @@ document.addEventListener('DOMContentLoaded', function () {
       const { data: { user }, error: erreurUtilisateur } = await supabase.auth.getUser();
       if (erreurUtilisateur || !user) throw erreurUtilisateur || new Error('SESSION_INVALIDE');
 
-      const { error: erreurReset } = await supabase
-        .from('member_addresses')
-        .update({ is_default: false })
-        .eq('user_id', user.id);
-      if (erreurReset) throw erreurReset;
-
       const { error } = await supabase
         .from('member_addresses')
         .update({ is_default: true })
         .eq('id', id)
         .eq('user_id', user.id);
       if (error) throw error;
+
+      const { error: erreurReset } = await supabase
+        .from('member_addresses')
+        .update({ is_default: false })
+        .eq('user_id', user.id)
+        .neq('id', id);
+      if (erreurReset) throw erreurReset;
 
       await chargerAdresses();
       afficherToast('Adresse par défaut mise à jour.', 'succes');
@@ -3698,7 +3766,13 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   async function supprimerAdresse(id) {
-    const confirmation = window.confirm('Supprimer cette adresse enregistrée ?');
+    const confirmation = await window.triedreModal.confirm({
+      eyebrow: 'MON COMPTE',
+      title: 'SUPPRIMER CETTE ADRESSE ?',
+      message: 'Cette adresse sera définitivement supprimée de ton compte.',
+      confirmText: 'Supprimer l’adresse',
+      cancelText: 'Annuler'
+    });
     if (!confirmation) return;
 
     try {

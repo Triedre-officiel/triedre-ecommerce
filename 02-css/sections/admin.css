@@ -410,3 +410,13 @@
     width: 100%;
   }
 }
+
+/* TRIÈDRE — Admin V2 : navigation par onglets */
+.admin-tabs{display:flex;gap:.55rem;margin:0 0 var(--space-lg);padding:.4rem;overflow-x:auto;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-bg-secondary)}
+.admin-tab{flex:1 0 auto;min-height:46px;padding:.7rem 1rem;border:1px solid transparent;border-radius:calc(var(--radius-md) - 4px);background:transparent;color:var(--color-text-secondary);font:inherit;font-weight:700;cursor:pointer;text-decoration:none;text-align:center}
+.admin-tab:hover{color:var(--color-text-primary);border-color:rgba(201,162,39,.35)}
+.admin-tab.is-active{border-color:rgba(201,162,39,.65);background:rgba(201,162,39,.10);color:var(--color-accent)}
+[data-admin-group][hidden]{display:none!important}
+@media(max-width:700px){.admin-tab{flex:0 0 auto}}
+
+.admin-tabs .studio-tab-link{display:flex;align-items:center;justify-content:center;text-decoration:none;color:inherit}.admin-tabs .studio-tab-link:hover{color:#d4b86f}

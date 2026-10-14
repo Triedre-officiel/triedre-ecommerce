@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Test Supabase - TRIÈDRE</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      background: #0d0d0d;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #c7c7c7;
+      line-height: 1.6;
+    }
+
+    #resultat {
+      margin-top: 24px;
+      padding: 18px;
+      border: 1px solid #333;
+      border-radius: 10px;
+      background: #171717;
+      white-space: pre-wrap;
+    }
+
+    .succes {
+      color: #d4af37;
+    }
+
+    .erreur {
+      color: #ff7b7b;
+    }
+  </style>
+</head>
+<body>
+
+  <main>
+    <h1>Test Supabase — TRIÈDRE</h1>
+    <p>
+      Cette page vérifie uniquement que le navigateur peut lire
+      <code>product_variants</code> avec la Publishable Key et la policy RLS.
+    </p>
+
+    <div id="resultat">Connexion en cours...</div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../03-js/supabase-config.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      const resultat = document.getElementById('resultat');
+
+      if (typeof window.testerConnexionSupabase !== 'function') {
+        resultat.className = 'erreur';
+        resultat.textContent =
+          'Échec : le client Supabase TRIÈDRE n’a pas été initialisé.';
+        return;
+      }
+
+      const test = await window.testerConnexionSupabase();
+
+      if (!test.ok) {
+        resultat.className = 'erreur';
+        resultat.textContent =
+          'Échec de la connexion Supabase.\nConsulte la Console DevTools pour le détail.';
+        return;
+      }
+
+      resultat.className = 'succes';
+      resultat.textContent =
+        'Connexion Supabase réussie ✅\n' +
+        'Variantes reçues : ' + test.count + '\n' +
+        'Résultat attendu pour le Catalogue V1.1 : 63.';
+    });
+  </script>
+
+</body>
+</html>
