@@ -12,6 +12,12 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([^/.]+)$ 01-html/$1.html [L,QSA]
 
+# Pages sans extension dans le dossier 01-html (ex. /01-html/membre)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/01-html/$1.html -f
+RewriteRule ^01-html/([^/.]+)$ 01-html/$1.html [L,QSA]
+
 # Compatibilité avec les anciennes URL en .html
 RewriteCond %{THE_REQUEST} \s/+([^/]+)\.html[\s?] [NC]
 RewriteRule ^([^/]+)\.html$ /$1 [R=301,L]
@@ -35,3 +41,8 @@ RewriteRule ^([^/]+)\.html$ /$1 [R=301,L]
   </FilesMatch>
 
 </IfModule>
+
+# TRIÈDRE — interdire tout accès HTTP aux fichiers de configuration PHP
+<FilesMatch "^config(?:\.example|\[[0-9]+\])?\.php$">
+    Require all denied
+</FilesMatch>

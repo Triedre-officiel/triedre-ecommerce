@@ -1,6 +1,58 @@
-// ==========================================================================
+// ========================================================================== 
 // TRIÈDRE — Gestion du panier (localStorage)
-// ==========================================================================
+// ========================================================================== 
+
+function obtenirClientStockSupabase() {
+  if (window.triedreStockSupabase) {
+    return Promise.resolve(window.triedreStockSupabase);
+  }
+
+  if (window.triedreStockReady) {
+    return window.triedreStockReady;
+  }
+
+  window.triedreStockReady = new Promise(function (resolve, reject) {
+    const existant = document.querySelector('script[data-triedre-stock-supabase]');
+
+    if (existant) {
+      existant.addEventListener('load', function () {
+        if (window.triedreStockSupabase) {
+          resolve(window.triedreStockSupabase);
+        } else {
+          reject(new Error('Client stock Supabase introuvable.'));
+        }
+      }, { once: true });
+
+      existant.addEventListener('error', function () {
+        reject(new Error('Impossible de charger stock-supabase.js.'));
+      }, { once: true });
+
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = '../03-js/stock-supabase.js';
+    script.async = true;
+    script.setAttribute('data-triedre-stock-supabase', '');
+
+    script.onload = function () {
+      if (window.triedreStockSupabase) {
+        resolve(window.triedreStockSupabase);
+      } else {
+        reject(new Error('Client stock Supabase introuvable.'));
+      }
+    };
+
+    script.onerror = function () {
+      reject(new Error('Impossible de charger stock-supabase.js.'));
+    };
+
+    document.head.appendChild(script);
+  });
+
+  return window.triedreStockReady;
+}
+
 
 function getPanier() {
   const donnees = localStorage.getItem('triedre_panier');
@@ -57,9 +109,9 @@ function mettreAJourCompteur() {
   });
 }
 
-// ==========================================================================
+// ========================================================================== 
 // Notifications premium
-// ==========================================================================
+// ========================================================================== 
 
 function afficherToast(message, type) {
   const typeToast = type || 'succes';
@@ -120,6 +172,76 @@ function afficherToast(message, type) {
   });
 
   setTimeout(retirerToast, 3800);
+}
+
+// ========================================================================== 
+// Panneau premium — Produit ajouté au panier
+// ========================================================================== 
+
+function afficherAjoutPanierPremium(article) {
+  const ancienPanneau = document.getElementById('triedre-ajout-panier');
+  if (ancienPanneau) ancienPanneau.remove();
+
+  const panneau = document.createElement('div');
+  panneau.id = 'triedre-ajout-panier';
+  panneau.className = 'triedre-ajout-panier';
+
+  const prixTotal = (article.prix * article.quantite).toFixed(2);
+
+  panneau.innerHTML =
+    '<div class="triedre-ajout-panier-overlay"></div>' +
+    '<aside class="triedre-ajout-panier-panneau" role="dialog" aria-modal="true" aria-labelledby="triedre-ajout-panier-titre">' +
+      '<div class="triedre-ajout-panier-entete">' +
+        '<div class="triedre-ajout-panier-validation">' +
+          '<span class="triedre-ajout-panier-check" aria-hidden="true">✓</span>' +
+          '<h2 id="triedre-ajout-panier-titre">Ajouté au panier</h2>' +
+        '</div>' +
+        '<button class="triedre-ajout-panier-fermer" type="button" aria-label="Fermer">×</button>' +
+      '</div>' +
+      '<div class="triedre-ajout-panier-produit">' +
+        '<img class="triedre-ajout-panier-image" src="' + article.image + '" alt="' + article.nom + '">' +
+        '<div class="triedre-ajout-panier-infos">' +
+          '<h3>' + article.nom + '</h3>' +
+          '<p>Couleur : ' + article.couleur + '</p>' +
+          '<p>Taille : ' + article.taille + '</p>' +
+          '<p>Quantité : ' + article.quantite + '</p>' +
+          '<strong>' + prixTotal + ' $</strong>' +
+        '</div>' +
+      '</div>' +
+      '<div class="triedre-ajout-panier-actions">' +
+        '<a href="panier" class="btn triedre-ajout-panier-voir">Afficher le panier</a>' +
+        '<a href="commande" class="btn btn-primary triedre-ajout-panier-paiement">Terminer ma commande</a>' +
+      '</div>' +
+    '</aside>';
+
+  document.body.appendChild(panneau);
+  document.body.classList.add('triedre-modal-ouverte');
+
+  const boutonFermer = panneau.querySelector('.triedre-ajout-panier-fermer');
+  const overlay = panneau.querySelector('.triedre-ajout-panier-overlay');
+
+  function fermerPanneau() {
+    document.body.classList.remove('triedre-modal-ouverte');
+    document.removeEventListener('keydown', gererClavier);
+    panneau.classList.remove('is-visible');
+
+    setTimeout(function () {
+      panneau.remove();
+    }, 250);
+  }
+
+  function gererClavier(e) {
+    if (e.key === 'Escape') fermerPanneau();
+  }
+
+  boutonFermer.addEventListener('click', fermerPanneau);
+  overlay.addEventListener('click', fermerPanneau);
+  document.addEventListener('keydown', gererClavier);
+
+  requestAnimationFrame(function () {
+    panneau.classList.add('is-visible');
+    boutonFermer.focus();
+  });
 }
 
 function demanderConfirmation(options) {
@@ -186,11 +308,11 @@ function demanderConfirmation(options) {
   });
 }
 
-// ==========================================================================
+// ========================================================================== 
 // Affichage du panier
-// ==========================================================================
+// ========================================================================== 
 
-function afficherPagePanier() {
+async function afficherPagePanier() {
   const conteneur = document.getElementById('panier-contenu');
   if (!conteneur) return;
 
@@ -205,10 +327,43 @@ function afficherPagePanier() {
     return;
   }
 
+  let verifications = null;
+
+  try {
+    const clientStock = await obtenirClientStockSupabase();
+    verifications = await clientStock.verifierPanier(panier, true);
+  } catch (erreur) {
+    console.error('[TRIÈDRE] Vérification du stock du panier impossible :', erreur);
+  }
+
+  const etatsParSku = new Map();
+
+  if (verifications) {
+    verifications.forEach(function (verification) {
+      etatsParSku.set(verification.item.sku, verification);
+    });
+  }
+
   let articlesHTML = '';
+  let panierValide = Boolean(verifications);
 
   panier.forEach(function (item, index) {
     const sousTotal = (item.prix * item.quantite).toFixed(2);
+    const etat = etatsParSku.get(item.sku);
+    let messageStock = '';
+
+    if (!etat) {
+      panierValide = false;
+      messageStock = 'Stock momentanément indisponible';
+    } else if (etat.raison === 'indisponible') {
+      panierValide = false;
+      messageStock = 'Indisponible';
+    } else if (etat.raison === 'quantite') {
+      panierValide = false;
+      messageStock = 'Plus que ' + etat.stock + ' en stock';
+    } else if (etat.stock <= 5) {
+      messageStock = 'Plus que ' + etat.stock + ' en stock';
+    }
 
     articlesHTML +=
       '<div class="panier-article" data-index="' + index + '">' +
@@ -216,6 +371,9 @@ function afficherPagePanier() {
         '<div class="panier-article-info">' +
           '<h3>' + item.nom + '</h3>' +
           '<p class="panier-article-details">Couleur : ' + item.couleur + ' — Taille : ' + item.taille + '</p>' +
+          (messageStock
+            ? '<p class="stock-message stock-limite-texte">' + messageStock + '</p>'
+            : '') +
           '<p class="panier-article-prix">' + sousTotal + ' $</p>' +
         '</div>' +
         '<div class="panier-article-actions">' +
@@ -233,16 +391,12 @@ function afficherPagePanier() {
 
   conteneur.innerHTML =
     '<div class="panier-layout">' +
-
       '<div class="panier-articles-colonne">' +
         '<div class="panier-colonne-action panier-colonne-action-gauche">' +
           '<a href="boutique" class="panier-continuer-achats">Continuer mes achats</a>' +
         '</div>' +
-        '<div class="panier-articles">' +
-          articlesHTML +
-        '</div>' +
+        '<div class="panier-articles">' + articlesHTML + '</div>' +
       '</div>' +
-
       '<div class="panier-resume-colonne">' +
         '<div class="panier-colonne-action panier-colonne-action-droite">' +
           '<button class="btn-vider-panier" type="button">Vider le panier</button>' +
@@ -252,17 +406,44 @@ function afficherPagePanier() {
           '<div class="panier-ligne-resume"><span>Sous-total</span><span>' + total + ' $</span></div>' +
           '<div class="panier-ligne-resume"><span>Livraison</span><span>Calculée à l\'étape suivante</span></div>' +
           '<div class="panier-total"><span>Total</span><span class="accent">' + total + ' $</span></div>' +
-          '<button class="btn btn-primary btn-commander">Passer à la commande</button>' +
+          '<button class="btn btn-primary btn-commander"' +
+            (panierValide ? '' : ' disabled') +
+          '>Terminer ma commande</button>' +
         '</div>' +
       '</div>' +
-
     '</div>';
 
   const boutonCommander = conteneur.querySelector('.btn-commander');
 
   if (boutonCommander) {
-    boutonCommander.addEventListener('click', function () {
-      window.location.href = 'commande';
+    boutonCommander.addEventListener('click', async function () {
+      try {
+        const clientStock = await obtenirClientStockSupabase();
+        const controles = await clientStock.verifierPanier(getPanier(), true);
+        const invalide = controles.find(function (controle) {
+          return !controle.disponible;
+        });
+
+        if (invalide) {
+          afficherToast(
+            invalide.raison === 'indisponible'
+              ? invalide.item.nom + ' est maintenant indisponible.'
+              : 'La quantité de ' + invalide.item.nom +
+                ' dépasse le stock disponible (' + invalide.stock + ').',
+            'avertissement'
+          );
+          afficherPagePanier();
+          return;
+        }
+
+        window.location.href = 'commande';
+      } catch (erreur) {
+        console.error('[TRIÈDRE] Vérification avant commande impossible :', erreur);
+        afficherToast(
+          'Le stock ne peut pas être vérifié pour le moment.',
+          'avertissement'
+        );
+      }
     });
   }
 
@@ -286,9 +467,9 @@ function afficherPagePanier() {
   }
 }
 
-// ==========================================================================
+// ========================================================================== 
 // Interactions du panier
-// ==========================================================================
+// ========================================================================== 
 
 function initialiserInteractionsPanier() {
   const conteneur = document.getElementById('panier-contenu');
@@ -302,9 +483,38 @@ function initialiserInteractionsPanier() {
     const panierActuel = getPanier();
 
     if (e.target.classList.contains('panier-plus')) {
-      panierActuel[index].quantite += 1;
-      sauvegarderPanier(panierActuel);
-      afficherPagePanier();
+      const article = panierActuel[index];
+
+      obtenirClientStockSupabase()
+        .then(function (clientStock) {
+          return clientStock.obtenirVariante(article.sku, true);
+        })
+        .then(function (variante) {
+          if (!variante || variante.active === false || variante.stock <= 0) {
+            afficherToast('Cette variante est indisponible.', 'avertissement');
+            afficherPagePanier();
+            return;
+          }
+
+          if (article.quantite >= variante.stock) {
+            afficherToast(
+              'Plus que ' + variante.stock + ' en stock.',
+              'avertissement'
+            );
+            return;
+          }
+
+          panierActuel[index].quantite += 1;
+          sauvegarderPanier(panierActuel);
+          afficherPagePanier();
+        })
+        .catch(function (erreur) {
+          console.error('[TRIÈDRE] Vérification du stock impossible :', erreur);
+          afficherToast(
+            'Le stock ne peut pas être vérifié pour le moment.',
+            'avertissement'
+          );
+        });
     }
 
     if (e.target.classList.contains('panier-moins')) {
@@ -334,9 +544,9 @@ function initialiserInteractionsPanier() {
   });
 }
 
-// ==========================================================================
+// ========================================================================== 
 // Initialisation
-// ==========================================================================
+// ========================================================================== 
 
 document.addEventListener('DOMContentLoaded', function () {
   mettreAJourCompteur();
@@ -349,33 +559,4 @@ document.addEventListener('DOMContentLoaded', function () {
     copyrightElement.textContent =
       copyrightElement.textContent.replace(/\d{4}/, new Date().getFullYear());
   }
-
-  const onglets = document.querySelectorAll('.onglet-btn');
-
-  if (onglets.length > 0) {
-    onglets.forEach(function (onglet) {
-      onglet.addEventListener('click', function () {
-        onglets.forEach(function (o) {
-          o.classList.remove('active');
-        });
-
-        onglet.classList.add('active');
-
-        const cible = onglet.getAttribute('data-cible');
-
-        document.querySelectorAll('[data-formulaire]').forEach(function (formulaire) {
-          formulaire.style.display =
-            formulaire.id === cible ? 'flex' : 'none';
-        });
-      });
-    });
-  }
-
-  document.querySelectorAll('[data-formulaire]').forEach(function (formulaire) {
-    formulaire.addEventListener('submit', function (e) {
-      e.preventDefault();
-      afficherToast('Fonctionnalité bientôt disponible.', 'info');
-      formulaire.reset();
-    });
-  });
 });

@@ -1,4 +1,4 @@
-/* ==========================================================================
+/* ========================================================================== 
    TRIÈDRE — Notifications et confirmations premium
    ========================================================================== */
 
@@ -34,229 +34,119 @@
   pointer-events: auto;
 }
 
-.toast.toast-visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+.toast.toast-visible { opacity: 1; transform: translateY(0) scale(1); }
+.toast-icone { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid rgba(201,162,39,.35); border-radius: 50%; background: rgba(201,162,39,.10); color: var(--color-accent); font-size: 1rem; font-weight: 700; }
+.toast-message { margin: 0; color: var(--color-text-primary); font-family: var(--font-body); font-size: .95rem; line-height: 1.45; }
+.toast-fermer { width: 28px; height: 28px; display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: var(--color-text-secondary); font-size: 1.25rem; line-height: 1; cursor: pointer; }
+.toast-fermer:hover { color: var(--color-text-primary); }
+.toast-avertissement { border-left-color: #e3a326; }
+.toast-avertissement .toast-icone { border-color: rgba(227,163,38,.35); background: rgba(227,163,38,.10); color: #e3a326; }
+.toast-erreur { border-left-color: #d94f3d; }
+.toast-erreur .toast-icone { border-color: rgba(217,79,61,.35); background: rgba(217,79,61,.10); color: #d94f3d; }
+.toast-info { border-left-color: rgba(255,255,255,.45); }
+.toast-info .toast-icone { border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.06); color: var(--color-text-primary); }
+
+/* ========================================================================== 
+   Panneau premium — Produit ajouté au panier
+   ========================================================================== */
+
+.triedre-ajout-panier {
+  position: fixed;
+  inset: 0;
+  z-index: 1350;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .25s ease, visibility .25s ease;
 }
 
-.toast-icone {
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(201, 162, 39, 0.35);
-  border-radius: 50%;
-  background: rgba(201, 162, 39, 0.10);
-  color: var(--color-accent);
-  font-size: 1rem;
-  font-weight: 700;
+.triedre-ajout-panier.is-visible { visibility: visible; opacity: 1; }
+
+.triedre-ajout-panier-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.58);
+  backdrop-filter: blur(3px);
 }
 
-.toast-message {
-  margin: 0;
-  color: var(--color-text-primary);
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  line-height: 1.45;
+.triedre-ajout-panier-panneau {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(440px, 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+  background: var(--color-bg-secondary);
+  border-left: 1px solid var(--color-border);
+  box-shadow: -24px 0 70px rgba(0,0,0,.40);
+  transform: translateX(100%);
+  transition: transform .28s ease;
 }
 
-.toast-fermer {
-  width: 28px;
-  height: 28px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--color-text-secondary);
-  font-size: 1.25rem;
-  line-height: 1;
-  cursor: pointer;
-}
+.triedre-ajout-panier.is-visible .triedre-ajout-panier-panneau { transform: translateX(0); }
 
-.toast-fermer:hover {
-  color: var(--color-text-primary);
-}
+.triedre-ajout-panier-entete { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding-bottom: var(--space-md); border-bottom: 1px solid var(--color-border); }
+.triedre-ajout-panier-validation { display: flex; align-items: center; gap: 12px; }
+.triedre-ajout-panier-validation h2 { margin: 0; font-size: 1.35rem; line-height: 1.2; }
+.triedre-ajout-panier-check { width: 34px; height: 34px; display: grid; place-items: center; flex-shrink: 0; border: 1px solid rgba(201,162,39,.40); border-radius: 50%; background: rgba(201,162,39,.10); color: var(--color-accent); font-weight: 700; }
+.triedre-ajout-panier-fermer { width: 34px; height: 34px; display: grid; place-items: center; flex-shrink: 0; padding: 0; border: 0; background: transparent; color: var(--color-text-secondary); font-size: 1.5rem; line-height: 1; cursor: pointer; transition: color var(--transition-fast); }
+.triedre-ajout-panier-fermer:hover { color: var(--color-text-primary); }
 
-.toast-avertissement {
-  border-left-color: #e3a326;
-}
+.triedre-ajout-panier-produit { display: grid; grid-template-columns: 118px minmax(0,1fr); gap: var(--space-md); padding: var(--space-lg) 0; border-bottom: 1px solid var(--color-border); }
+.triedre-ajout-panier-image { width: 118px; height: 142px; object-fit: cover; border-radius: var(--radius-sm); background: var(--color-bg-primary); }
+.triedre-ajout-panier-infos { min-width: 0; }
+.triedre-ajout-panier-infos h3 { margin: 0 0 8px; font-size: 1.05rem; text-transform: none; }
+.triedre-ajout-panier-infos p { margin: 0 0 5px; color: var(--color-text-secondary); font-size: var(--font-size-small); }
+.triedre-ajout-panier-infos strong { display: block; margin-top: 12px; color: var(--color-accent); font-family: var(--font-heading); font-size: 1.05rem; }
 
-.toast-avertissement .toast-icone {
-  border-color: rgba(227, 163, 38, 0.35);
-  background: rgba(227, 163, 38, 0.10);
-  color: #e3a326;
-}
+.triedre-ajout-panier-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; padding-top: var(--space-lg); }
+.triedre-ajout-panier-actions .btn { min-height: 48px; display: flex; align-items: center; justify-content: center; text-align: center; }
+.triedre-ajout-panier-voir { border: 1px solid var(--color-border); background: transparent; color: var(--color-text-primary); }
+.triedre-ajout-panier-voir:hover { border-color: var(--color-accent); color: var(--color-accent); }
 
-.toast-erreur {
-  border-left-color: #d94f3d;
-}
-
-.toast-erreur .toast-icone {
-  border-color: rgba(217, 79, 61, 0.35);
-  background: rgba(217, 79, 61, 0.10);
-  color: #d94f3d;
-}
-
-.toast-info {
-  border-left-color: rgba(255, 255, 255, 0.45);
-}
-
-.toast-info .toast-icone {
-  border-color: rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--color-text-primary);
-}
-
-/* ==========================================================================
+/* ========================================================================== 
    Modal de confirmation premium
    ========================================================================== */
 
-body.triedre-modal-ouverte {
-  overflow: hidden;
-}
-
-.triedre-confirmation-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 1300;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
-}
-
-.triedre-confirmation-modal.is-visible {
-  opacity: 1;
-  visibility: visible;
-}
-
-.triedre-confirmation-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: blur(5px);
-}
-
-.triedre-confirmation-contenu {
-  position: relative;
-  z-index: 1;
-  width: min(100%, 420px);
-  padding: 22px;
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.44);
-  text-align: center;
-  transform: translateY(10px) scale(0.98);
-  transition: transform 0.2s ease;
-}
-
-.triedre-confirmation-modal.is-visible .triedre-confirmation-contenu {
-  transform: translateY(0) scale(1);
-}
-
-.triedre-confirmation-fermer {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--color-text-secondary);
-  font-size: 1.35rem;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.triedre-confirmation-fermer:hover {
-  color: var(--color-text-primary);
-}
-
-.triedre-confirmation-icone {
-  width: 44px;
-  height: 44px;
-  margin: 0 auto 12px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(201, 162, 39, 0.35);
-  border-radius: 50%;
-  background: rgba(201, 162, 39, 0.10);
-  color: var(--color-accent);
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.triedre-confirmation-contenu h2 {
-  margin: 0 0 8px;
-  font-size: 1.55rem;
-  line-height: 1.15;
-}
-
-.triedre-confirmation-contenu p {
-  margin: 0 auto 18px;
-  max-width: 340px;
-  color: var(--color-text-secondary);
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.triedre-confirmation-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.triedre-confirmation-actions .btn {
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 14px;
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  font-weight: var(--font-weight-medium);
-  letter-spacing: normal;
-  text-transform: none;
-}
-
-.triedre-confirmation-annuler {
-  border: 1px solid var(--color-border);
-  background: transparent;
-  color: var(--color-text-primary);
-}
-
-.triedre-confirmation-annuler:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-}
+body.triedre-modal-ouverte { overflow: hidden; }
+.triedre-confirmation-modal { position: fixed; inset: 0; z-index: 1300; display: grid; place-items: center; padding: 20px; opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility .2s ease; }
+.triedre-confirmation-modal.is-visible { opacity: 1; visibility: visible; }
+.triedre-confirmation-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.72); backdrop-filter: blur(5px); }
+.triedre-confirmation-contenu { position: relative; z-index: 1; width: min(100%,420px); padding: 22px; background: var(--color-bg-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-md); box-shadow: 0 20px 55px rgba(0,0,0,.44); text-align: center; transform: translateY(10px) scale(.98); transition: transform .2s ease; }
+.triedre-confirmation-modal.is-visible .triedre-confirmation-contenu { transform: translateY(0) scale(1); }
+.triedre-confirmation-fermer { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: var(--color-text-secondary); font-size: 1.35rem; line-height: 1; cursor: pointer; }
+.triedre-confirmation-fermer:hover { color: var(--color-text-primary); }
+.triedre-confirmation-icone { width: 44px; height: 44px; margin: 0 auto 12px; display: grid; place-items: center; border: 1px solid rgba(201,162,39,.35); border-radius: 50%; background: rgba(201,162,39,.10); color: var(--color-accent); font-size: 1rem; font-weight: 700; }
+.triedre-confirmation-contenu h2 { margin: 0 0 8px; font-size: 1.55rem; line-height: 1.15; }
+.triedre-confirmation-contenu p { margin: 0 auto 18px; max-width: 340px; color: var(--color-text-secondary); font-size: .95rem; line-height: 1.5; }
+.triedre-confirmation-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.triedre-confirmation-actions .btn { min-height: 44px; display: flex; align-items: center; justify-content: center; padding: 10px 14px; font-family: var(--font-body); font-size: .95rem; font-weight: var(--font-weight-medium); letter-spacing: normal; text-transform: none; }
+.triedre-confirmation-annuler { border: 1px solid var(--color-border); background: transparent; color: var(--color-text-primary); }
+.triedre-confirmation-annuler:hover { border-color: var(--color-accent); color: var(--color-accent); }
 
 @media (max-width: 600px) {
-  #toast-conteneur {
-    top: 16px;
-    right: 16px;
-    left: 16px;
-    width: auto;
-  }
+  #toast-conteneur { top: 16px; right: 16px; left: 16px; width: auto; }
 
-  .triedre-confirmation-modal {
-    place-items: end center;
-    padding: 0;
-  }
-
-  .triedre-confirmation-contenu {
+  .triedre-ajout-panier-panneau {
+    top: auto;
+    bottom: 0;
     width: 100%;
+    height: auto;
+    max-height: 88vh;
     padding: 22px var(--container-padding);
+    border-left: 0;
+    border-top: 1px solid var(--color-border);
     border-radius: var(--radius-md) var(--radius-md) 0 0;
+    transform: translateY(100%);
   }
 
-  .triedre-confirmation-actions {
-    grid-template-columns: 1fr;
-  }
+  .triedre-ajout-panier.is-visible .triedre-ajout-panier-panneau { transform: translateY(0); }
+  .triedre-ajout-panier-produit { grid-template-columns: 92px minmax(0,1fr); }
+  .triedre-ajout-panier-image { width: 92px; height: 112px; }
+  .triedre-ajout-panier-actions { grid-template-columns: 1fr; }
+
+  .triedre-confirmation-modal { place-items: end center; padding: 0; }
+  .triedre-confirmation-contenu { width: 100%; padding: 22px var(--container-padding); border-radius: var(--radius-md) var(--radius-md) 0 0; }
+  .triedre-confirmation-actions { grid-template-columns: 1fr; }
 }

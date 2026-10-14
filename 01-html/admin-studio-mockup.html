@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="robots" content="noindex, nofollow">
+<title>Studio Mockup — Produits & Visuels - TRIÈDRE</title>
+<link rel="icon" type="image/png" href="../05-images/icons/favicon-triedre.svg">
+<link rel="stylesheet" href="../02-css/style.css"><link rel="stylesheet" href="../02-css/sections/admin.css"><link rel="stylesheet" href="../02-css/sections/admin-studio-mockup.css">
+</head>
+<body>
+<div class="top-banner"><p>TRIÈDRE ATHLETIC - ESPACE ADMIN</p></div>
+<header class="site-header">
+<a href="/" class="logo"><img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE"><span class="logo-text"><span class="sr-only">TRIÈDRE</span><span aria-hidden="true">TRIΞDRΞ</span> <small>Deviens Plus</small></span></a>
+<nav class="main-nav"><ul><li><a href="/">Accueil</a></li><li><a href="/membre">Espace membre</a></li><li><a href="/coach">Tableau coach</a></li><li><a href="/admin" class="active">Admin</a></li></ul></nav>
+<button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+<div class="header-icons"><a href="/membre" aria-label="Mon compte"><img src="../05-images/icons/icon-account.svg" alt=""></a></div>
+</header>
+<main class="studio-page"><div class="studio-top"><div><p class="studio-kicker">ADMINISTRATION / ATELIER DE CRÉATION</p><h1>STUDIO <em>MOCKUP.</em></h1><p>Crée des visuels à partir de vêtements vierges. Les zones sont verrouillées pendant la conception.</p></div><a href="/admin-visuels" class="studio-back" id="studio-back">← Produits & visuels</a></div>
+<div id="studio-alert" role="status" aria-live="polite"></div><div id="studio-zone-info" class="studio-zone-info" role="status"></div>
+<div class="studio-layout">
+<aside class="studio-panel"><h2>01 · Support vierge</h2><label for="studio-product">Type de produit</label><select id="studio-product"><option value="tshirt">T-shirt</option><option value="hoodie">Hoodie</option><option value="casquette">Casquette</option><option value="brassiere">Brassière</option><option value="legging">Legging</option><option value="veste">Veste légère</option></select><select id="studio-view" hidden aria-label="Vue actuelle"></select><label for="studio-base-upload">Importer la photo vierge</label><input id="studio-base-upload" type="file" accept="image/png,image/jpeg,image/webp"><button type="button" id="studio-clear-base">Supprimer la photo</button><p class="studio-hint">Une image vierge par vue. Formats PNG, JPG ou WebP.</p><div class="studio-sep"></div><h2>02 · Emplacement</h2><label for="studio-zone">Zone prédéfinie</label><select id="studio-zone"></select><p class="studio-hint">Les zones changent selon la vue sélectionnée. Un design sur le devant ne sera pas reproduit automatiquement au dos.</p><div class="studio-sep"></div><h2>03 · Design</h2><label for="studio-logo-upload">Importer le logo pour cette vue</label><input id="studio-logo-upload" type="file" accept="image/png,image/webp,image/svg+xml"><p class="studio-hint">PNG/WebP transparents conseillés. Les SVG sont vérifiés avant affichage.</p><div id="studio-background-tools" class="studio-background-tools" hidden><div class="studio-background-title">Fond du logo <span id="studio-background-state">Original</span></div><div class="studio-background-compare"><div><canvas id="studio-before" width="140" height="120"></canvas><small>Original</small></div><div><canvas id="studio-after" width="140" height="120"></canvas><small>Sans fond</small></div></div><label for="studio-bg-tolerance">Tolérance du noir <output id="studio-bg-tolerance-value">30</output></label><input type="range" id="studio-bg-tolerance" min="5" max="100" step="1" value="30"><div class="studio-background-actions"><button type="button" id="studio-remove-bg">Supprimer le fond</button><button type="button" id="studio-restore-bg">Restaurer l’original</button></div><p class="studio-hint">Aperçu avant/après. L’original reste conservé. Le noir est rendu transparent, y compris à l’intérieur du triangle.</p></div><button type="button" id="studio-clear-logo">Retirer le design</button></aside>
+<section class="studio-preview"><div class="studio-preview-head"><h2>Aperçu de conception</h2><span id="studio-status">Brouillon local</span></div><div class="studio-viewbar" id="studio-viewbar" role="group" aria-label="Vues du produit"></div><div class="studio-canvas" id="studio-canvas"><canvas id="studio-render" width="900" height="1000" aria-label="Prévisualisation du mockup"></canvas></div><p class="studio-hint">Le rendu exporté utilise les dimensions de la photo vierge. Une image 2D ne simule pas automatiquement les plis du tissu.</p></section>
+<aside class="studio-panel studio-tools"><div class="studio-sep"></div><h2>Réglages du design</h2><div class="studio-measure-grid"><label for="studio-width-cm">Largeur (cm)<input id="studio-width-cm" type="number" min="0.1" max="100" step="0.1" value="4"></label><label for="studio-height-cm">Hauteur (cm)<input id="studio-height-cm" type="number" min="0.1" max="100" step="0.1" value="4"></label></div><label class="studio-lock"><input type="checkbox" id="studio-lock-ratio" checked> Conserver les proportions</label><p class="studio-hint" id="studio-measure-note">Dimensions de simulation, à calibrer selon le fournisseur.</p><label for="studio-rotation">Rotation <output id="studio-rotation-value">0°</output></label><input id="studio-rotation" type="range" min="-180" max="180" value="0"><p class="studio-hint">Déplacement par pas de 0,1 cm, sans glisser-déposer.</p><div class="studio-nudges"><button type="button" data-move="left" aria-label="Décaler à gauche">←</button><button type="button" data-move="up" aria-label="Décaler vers le haut">↑</button><button type="button" data-move="down" aria-label="Décaler vers le bas">↓</button><button type="button" data-move="right" aria-label="Décaler à droite">→</button></div><div class="studio-nudges"><button type="button" id="studio-center">Centrer</button><button type="button" id="studio-flip-x">Pivot X</button><button type="button" id="studio-flip-y">Pivot Y</button></div><p class="studio-hint" id="studio-quality" role="status"></p><div hidden aria-hidden="true"><input id="studio-garment-cm" type="number"><input id="studio-garment-pct" type="number" value="65"><span id="studio-calibration-status"></span></div><div class="studio-sep"></div><h2>04 · Modèle de placement</h2><p class="studio-hint">Les coordonnées sont enregistrées par type de produit, vue et zone.</p><label class="studio-switch"><input id="studio-calibrate" type="checkbox"> Mode calibrage administrateur</label><div id="studio-calibration" hidden><label for="studio-x">Centre horizontal <output id="studio-x-value"></output></label><input id="studio-x" type="range" min="0" max="100" step="1"><label for="studio-y">Centre vertical <output id="studio-y-value"></output></label><input id="studio-y" type="range" min="0" max="100" step="1"><label for="studio-w">Largeur <output id="studio-w-value"></output></label><input id="studio-w" type="range" min="3" max="75" step="1"><label for="studio-h">Hauteur <output id="studio-h-value"></output></label><input id="studio-h" type="range" min="3" max="75" step="1"><label for="studio-margin">Marge intérieure <output id="studio-margin-value"></output></label><input id="studio-margin" type="range" min="0" max="20" step="1"><button type="button" id="studio-save-template">Enregistrer cette zone</button><button type="button" id="studio-reset-template">Restaurer la zone par défaut</button></div><div class="studio-sep"></div><h2>05 · Finalisation</h2><div class="studio-final-actions"><button type="button" id="studio-save" class="studio-primary">Enregistrer le design</button><button type="button" id="studio-export">Exporter le PNG</button></div><div class="studio-publish-row"><span>Publication boutique <small>Connexion sécurisée à venir</small></span><button type="button" id="studio-publish" disabled title="Publication sécurisée à connecter au catalogue">Publier</button></div><p class="studio-hint">Enregistrement manuel dans ce navigateur. La publication dans la boutique sera activée après connexion sécurisée.</p></aside>
+</div></main>  <footer class="site-footer">
+    <div class="footer-brand">
+      <div class="footer-logo-ligne">
+        <img class="footer-logo-img" src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+        <span class="logo-text">
+          <span class="sr-only">TRIÈDRE</span><span aria-hidden="true">TRIΞDRΞ</span>
+          <small>Deviens Plus</small>
+        </span>
+      </div>
+
+      <p>
+        Corps. Mental. Confiance.<br>
+        Un mode de vie. Une discipline.<br>
+        Une seule direction.
+      </p>
+
+      <div class="social-links">
+        <a href="https://www.facebook.com/share/1KZvCWZQVM/" target="_blank" rel="noopener" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
+        <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" target="_blank" rel="noopener" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
+        <a href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4" target="_blank" rel="noopener" aria-label="TikTok"><img src="../05-images/icons/icon-tiktok.svg" alt=""></a>
+        <a href="#" target="_blank" rel="noopener" aria-label="YouTube"><img src="../05-images/icons/icon-youtube.svg" alt=""></a>
+      </div>
+    </div>
+
+    <nav class="footer-nav">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="/">Accueil</a></li>
+        <li><a href="/marque">La Marque</a></li>
+        <li><a href="/univers">Univers</a></li>
+        <li><a href="/boutique">Boutique</a></li>
+        <li><a href="/membre">Espace Membre</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-aide">
+      <h4>Aide</h4>
+      <ul>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/livraison">Livraison</a></li>
+        <li><a href="/retours">Retours</a></li>
+        <li><a href="/conditions">Conditions</a></li>
+        <li><a href="/confidentialite">Confidentialité</a></li>
+      </ul>
+    </nav>
+
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p><a href="/contact">Formulaire de contact</a></p>
+      <p>Montréal, Québec, Canada</p>
+      <p><a href="mailto:info@triedreofficiel.com">info@triedreofficiel.com</a></p>
+    </div>
+
+    <p class="footer-copyright">© 2026 Trièdre Athletic. Tous droits réservés.</p>
+  </footer>
+<script src="../03-js/navigation.js"></script><script src="../03-js/modal.js"></script><script src="../03-js/admin-studio-mockup.js"></script>
+</body></html>

@@ -8,6 +8,7 @@
   height: 85vh;
   min-height: 500px;
   overflow: hidden;
+  margin-top: 1rem;
 }
 
 .hero-video-bg {

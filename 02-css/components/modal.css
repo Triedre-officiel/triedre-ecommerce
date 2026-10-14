@@ -1,0 +1,63 @@
+/* ==========================================================================
+   TRIÈDRE — Modal globale
+   ========================================================================== */
+
+body.triedre-modal-open {
+  overflow: hidden;
+}
+
+.triedre-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, .72);
+  backdrop-filter: blur(4px);
+}
+
+.triedre-modal {
+  width: min(100%, 500px);
+  padding: 1.4rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .45);
+}
+
+.triedre-modal h2 {
+  margin: .15rem 0 .6rem;
+}
+
+.triedre-modal-message {
+  margin-bottom: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.triedre-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .6rem;
+}
+
+@media (max-width: 600px) {
+  .triedre-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .triedre-modal-actions .btn {
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   TRIÈDRE — Visibilité de l’œil natif des champs mot de passe (Edge)
+   ========================================================================== */
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  filter: brightness(0) invert(1);
+  opacity: 1;
+  cursor: pointer;
+}

@@ -5,7 +5,7 @@
 .panier-page {
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: var(--space-2xl) var(--container-padding);
+  padding: var(--space-lg) var(--container-padding) var(--space-xl);
 }
 
 .panier-page h1 {

@@ -1,0 +1,14 @@
+/* ==========================================================================
+   TRIÈDRE — V14.1 — Calendriers natifs
+   Ajouter ce bloc dans un CSS global chargé sur tout le site.
+   ========================================================================== */
+
+input[type="date"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: brightness(0) invert(1);
+  opacity: 1;
+  cursor: pointer;
+}

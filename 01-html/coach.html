@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Coach - TRIÈDRE</title>
+  <link rel="icon" type="image/png" href="../05-images/icons/favicon-triedre.svg">
+  <link rel="stylesheet" href="../02-css/style.css">
+  <link rel="stylesheet" href="../02-css/sections/coach.css">
+</head>
+<body>
+
+  <div class="top-banner">
+    <p>TRIÈDRE ATHLETIC - ESPACE COACH</p>
+  </div>
+
+  <header class="site-header">
+    <a href="./" class="logo">
+      <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+      <span class="logo-text">
+      <span class="sr-only">TRIÈDRE</span><span aria-hidden="true">TRIΞDRΞ</span> <small>Deviens Plus</small></span>
+    </a>
+
+    <nav class="main-nav">
+      <ul>
+        <li><a href="./">Accueil</a></li>
+        <li><a href="/membre">Espace Membre</a></li>
+        <li><a href="/coach" class="active">Coach</a></li>
+      </ul>
+    </nav>
+
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="header-icons">
+      <a href="/membre" aria-label="Mon compte">
+        <img src="../05-images/icons/icon-account.svg" alt="">
+      </a>
+    </div>
+  </header>
+
+  <main class="coach-page">
+    <section class="coach-hero">
+      <p class="section-eyebrow">TRIÈDRE ATHLETIC</p>
+      <h1>TABLEAU <span class="accent">COACH.</span></h1>
+      <p>Crée la première semaine, attribue le programme au membre et duplique-la sur toute la durée.</p>
+    </section>
+
+    <div id="coach-message" class="coach-message" hidden aria-live="polite"></div>
+
+    <section id="coach-acces" class="coach-card coach-acces">
+      <p>Vérification de l’accès coach…</p>
+    </section>
+
+    <div id="coach-zone" hidden>
+      <section class="coach-card">
+        <div class="coach-section-heading">
+          <div>
+            <p class="section-eyebrow">Étape 1</p>
+            <h2>MEMBRE & PROGRAMME</h2>
+          </div>
+        </div>
+
+        <form id="coach-form-programme" novalidate>
+          <div class="coach-grid coach-grid-2">
+            <label class="coach-field">
+              <span>Membre</span>
+              <select id="coach-member" required>
+                <option value="">Choisir un membre</option>
+              </select>
+            </label>
+
+            <label class="coach-field">
+              <span>Date de début</span>
+              <input id="coach-start-date" type="date" required>
+            </label>
+
+            <label class="coach-field coach-field-wide">
+              <span>Nom du programme</span>
+              <input id="coach-program-name" type="text" placeholder="Ex. Recomposition — 8 semaines" required>
+            </label>
+
+            <label class="coach-field">
+              <span>Objectif</span>
+              <input id="coach-goal" type="text" placeholder="Ex. Recomposition corporelle">
+            </label>
+
+            <label class="coach-field">
+              <span>Niveau</span>
+              <select id="coach-level">
+                <option value="Débutant">Débutant</option>
+                <option value="Intermédiaire" selected>Intermédiaire</option>
+                <option value="Avancé">Avancé</option>
+              </select>
+            </label>
+
+            <label class="coach-field">
+              <span>Durée</span>
+              <select id="coach-duration">
+                <option value="4">4 semaines</option>
+                <option value="6">6 semaines</option>
+                <option value="8" selected>8 semaines</option>
+                <option value="10">10 semaines</option>
+                <option value="12">12 semaines</option>
+                <option value="16">16 semaines</option>
+                <option value="20">20 semaines</option>
+                <option value="24">24 semaines</option>
+                <option value="26">26 semaines</option>
+              </select>
+            </label>
+
+            <label class="coach-field">
+              <span>Séances / semaine</span>
+              <select id="coach-sessions-count">
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+              </select>
+            </label>
+
+            <label class="coach-field coach-field-wide">
+              <span>Description</span>
+              <textarea id="coach-program-description" rows="3" placeholder="Intention générale du programme…"></textarea>
+            </label>
+          </div>
+        </form>
+      </section>
+
+      <section class="coach-card">
+        <div class="coach-section-heading">
+          <div>
+            <p class="section-eyebrow">Étape 2</p>
+            <h2>SEMAINE 1</h2>
+          </div>
+          <p class="coach-section-note">
+            Remplis uniquement la première semaine. TRIÈDRE dupliquera ces séances sur la durée choisie.
+          </p>
+        </div>
+
+        <div id="coach-sessions"></div>
+      </section>
+
+      <section class="coach-card coach-finalisation">
+        <div>
+          <p class="section-eyebrow">Étape 3</p>
+          <h2>ATTRIBUER LE PROGRAMME</h2>
+          <p>
+            Le membre retrouvera immédiatement le programme, son calendrier et les séances dans son Espace membre.
+          </p>
+        </div>
+
+        <button id="coach-submit" type="button" class="btn btn-primary">
+          Créer, attribuer et dupliquer
+        </button>
+      </section>
+
+      <section class="coach-card">
+        <div class="coach-section-heading">
+          <div>
+            <p class="section-eyebrow">Suivi</p>
+            <h2>PROGRAMMES ATTRIBUÉS</h2>
+          </div>
+          <button id="coach-refresh" type="button" class="btn btn-secondaire">
+            Actualiser
+          </button>
+        </div>
+
+        <div id="coach-assignments" class="coach-assignments">
+          <p class="coach-empty">Aucun programme chargé.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+
+    <div class="footer-brand">
+  <div class="footer-logo-ligne">
+    <img class="footer-logo-img" src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+    <span class="logo-text">
+    <span class="sr-only">TRIÈDRE</span><span aria-hidden="true">TRIΞDRΞ</span> <small>Deviens Plus</small></span>
+  </div>
+
+  <p>
+    Corps. Mental. Confiance.<br>
+    Un mode de vie. Une discipline.<br>
+    Une seule direction.
+  </p>
+
+  <div class="social-links">
+    <a href="https://www.facebook.com/share/1KZvCWZQVM/" target="_blank" rel="noopener" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
+    <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" target="_blank" rel="noopener" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
+    <a href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4" target="_blank" rel="noopener" aria-label="TikTok"><img src="../05-images/icons/icon-tiktok.svg" alt=""></a>
+    <a href="#" target="_blank" rel="noopener" aria-label="YouTube"><img src="../05-images/icons/icon-youtube.svg" alt=""></a>
+  </div>
+  </div>
+
+
+    <nav class="footer-nav">
+      <h4>Navigation</h4>
+
+      <ul>
+        <li><a href="./">Accueil</a></li>
+        <li><a href="marque">La Marque</a></li>
+        <li><a href="univers">Univers</a></li>
+        <li><a href="boutique">Boutique</a></li>
+        <li><a href="membre">Espace Membre</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-aide">
+      <h4>Aide</h4>
+
+      <ul>
+        <li><a href="faq">FAQ</a></li>
+        <li><a href="livraison">Livraison</a></li>
+        <li><a href="retours">Retours</a></li>
+        <li><a href="conditions">Conditions</a></li>
+        <li><a href="confidentialite">Confidentialité</a></li>
+      </ul>
+    </nav>
+
+    <div class="footer-contact">
+      <h4>Contact</h4>
+
+        <p>
+        <a href="contact">Formulaire de contact</a>
+        </p>
+
+        <p>Montréal, Québec, Canada</p>
+
+        <p>
+        <a href="mailto:info@triedreofficiel.com">
+        info@triedreofficiel.com
+        </a>
+      </p>
+  </div>
+
+    <p class="footer-copyright">© 2026 Trièdre Athletic. Tous droits réservés.
+    </p>
+
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../03-js/supabase-config.js"></script>
+  <script src="../03-js/navigation.js"></script>
+  <script src="../03-js/modal.js"></script>
+  <script src="../03-js/coach.js"></script>
+</body>
+</html>

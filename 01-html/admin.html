@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Administration - TRIÈDRE</title>
+  <link rel="icon" type="image/png" href="../05-images/icons/favicon-triedre.svg">
+  <link rel="stylesheet" href="../02-css/style.css">
+  <link rel="stylesheet" href="../02-css/sections/admin.css">
+</head>
+<body>
+
+  <div class="top-banner">
+    <p>TRIÈDRE ATHLETIC - ESPACE ADMIN</p>
+  </div>
+
+  <header class="site-header">
+    <a href="/" class="logo">
+      <img src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+      <span class="logo-text">
+      <span class="sr-only">TRIÈDRE</span><span aria-hidden="true">TRIΞDRΞ</span> <small>Deviens Plus</small>
+    </span>
+
+    </a>
+
+    <nav class="main-nav">
+      <ul>
+        <li><a href="/">Accueil</a></li>
+        <li><a href="/membre">Espace membre</a></li>
+        <li><a href="/coach">Tableau coach</a></li>
+        <li><a href="/admin" class="active">Admin</a></li>
+      </ul>
+    </nav>
+
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="header-icons">
+      <a href="/membre" aria-label="Mon compte">
+        <img src="../05-images/icons/icon-account.svg" alt="">
+      </a>
+    </div>
+  </header>
+
+  <main class="admin-page">
+    <section class="admin-hero">
+      <p class="section-eyebrow">TRIÈDRE ATHLETIC</p>
+      <h1>ESPACE <span class="accent">ADMIN.</span></h1>
+      <p>Pilote les outils, les produits et les opérations de TRIÈDRE ATHLETIC.</p>
+    </section>
+
+    <div id="admin-message" class="admin-message" hidden aria-live="polite"></div>
+
+    <section id="admin-acces" class="admin-card admin-acces">
+      <p>Vérification de l’accès administrateur…</p>
+    </section>
+
+    <div id="admin-zone" hidden>
+      <nav class="admin-tabs" aria-label="Sections de l’administration">
+        <button class="admin-tab is-active" type="button" data-admin-tab="dashboard" aria-selected="true">Tableau de bord</button>
+        <button class="admin-tab" type="button" data-admin-tab="produits" aria-selected="false">Produits & visuels</button>
+        <a class="admin-tab studio-tab-link" href="/admin-studio-mockup">Studio Mockup</a>
+        <button class="admin-tab" type="button" data-admin-tab="equipe" aria-selected="false">Équipe & membres</button>
+      </nav>
+
+      <section class="admin-resume" data-admin-group="dashboard">
+        <article class="admin-kpi">
+          <span>Coachs actifs</span>
+          <strong id="admin-kpi-coachs">—</strong>
+        </article>
+        <article class="admin-kpi">
+          <span>Membres suivis</span>
+          <strong id="admin-kpi-membres">—</strong>
+        </article>
+        <article class="admin-kpi">
+          <span>Couvertures temporaires</span>
+          <strong id="admin-kpi-temporaires">—</strong>
+        </article>
+      </section>
+
+      <!-- =========================================================
+           PRODUITS & VISUELS
+      ========================================================= -->
+      <section class="admin-card" data-admin-group="produits">
+        <div class="admin-section-heading">
+          <div>
+            <p class="section-eyebrow">Apparel</p>
+            <h2>PRODUITS & VISUELS</h2>
+          </div>
+          <a class="btn btn-primary" href="/admin-visuels">Gérer les visuels</a>
+        </div>
+
+        <p class="admin-note">
+          Crée, importe, contrôle et publie les visuels des produits TRIÈDRE.
+        </p>
+      </section>
+
+      <section class="admin-card" data-admin-group="equipe">
+        <div class="admin-section-heading">
+          <div>
+            <p class="section-eyebrow">Équipe</p>
+            <h2>GESTION DES COACHS</h2>
+          </div>
+          <a class="btn btn-secondaire" href="/coach">Ouvrir le tableau Coach</a>
+        </div>
+
+        <form id="admin-form-coach" class="admin-inline-form">
+          <label class="admin-field">
+            <span>Adresse courriel du compte TRIÈDRE</span>
+            <input
+              id="admin-coach-email"
+              type="email"
+              autocomplete="email"
+              placeholder="coach@exemple.com"
+              required
+            >
+          </label>
+          <button type="submit" class="btn btn-primary">Activer comme coach</button>
+        </form>
+
+        <p class="admin-note">
+          Le compte doit déjà exister comme compte TRIÈDRE. Les rôles administrateur restent attribués uniquement par SQL.
+        </p>
+
+        <div id="admin-coachs" class="admin-list">
+          <p class="admin-empty">Chargement des coachs…</p>
+        </div>
+      </section>
+
+      <section class="admin-card" data-admin-group="equipe">
+        <div class="admin-section-heading">
+          <div>
+            <p class="section-eyebrow">Suivi</p>
+            <h2>MEMBRES & AFFECTATIONS</h2>
+          </div>
+          <button id="admin-refresh" type="button" class="btn btn-secondaire">Actualiser</button>
+        </div>
+
+        <label class="admin-search">
+          <span>Rechercher un membre</span>
+          <input id="admin-member-search" type="search" placeholder="Nom ou courriel…">
+        </label>
+
+        <div id="admin-membres" class="admin-members">
+          <p class="admin-empty">Chargement des membres…</p>
+        </div>
+      </section>
+
+      <section class="admin-card" data-admin-group="equipe">
+        <div class="admin-section-heading">
+          <div>
+            <p class="section-eyebrow">Traçabilité</p>
+            <h2>HISTORIQUE DES AFFECTATIONS</h2>
+          </div>
+        </div>
+
+        <div id="admin-historique" class="admin-list">
+          <p class="admin-empty">Aucun historique chargé.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+    <footer class="site-footer">
+    <div class="footer-brand">
+      <div class="footer-logo-ligne">
+        <img class="footer-logo-img" src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">
+        <span class="logo-text">
+          <span class="sr-only">TRIÈDRE</span><span aria-hidden="true">TRIΞDRΞ</span>
+          <small>Deviens Plus</small>
+        </span>
+      </div>
+
+      <p>
+        Corps. Mental. Confiance.<br>
+        Un mode de vie. Une discipline.<br>
+        Une seule direction.
+      </p>
+
+      <div class="social-links">
+        <a href="https://www.facebook.com/share/1KZvCWZQVM/" target="_blank" rel="noopener" aria-label="Facebook"><img src="../05-images/icons/icon-facebook.svg" alt=""></a>
+        <a href="https://www.instagram.com/triedreofficiel?igsh=c3h2Zm1qejhtNjY5" target="_blank" rel="noopener" aria-label="Instagram"><img src="../05-images/icons/icon-instagram.svg" alt=""></a>
+        <a href="https://www.tiktok.com/@triedreofficiel?_r=1&_t=ZS-991Mw1aQrh4" target="_blank" rel="noopener" aria-label="TikTok"><img src="../05-images/icons/icon-tiktok.svg" alt=""></a>
+        <a href="#" target="_blank" rel="noopener" aria-label="YouTube"><img src="../05-images/icons/icon-youtube.svg" alt=""></a>
+      </div>
+    </div>
+
+    <nav class="footer-nav">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="/">Accueil</a></li>
+        <li><a href="/marque">La Marque</a></li>
+        <li><a href="/univers">Univers</a></li>
+        <li><a href="/boutique">Boutique</a></li>
+        <li><a href="/membre">Espace Membre</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-aide">
+      <h4>Aide</h4>
+      <ul>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/livraison">Livraison</a></li>
+        <li><a href="/retours">Retours</a></li>
+        <li><a href="/conditions">Conditions</a></li>
+        <li><a href="/confidentialite">Confidentialité</a></li>
+      </ul>
+    </nav>
+
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p><a href="/contact">Formulaire de contact</a></p>
+      <p>Montréal, Québec, Canada</p>
+      <p><a href="mailto:info@triedreofficiel.com">info@triedreofficiel.com</a></p>
+    </div>
+
+    <p class="footer-copyright">© 2026 Trièdre Athletic. Tous droits réservés.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../03-js/supabase-config.js"></script>
+  <script src="../03-js/navigation.js"></script>
+  <script src="../03-js/modal.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabs=[...document.querySelectorAll('[data-admin-tab]')];
+    const groups=[...document.querySelectorAll('[data-admin-group]')];
+    function openTab(name){
+      tabs.forEach(t=>{const on=t.dataset.adminTab===name;t.classList.toggle('is-active',on);t.setAttribute('aria-selected',on?'true':'false');});
+      groups.forEach(g=>g.hidden=g.dataset.adminGroup!==name);
+    }
+    tabs.forEach(t=>t.addEventListener('click',()=>openTab(t.dataset.adminTab)));
+    openTab(location.hash==='#equipe'?'equipe':'dashboard');
+  });
+  </script>
+  <script src="../03-js/admin.js"></script>
+</body>
+</html>

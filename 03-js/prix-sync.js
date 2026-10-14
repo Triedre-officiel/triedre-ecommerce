@@ -1,73 +1,155 @@
 // ==========================================================================
-// TRIÈDRE — Synchronisation des prix + promos/badges/stock depuis produits.json
-// À charger sur toute page contenant des cartes .produit-card
+// TRIÈDRE — Synchronisation cartes boutique — Catalogue V1 + stock Supabase
 // ==========================================================================
 
-document.addEventListener('DOMContentLoaded', function () {
+function obtenirClientStockSupabase() {
+  if (window.triedreStockSupabase) {
+    return Promise.resolve(window.triedreStockSupabase);
+  }
 
-  const cartes = document.querySelectorAll('.produit-card a[href*="produit?id="]');
+  if (window.triedreStockReady) {
+    return window.triedreStockReady;
+  }
+
+  window.triedreStockReady = new Promise(function (resolve, reject) {
+    const existant = document.querySelector('script[data-triedre-stock-supabase]');
+
+    if (existant) {
+      existant.addEventListener('load', function () {
+        if (window.triedreStockSupabase) {
+          resolve(window.triedreStockSupabase);
+        } else {
+          reject(new Error('Client stock Supabase introuvable.'));
+        }
+      }, { once: true });
+
+      existant.addEventListener('error', function () {
+        reject(new Error('Impossible de charger stock-supabase.js.'));
+      }, { once: true });
+
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = '../03-js/stock-supabase.js';
+    script.async = true;
+    script.setAttribute('data-triedre-stock-supabase', '');
+
+    script.onload = function () {
+      if (window.triedreStockSupabase) {
+        resolve(window.triedreStockSupabase);
+      } else {
+        reject(new Error('Client stock Supabase introuvable.'));
+      }
+    };
+
+    script.onerror = function () {
+      reject(new Error('Impossible de charger stock-supabase.js.'));
+    };
+
+    document.head.appendChild(script);
+  });
+
+  return window.triedreStockReady;
+}
+
+document.addEventListener('DOMContentLoaded', async function () {
+
+  const cartes =
+    document.querySelectorAll('.produit-card a[href*="produit?id="]');
+
   if (cartes.length === 0) return;
 
-  fetch('../04-data/produits.json')
-    .then(function (reponse) {
-      if (!reponse.ok) throw new Error('Impossible de charger produits.json');
-      return reponse.json();
-    })
-    .then(function (donnees) {
-      cartes.forEach(function (lien) {
-        const url = new URL(lien.href);
-        const id = url.searchParams.get('id');
-        const produit = donnees.produits.find(function (p) { return p.id === id; });
-        if (!produit) return;
+  try {
+    const reponse = await fetch('../04-data/produits.json');
 
-        const spanPrix = lien.querySelector('.prix');
-        if (!spanPrix) return;
+    if (!reponse.ok) {
+      throw new Error('Impossible de charger produits.json');
+    }
 
-        const prixFormate = produit.prix.toFixed(2).replace('.', ',') + ' $';
+    const donnees = await reponse.json();
+    const clientStock = await obtenirClientStockSupabase();
+    const stocksParSku = await clientStock.indexParSku(true);
 
-        // ---- Prix barré + pourcentage si en promo ----
-        if (produit.prixOriginal && produit.prixOriginal > produit.prix) {
-          const pourcentage = Math.round(
-            ((produit.prixOriginal - produit.prix) / produit.prixOriginal) * 100
-          );
-          const prixOriginalFormate = produit.prixOriginal.toFixed(2).replace('.', ',') + ' $';
+    cartes.forEach(function (lien) {
+      const url = new URL(lien.href);
+      const id = url.searchParams.get('id');
 
-          spanPrix.innerHTML =
-            '<span class="prix-original">' + prixOriginalFormate + '</span>' +
-            '<span class="prix-actuel">' + prixFormate + '</span>' +
-            '<span class="badge-promo">-' + pourcentage + '%</span>';
-        } else {
-          spanPrix.textContent = prixFormate;
-        }
-
-        // ---- Badge texte libre (Nouveau, Solde, etc.) ----
-        if (produit.badge) {
-          const badge = document.createElement('span');
-          badge.className = 'badge-produit';
-          badge.textContent = produit.badge;
-          lien.appendChild(badge);
-        }
-
-        // ---- Stock (élément toujours créé pour un alignement constant) ----
-        const stockLimite = document.createElement('span');
-        stockLimite.className = 'stock-limite';
-
-        if (produit.stock !== undefined) {
-          if (produit.stock === 0) {
-            lien.classList.add('produit-rupture');
-            const badgeRupture = document.createElement('span');
-            badgeRupture.className = 'badge-produit badge-rupture';
-            badgeRupture.textContent = 'Rupture de stock';
-            lien.appendChild(badgeRupture);
-          } else if (produit.stock <= 5) {
-            stockLimite.textContent = 'Plus que ' + produit.stock + ' en stock';
-          }
-        }
-        lien.appendChild(stockLimite);
+      const produit = donnees.produits.find(function (p) {
+        return p.id === id;
       });
-    })
-    .catch(function (erreur) {
-      console.error('Erreur de synchronisation des prix :', erreur);
+
+      if (!produit || produit.actif === false) return;
+
+      const variantes = (produit.variantes || [])
+        .filter(function (v) {
+          return v.actif !== false;
+        })
+        .map(function (v) {
+          const distante = stocksParSku.get(v.sku);
+
+          return Object.assign({}, v, {
+            stock: distante ? distante.stock : 0,
+            actif: distante ? distante.active !== false : false
+          });
+        })
+        .filter(function (v) {
+          return v.actif !== false;
+        });
+
+      if (variantes.length === 0) return;
+
+      const reference = variantes.reduce(function (moinsCher, variante) {
+        return variante.prix < moinsCher.prix ? variante : moinsCher;
+      }, variantes[0]);
+
+      const spanPrix = lien.querySelector('.prix');
+
+      if (spanPrix) {
+        spanPrix.textContent =
+          reference.prix.toFixed(2).replace('.', ',') + ' $';
+      }
+
+      lien.querySelectorAll(
+        '.badge-produit, .stock-limite'
+      ).forEach(function (element) {
+        element.remove();
+      });
+
+      lien.classList.remove('produit-rupture');
+
+      if (produit.badge) {
+        const badge = document.createElement('span');
+        badge.className = 'badge-produit';
+        badge.textContent = produit.badge;
+        lien.appendChild(badge);
+      }
+
+      const stockTotal = variantes.reduce(function (total, v) {
+        return total + v.stock;
+      }, 0);
+
+      const messageStock = document.createElement('span');
+      messageStock.className = 'stock-limite';
+
+      if (stockTotal === 0) {
+        lien.classList.add('produit-rupture');
+
+        const badgeIndisponible = document.createElement('span');
+        badgeIndisponible.className = 'badge-produit badge-rupture';
+        badgeIndisponible.textContent = 'Indisponible';
+        lien.appendChild(badgeIndisponible);
+      } else if (stockTotal <= 5) {
+        messageStock.textContent =
+          'Plus que ' + stockTotal + ' en stock';
+        lien.appendChild(messageStock);
+      }
     });
 
+  } catch (erreur) {
+    console.error(
+      '[TRIÈDRE] Erreur de synchronisation boutique / Supabase :',
+      erreur
+    );
+  }
 });

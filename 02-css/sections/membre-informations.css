@@ -1,0 +1,251 @@
+/* ==========================================================================
+   TRIÈDRE — V15 — Mes informations
+   ========================================================================== */
+
+.champ-obligatoire {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.membre-sexe-options {
+  flex-wrap: wrap;
+  row-gap: .75rem;
+}
+
+.membre-mot-de-passe {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.membre-mot-de-passe-entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.membre-mot-de-passe-entete h3 {
+  margin: .15rem 0 .35rem;
+}
+
+.membre-mot-de-passe-entete p:not(.section-eyebrow) {
+  color: var(--color-text-secondary);
+}
+
+.membre-action-texte,
+.mot-de-passe-afficher {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-accent);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.membre-action-texte:hover,
+.mot-de-passe-afficher:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.membre-mot-de-passe-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, .12);
+}
+
+.membre-mot-de-passe-form[hidden] {
+  display: none !important;
+}
+
+.champ-mot-de-passe {
+  position: relative;
+}
+
+.champ-mot-de-passe input {
+  width: 100%;
+  padding-right: 6rem;
+}
+
+.mot-de-passe-afficher {
+  position: absolute;
+  top: 50%;
+  right: .9rem;
+  transform: translateY(-50%);
+  color: var(--color-text-primary);
+  opacity: .95;
+}
+
+.membre-mot-de-passe-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+.membre-informations-actions-v15 {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+@media (max-width: 700px) {
+  .membre-mot-de-passe-entete {
+    flex-direction: column;
+  }
+
+  .membre-mot-de-passe-form {
+    grid-template-columns: 1fr;
+  }
+
+  .membre-mot-de-passe-actions,
+  .membre-informations-actions-v15 {
+    flex-direction: column-reverse;
+  }
+
+  .membre-mot-de-passe-actions .btn,
+  .membre-informations-actions-v15 .btn {
+    width: 100%;
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — V15.1 — Genre select + Mot de passe 2 colonnes
+   ========================================================================== */
+
+#profil-sexe {
+  width: 100%;
+  min-height: 48px;
+  padding: .8rem .9rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font: inherit;
+}
+
+#profil-sexe:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.membre-mot-de-passe-grille {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(220px, .8fr);
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+.membre-mot-de-passe-colonne-champs .section-eyebrow {
+  margin-bottom: var(--space-sm);
+}
+
+.membre-mot-de-passe-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  margin-top: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.membre-mot-de-passe-colonne-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding-top: .15rem;
+}
+
+.membre-mot-de-passe-colonne-actions .membre-action-principale {
+  align-self: flex-start;
+  margin-bottom: var(--space-xl);
+}
+
+.membre-mot-de-passe-colonne-actions #sauvegarder-mot-de-passe {
+  margin-bottom: var(--space-lg);
+}
+
+.membre-mot-de-passe-colonne-actions #annuler-mot-de-passe {
+  margin-top: var(--space-sm);
+}
+
+@media (max-width: 700px) {
+  .membre-mot-de-passe-grille {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+
+  .membre-mot-de-passe-colonne-actions {
+    order: 2;
+  }
+
+  .membre-mot-de-passe-colonne-actions .membre-action-principale {
+    margin-bottom: var(--space-lg);
+  }
+
+  .membre-mot-de-passe-colonne-actions #sauvegarder-mot-de-passe {
+    margin-bottom: var(--space-md);
+  }
+}
+
+
+/* ==========================================================================
+   TRIÈDRE — V15.2 — États Mot de passe + icône œil premium
+   ========================================================================== */
+
+.membre-mot-de-passe-colonne-actions button[hidden] {
+  display: none !important;
+}
+
+.mot-de-passe-afficher {
+  width: 2.6rem;
+  height: 2.6rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-primary);
+  opacity: .82;
+}
+
+.mot-de-passe-afficher:hover,
+.mot-de-passe-afficher:focus-visible {
+  opacity: 1;
+  background: rgba(255, 255, 255, .06);
+  text-decoration: none;
+}
+
+.icone-oeil {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icone-oeil-masque {
+  display: none;
+}
+
+.mot-de-passe-afficher.mot-de-passe-visible .icone-oeil-visible {
+  display: none;
+}
+
+.mot-de-passe-afficher.mot-de-passe-visible .icone-oeil-masque {
+  display: block;
+}

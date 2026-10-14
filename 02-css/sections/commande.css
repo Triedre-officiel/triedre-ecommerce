@@ -5,11 +5,64 @@
 .commande-page {
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: var(--space-2xl) var(--container-padding);
+  padding: var(--space-lg) var(--container-padding) var(--space-xl);
 }
 
 .commande-page h1 {
   margin: var(--space-xs) 0 var(--space-lg);
+}
+
+/* ---- Choix du mode de commande ---- */
+.commande-acces {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.commande-acces-intro {
+  max-width: 900px;
+  margin: 0 auto var(--space-xl);
+  text-align: center;
+}
+
+.commande-acces-intro h2 {
+  margin-bottom: var(--space-sm);
+}
+
+.commande-acces-intro p:last-child {
+  color: var(--color-text-secondary);
+}
+
+.commande-acces-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-md);
+  margin-top: -0.75rem;
+}
+
+.commande-acces-carte {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-lg);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.commande-acces-carte h3 {
+  margin-bottom: var(--space-sm);
+}
+
+.commande-acces-carte p {
+  flex: 1;
+  margin-bottom: var(--space-lg);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+  line-height: 1.6;
+}
+
+.commande-acces-carte .btn {
+  width: 100%;
+  text-align: center;
 }
 
 /* ---- Layout ---- */
@@ -33,6 +86,17 @@
 .commande-formulaire h2 {
   font-size: var(--font-size-h3);
   margin-bottom: var(--space-xs);
+}
+
+.commande-champs-obligatoires {
+  margin-top: calc(var(--space-sm) * -1);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+}
+
+.champ-obligatoire,
+.commande-champs-obligatoires span {
+  color: var(--color-accent);
 }
 
 .champ-ligne {
@@ -139,15 +203,16 @@
 .commande-resume-colonne {
   flex: 1;
   min-width: 280px;
+  position: relative;
 }
 
 .retour-panier {
-  display: flex;
-  justify-content: flex-end;
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--space-sm));
   font-size: var(--font-size-small);
   color: var(--color-text-secondary);
   text-decoration: underline;
-  margin-bottom: var(--space-sm);
   transition: color var(--transition-fast);
 }
 
@@ -157,8 +222,18 @@
 
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
+  .commande-acces-options {
+    grid-template-columns: 1fr;
+  }
+
   .commande-layout {
     flex-direction: column;
+  }
+
+  .commande-formulaire,
+  .commande-resume-colonne {
+    width: 100%;
+    min-width: 0;
   }
 
   .commande-resume {
@@ -171,3 +246,90 @@
     gap: var(--space-md);
   }
 }
+
+
+/* TRIÈDRE — Tunnel final : Panier → Adresse → Résumé → Paiement */
+.commande-layout-adresse {
+  display: block;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.commande-layout-adresse .commande-formulaire {
+  width: 100%;
+}
+.commande-resume-adresse-cache {
+  display: none;
+}
+.commande-etape-final {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.commande-etapes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+}
+.commande-etapes .is-complete,
+.commande-etapes .is-active {
+  color: var(--color-accent);
+}
+.commande-resume-final {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+}
+.commande-resume-entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+.commande-resume-entete h2 {
+  margin: 0;
+}
+.commande-lien-action {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-accent);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.commande-adresse-confirmee {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+}
+.commande-adresse-confirmee strong {
+  color: var(--color-text-primary);
+}
+.commande-ligne-final {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-sm) 0;
+  border-top: 1px solid var(--color-border);
+}
+.commande-total-final {
+  padding-top: var(--space-md);
+}
+#btn-resume-commande {
+  width: 100%;
+  margin-top: var(--space-lg);
+}
+
+/* Checkout membre — actions de confirmation */
+.commande-membre-actions { display:flex; flex-wrap:wrap; gap:14px; margin-top:24px; }
+.commande-membre-actions .btn { flex:1 1 210px; text-align:center; }
