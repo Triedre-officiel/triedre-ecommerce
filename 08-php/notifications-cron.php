@@ -12,6 +12,13 @@ function trLog(string $message):void{
  error_log('[TRIÈDRE cron] '.$message);
 }
 
+// Filet de sécurité du stock : libère les réservations expirées (paiement jamais finalisé)
+// si un événement Stripe s'est perdu. Une erreur ici n'empêche pas l'envoi des courriels.
+try{
+ $liberees=(int)(trRpc($c,'triedre_stock_liberer_expirees')['result']??0);
+ if($liberees>0)trLog('Stock : '.$liberees.' réservation(s) expirée(s) libérée(s).');
+}catch(Throwable $e){trLog('Stock : libération des réservations impossible : '.$e->getMessage());}
+
 $envoyes=0;$ignores=0;
 try{
  trRpc($c,'triedre_queue_due_reminders');
