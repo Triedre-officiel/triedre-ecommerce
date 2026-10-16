@@ -15,6 +15,13 @@ document.addEventListener('DOMContentLoaded', function () {
     return;
   }
 
+  // Retour depuis Stripe sans paiement (bouton « Retour », ou session expirée) :
+  // on rend les articles réservés et on prévient le client. Son panier est conservé
+  // et la page de commande s'affiche normalement.
+  if (parametresUrl.get('stripe') === 'cancelled') {
+    traiterRetourSansPaiement(parametresUrl.get('commande'));
+  }
+
   const provincesCanada = [
     'Alberta',
     'Colombie-Britannique',
@@ -1285,6 +1292,43 @@ document.addEventListener('DOMContentLoaded', function () {
           'Ton paiement est en cours de vérification. Actualise cette page dans quelques instants.'
         );
       }
+    }
+  }
+
+  async function traiterRetourSansPaiement(orderId) {
+    // Nettoie l'adresse : un rechargement de la page ne relance pas ce traitement.
+    window.history.replaceState(null, '', window.location.pathname);
+
+    let etat = '';
+    if (orderId && /^[a-f0-9-]{36}$/i.test(orderId)) {
+      try {
+        const headers = await entetesAvecSessionOptionnelle();
+        headers['Content-Type'] = 'application/json';
+        const reponse = await fetch('/08-php/liberer-reservation.php', {
+          method: 'POST', headers: headers, cache: 'no-store',
+          body: JSON.stringify({ order_id: orderId })
+        });
+        etat = (await lireJson(reponse)).etat || '';
+      } catch (erreur) {
+        // Sans gravité : l'expiration Stripe ou le cron libéreront le stock.
+        console.warn('[TRIÈDRE] Libération de la réservation différée :', erreur);
+      }
+    }
+
+    // Cas rare : le paiement a abouti juste avant le retour. Rien n'est libéré.
+    if (etat === 'payee') {
+      afficherToast('Ton paiement est en cours de traitement : tu recevras une confirmation par courriel.', 'succes');
+      return;
+    }
+
+    if (window.triedreModal && typeof window.triedreModal.alert === 'function') {
+      await window.triedreModal.alert({
+        eyebrow: 'PAIEMENT',
+        title: 'PAIEMENT NON FINALISÉ',
+        message: 'Aucun montant n’a été débité. Tes articles ne sont plus réservés, mais ton panier est conservé : ' +
+          'valide de nouveau ta commande quand tu es prêt, selon les disponibilités.',
+        confirmText: 'Compris'
+      });
     }
   }
 

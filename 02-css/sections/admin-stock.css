@@ -1,0 +1,86 @@
+/* TRIÈDRE — Admin : gestion du stock */
+.admin-stock-page{padding-bottom:120px}
+.stock-kpis{margin-bottom:1.25rem}
+.stock-toolbar{flex-wrap:wrap}
+.stock-filtre select{min-height:46px;padding:.6rem .9rem;border:1px solid rgba(255,255,255,.16);border-radius:8px;background:#151517;color:inherit;font:inherit}
+
+.stock-liste{display:flex;flex-direction:column;gap:.5rem;margin-top:1rem}
+.stock-produit{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin:1.2rem 0 .3rem;padding-bottom:.4rem;border-bottom:1px solid rgba(255,255,255,.1);font-size:1.05rem;letter-spacing:.04em}
+.stock-produit:first-child{margin-top:0}
+.stock-produit span{font-size:.8rem;font-weight:500;opacity:.65;letter-spacing:0}
+
+.stock-ligne{display:grid;grid-template-columns:18px minmax(0,1fr) auto auto 52px;align-items:center;gap:.9rem;padding:.7rem .9rem;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)}
+.stock-ligne.is-modifie{border-color:rgba(201,162,39,.7);background:rgba(201,162,39,.07)}
+.stock-ligne.is-inactive{opacity:.55}
+.stock-pastille{width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.35)}
+.stock-ident{display:flex;flex-direction:column;min-width:0}
+.stock-ident strong{font-size:.95rem}
+.stock-ident code{font-size:.75rem;opacity:.6;overflow-wrap:anywhere}
+
+.stock-badge{padding:.25rem .6rem;border-radius:999px;font-size:.72rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.stock-badge.is-ok{background:rgba(143,207,154,.12);color:#8fcf9a}
+.stock-badge.is-faible{background:rgba(230,160,60,.15);color:#f0b45a}
+.stock-badge.is-rupture{background:rgba(220,90,90,.15);color:#ef8a8a}
+.stock-badge.is-inactive{background:rgba(255,255,255,.08);color:#bbb}
+
+.stock-controle{display:flex;align-items:center;border:1px solid rgba(255,255,255,.16);border-radius:8px;overflow:hidden}
+.stock-controle button{width:40px;height:42px;border:0;background:rgba(255,255,255,.05);color:inherit;font-size:1.2rem;cursor:pointer}
+.stock-controle button:hover{background:rgba(201,162,39,.18)}
+.stock-controle input{width:72px;height:42px;border:0;border-left:1px solid rgba(255,255,255,.12);border-right:1px solid rgba(255,255,255,.12);background:transparent;color:inherit;font:inherit;font-weight:700;text-align:center;-moz-appearance:textfield}
+.stock-controle input::-webkit-outer-spin-button,.stock-controle input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.stock-controle input:focus{outline:2px solid #c9a227;outline-offset:-2px}
+.stock-diff{font-weight:700;font-size:.85rem;text-align:right}
+.positif{color:#8fcf9a}.negatif{color:#ef8a8a}
+
+.stock-historique{display:flex;flex-direction:column;margin-top:1rem}
+.stock-histo-ligne{display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:1rem;align-items:center;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.stock-histo-ligne time{font-size:.8rem;opacity:.65}
+.stock-histo-quoi{display:flex;flex-direction:column;min-width:0}
+.stock-histo-quoi strong{font-size:.88rem;overflow-wrap:anywhere}
+.stock-histo-quoi span{font-size:.78rem;color:#d9b65b}
+.stock-histo-quoi em{font-size:.78rem;opacity:.7}
+.stock-histo-chiffres{display:flex;flex-direction:column;align-items:flex-end;font-size:.82rem}
+.stock-histo-chiffres span{opacity:.7}
+
+.stock-barre{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:.7rem;width:min(980px,calc(100% - 32px));padding:.8rem 1rem;border:1px solid rgba(201,162,39,.6);border-radius:12px;background:#17181b;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.stock-barre[hidden]{display:none}
+.stock-barre p{margin:0;white-space:nowrap}
+.stock-barre strong{color:#e6c35a}
+.stock-barre select,.stock-barre input{min-height:42px;padding:.5rem .7rem;border:1px solid rgba(255,255,255,.16);border-radius:8px;background:#0f1012;color:inherit;font:inherit}
+.stock-note{flex:1;min-width:0}.stock-note input{width:100%}
+
+@media(max-width:760px){
+  .stock-ligne{grid-template-columns:18px minmax(0,1fr) auto;row-gap:.6rem}
+  .stock-badge{grid-column:3;grid-row:1}
+  .stock-controle{grid-column:1 / 3;grid-row:2;justify-self:start}
+  .stock-diff{grid-column:3;grid-row:2}
+  .stock-histo-ligne{grid-template-columns:minmax(0,1fr) auto}
+  .stock-histo-ligne time{grid-column:1 / -1}
+  .stock-barre{flex-wrap:wrap;bottom:8px}
+  .stock-barre p{width:100%}
+  .stock-barre label{flex:1 1 45%}
+  .stock-barre select{width:100%}
+  .stock-barre .btn{flex:1}
+}
+
+/* Boutons de la page (le site n'a pas de style .btn global) */
+.admin-stock-page .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.6rem 1.1rem;border-radius:8px;font:inherit;font-weight:700;font-size:.9rem;letter-spacing:.02em;text-decoration:none;cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s,color .15s}
+.admin-stock-page .btn-primary{background:#c9a227;border:1px solid #c9a227;color:#111}
+.admin-stock-page .btn-primary:hover{background:#dbb43a}
+.admin-stock-page .btn-primary:disabled{opacity:.6;cursor:wait}
+.admin-stock-page .btn-secondaire{background:transparent;border:1px solid rgba(201,162,39,.6);color:#e6c35a}
+.admin-stock-page .btn-secondaire:hover{background:rgba(201,162,39,.12)}
+.admin-stock-page .btn:focus-visible{outline:2px solid #c9a227;outline-offset:2px}
+
+/* Mobile : barre compacte en grille, filtres pleine largeur */
+@media(max-width:760px){
+  .admin-stock-page{padding-bottom:230px}
+  .stock-filtre,.stock-filtre select,.stock-toolbar .btn{width:100%}
+  .stock-barre{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:.5rem;padding:.7rem}
+  .stock-barre p{grid-column:1;grid-row:1;width:auto;align-self:center;font-size:.85rem;white-space:normal}
+  #stock-annuler{grid-column:2;grid-row:1;padding:.5rem .7rem}
+  #stock-enregistrer{grid-column:3;grid-row:1;padding:.5rem .8rem}
+  .stock-barre label{grid-column:1 / -1}
+  .stock-barre select,.stock-barre input{width:100%;min-height:40px}
+  .stock-barre .btn{flex:none;min-height:40px}
+}
