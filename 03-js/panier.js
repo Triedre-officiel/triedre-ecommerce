@@ -54,14 +54,201 @@ function obtenirClientStockSupabase() {
 }
 
 
+// --------------------------------------------------------------------------
+// Stockage local du panier
+// --------------------------------------------------------------------------
+
+const CLE_PANIER = 'triedre_panier';
+const CLE_PANIER_COMPTE = 'triedre_panier_compte'; // id du membre propriétaire du panier local
+const CLE_PANIER_MAJ = 'triedre_panier_maj';       // date de dernière modification locale
+
 function getPanier() {
-  const donnees = localStorage.getItem('triedre_panier');
-  return donnees ? JSON.parse(donnees) : [];
+  try {
+    const donnees = localStorage.getItem(CLE_PANIER);
+    const panier = donnees ? JSON.parse(donnees) : [];
+    return Array.isArray(panier) ? panier : [];
+  } catch (erreur) {
+    return [];
+  }
 }
 
-function sauvegarderPanier(panier) {
-  localStorage.setItem('triedre_panier', JSON.stringify(panier));
+function sauvegarderPanier(panier, options) {
+  const parametres = options || {};
+  localStorage.setItem(CLE_PANIER, JSON.stringify(panier));
+  localStorage.setItem(CLE_PANIER_MAJ, parametres.dateMaj || new Date().toISOString());
   mettreAJourCompteur();
+
+  // Membre connecté : chaque modification est aussi enregistrée dans son compte.
+  if (!parametres.sansSynchronisation) planifierEnvoiPanierCompte();
+}
+
+// --------------------------------------------------------------------------
+// Panier lié au compte membre (Supabase — table member_carts)
+// --------------------------------------------------------------------------
+
+let minuterieEnvoiPanier = null;
+let synchronisationEnCours = null;
+
+function clientPanierSupabase() {
+  return window.triedreSupabase || null;
+}
+
+function cleArticle(item) {
+  return item.sku || [item.id, item.couleur, item.taille].join('|');
+}
+
+// Fusion panier du compte + panier invité : quantités additionnées pour un même article.
+function fusionnerPaniers(panierCompte, panierLocal) {
+  const resultat = panierCompte.map(function (item) { return Object.assign({}, item); });
+
+  panierLocal.forEach(function (item) {
+    const existant = resultat.find(function (r) { return cleArticle(r) === cleArticle(item); });
+    if (existant) existant.quantite = (Number(existant.quantite) || 0) + (Number(item.quantite) || 0);
+    else resultat.push(Object.assign({}, item));
+  });
+
+  return resultat;
+}
+
+function viderPanierLocal() {
+  clearTimeout(minuterieEnvoiPanier);
+  localStorage.removeItem(CLE_PANIER);
+  localStorage.removeItem(CLE_PANIER_COMPTE);
+  localStorage.removeItem(CLE_PANIER_MAJ);
+  mettreAJourCompteur();
+  if (document.getElementById('panier-contenu')) afficherPagePanier();
+}
+
+async function envoyerPanierCompte() {
+  const client = clientPanierSupabase();
+  const proprietaire = localStorage.getItem(CLE_PANIER_COMPTE);
+  if (!client || !proprietaire) return;
+
+  const { error } = await client
+    .from('member_carts')
+    .upsert({
+      user_id: proprietaire,
+      items: getPanier(),
+      updated_at: localStorage.getItem(CLE_PANIER_MAJ) || new Date().toISOString()
+    }, { onConflict: 'user_id' });
+
+  if (error) console.error('[TRIÈDRE] Sauvegarde du panier dans le compte :', error);
+}
+
+function planifierEnvoiPanierCompte() {
+  if (!clientPanierSupabase() || !localStorage.getItem(CLE_PANIER_COMPTE)) return;
+  clearTimeout(minuterieEnvoiPanier);
+  minuterieEnvoiPanier = setTimeout(envoyerPanierCompte, 400);
+}
+
+// Appelée à la connexion (et à chaque chargement de page avec une session active).
+async function synchroniserPanierCompte(userId) {
+  const client = clientPanierSupabase();
+  if (!client || !userId) return;
+  if (synchronisationEnCours) return synchronisationEnCours;
+
+  synchronisationEnCours = (async function () {
+    const { data, error } = await client
+      .from('member_carts')
+      .select('items, updated_at')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('[TRIÈDRE] Lecture du panier du compte :', error);
+      return;
+    }
+
+    const panierCompte = data && Array.isArray(data.items) ? data.items : [];
+    const majCompte = data ? Date.parse(data.updated_at) || 0 : 0;
+    const proprietaire = localStorage.getItem(CLE_PANIER_COMPTE);
+    const panierLocal = getPanier();
+    const majLocale = Date.parse(localStorage.getItem(CLE_PANIER_MAJ)) || 0;
+
+    let resultat;
+    let envoyer = true;
+
+    if (proprietaire === userId) {
+      // Même membre : on garde la version la plus récente (appareil ou compte).
+      if (majLocale >= majCompte) {
+        resultat = panierLocal;
+      } else {
+        resultat = panierCompte;
+        envoyer = false;
+      }
+    } else if (proprietaire && proprietaire !== userId) {
+      // Panier resté d'un autre compte : jamais partagé avec ce membre.
+      resultat = panierCompte;
+      envoyer = false;
+    } else {
+      // Panier invité : fusionné avec celui du compte.
+      resultat = fusionnerPaniers(panierCompte, panierLocal);
+      envoyer = panierLocal.length > 0;
+      if (panierCompte.length > 0 && typeof afficherToast === 'function') {
+        afficherToast('Ton panier a été retrouvé.', 'info');
+      }
+    }
+
+    localStorage.setItem(CLE_PANIER_COMPTE, userId);
+    sauvegarderPanier(resultat, {
+      sansSynchronisation: true,
+      dateMaj: envoyer ? new Date().toISOString() : (data ? data.updated_at : undefined)
+    });
+
+    if (envoyer) await envoyerPanierCompte();
+    if (document.getElementById('panier-contenu')) afficherPagePanier();
+  })();
+
+  try {
+    await synchronisationEnCours;
+  } finally {
+    synchronisationEnCours = null;
+  }
+}
+
+// À appeler AVANT supabase.auth.signOut() : enregistre le panier dans le compte, puis vide l'appareil.
+async function preparerDeconnexionPanier() {
+  clearTimeout(minuterieEnvoiPanier);
+  try {
+    await envoyerPanierCompte();
+  } catch (erreur) {
+    console.error('[TRIÈDRE] Sauvegarde du panier avant déconnexion :', erreur);
+  }
+  viderPanierLocal();
+}
+
+window.triedrePanierCompte = {
+  synchroniser: synchroniserPanierCompte,
+  avantDeconnexion: preparerDeconnexionPanier,
+  viderLocal: viderPanierLocal
+};
+
+async function initialiserPanierCompte() {
+  const client = clientPanierSupabase();
+  if (!client) return; // Page sans Supabase : le panier local suffit, il sera synchronisé plus tard.
+
+  try {
+    const { data } = await client.auth.getSession();
+    const session = data && data.session;
+
+    if (session && session.user) {
+      await synchroniserPanierCompte(session.user.id);
+    } else if (localStorage.getItem(CLE_PANIER_COMPTE)) {
+      // Session terminée ailleurs : le panier du membre ne reste pas sur l'appareil.
+      viderPanierLocal();
+    }
+
+    client.auth.onAuthStateChange(function (evenement, sessionActive) {
+      if (evenement === 'SIGNED_IN' && sessionActive && sessionActive.user) {
+        setTimeout(function () { synchroniserPanierCompte(sessionActive.user.id); }, 0);
+      }
+      if (evenement === 'SIGNED_OUT' && localStorage.getItem(CLE_PANIER_COMPTE)) {
+        viderPanierLocal();
+      }
+    });
+  } catch (erreur) {
+    console.error('[TRIÈDRE] Synchronisation du panier :', erreur);
+  }
 }
 
 function ajouterAuPanier(article) {
@@ -312,6 +499,37 @@ function demanderConfirmation(options) {
 // Affichage du panier
 // ========================================================================== 
 
+// Même seuil que le serveur (08-php/livraison-lib.php).
+const SEUIL_LIVRAISON_GRATUITE = 100;
+
+function barreLivraisonGratuitePanier(sousTotal) {
+  const montant = function (valeur) { return valeur.toFixed(2).replace('.', ',') + ' $'; };
+  const iconeCamion = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h11v9H3z" /><path d="M14 9.5h3.6l3.4 3.4v2.6h-7" /><circle cx="7" cy="17.5" r="1.8" /><circle cx="17" cy="17.5" r="1.8" /></svg>';
+  const iconeCoche = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>';
+
+  if (sousTotal >= SEUIL_LIVRAISON_GRATUITE) {
+    return '<div class="tr-livgratuite is-atteint" role="status">' +
+        '<span class="tr-livgratuite-icone">' + iconeCoche + '</span>' +
+        '<div class="tr-livgratuite-corps">' +
+          '<p class="tr-livgratuite-message">La livraison standard t’est offerte.</p>' +
+          '<div class="tr-livgratuite-piste"><span class="tr-livgratuite-remplissage" style="--progression:100%"></span></div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  const progression = Math.max(4, Math.min(100, Math.round((sousTotal / SEUIL_LIVRAISON_GRATUITE) * 100)));
+  return '<div class="tr-livgratuite">' +
+      '<span class="tr-livgratuite-icone">' + iconeCamion + '</span>' +
+      '<div class="tr-livgratuite-corps">' +
+        '<p class="tr-livgratuite-message">Plus que <strong>' + montant(SEUIL_LIVRAISON_GRATUITE - sousTotal) + '</strong> pour profiter de la livraison standard gratuite.</p>' +
+        '<div class="tr-livgratuite-piste" role="progressbar" aria-label="Progression vers la livraison gratuite" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + progression + '">' +
+          '<span class="tr-livgratuite-remplissage" style="--progression:' + progression + '%"></span>' +
+        '</div>' +
+        '<div class="tr-livgratuite-pied"><span>' + montant(sousTotal) + '</span><span>' + montant(SEUIL_LIVRAISON_GRATUITE) + '</span></div>' +
+      '</div>' +
+    '</div>';
+}
+
 async function afficherPagePanier() {
   const conteneur = document.getElementById('panier-contenu');
   if (!conteneur) return;
@@ -404,7 +622,10 @@ async function afficherPagePanier() {
         '<div class="panier-resume">' +
           '<h2>Résumé</h2>' +
           '<div class="panier-ligne-resume"><span>Sous-total</span><span>' + total + ' $</span></div>' +
-          '<div class="panier-ligne-resume"><span>Livraison</span><span>Calculée à l\'étape suivante</span></div>' +
+          '<div class="panier-ligne-resume"><span>Livraison</span><span>' +
+            (totalPanier() >= SEUIL_LIVRAISON_GRATUITE ? 'Gratuite' : 'Calculée à l\'étape suivante') +
+          '</span></div>' +
+          barreLivraisonGratuitePanier(totalPanier()) +
           '<div class="panier-total"><span>Total</span><span class="accent">' + total + ' $</span></div>' +
           '<button class="btn btn-primary btn-commander"' +
             (panierValide ? '' : ' disabled') +
@@ -552,6 +773,7 @@ document.addEventListener('DOMContentLoaded', function () {
   mettreAJourCompteur();
   afficherPagePanier();
   initialiserInteractionsPanier();
+  initialiserPanierCompte();
 
   const copyrightElement = document.querySelector('.footer-copyright');
 

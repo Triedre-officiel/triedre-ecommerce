@@ -9,12 +9,21 @@
 //   confirmText: 'Confirmer',
 //   cancelText: 'Annuler'
 // });
+//
+// Message simple (un seul bouton) :
+// await window.triedreModal.alert({ eyebrow: 'Studio', title: 'ENREGISTRÉ', message: '...' });
 // ==========================================================================
 
 (function () {
   'use strict';
 
+  let clavierActif = null;
+
   function fermerModal(overlay, valeur, resolve) {
+    if (clavierActif) {
+      document.removeEventListener('keydown', clavierActif);
+      clavierActif = null;
+    }
     overlay.remove();
     document.body.classList.remove('triedre-modal-open');
     resolve(valeur);
@@ -27,6 +36,13 @@
       if (ancien) {
         ancien.remove();
       }
+
+      if (clavierActif) {
+        document.removeEventListener('keydown', clavierActif);
+        clavierActif = null;
+      }
+
+      const avecAnnuler = options.cancelText !== null;
 
       const overlay = document.createElement('div');
       overlay.id = 'triedre-modal-overlay';
@@ -64,7 +80,9 @@
       confirmer.className = 'btn btn-primary';
       confirmer.textContent = options.confirmText || 'Confirmer';
 
-      actions.appendChild(annuler);
+      if (avecAnnuler) {
+        actions.appendChild(annuler);
+      }
       actions.appendChild(confirmer);
 
       dialogue.appendChild(eyebrow);
@@ -89,22 +107,33 @@
 
       overlay.addEventListener('click', function (event) {
         if (event.target === overlay) {
-          fermerModal(overlay, false, resolve);
+          fermerModal(overlay, !avecAnnuler, resolve);
         }
       });
 
       function clavier(event) {
         if (event.key === 'Escape') {
-          document.removeEventListener('keydown', clavier);
-          fermerModal(overlay, false, resolve);
+          fermerModal(overlay, !avecAnnuler, resolve);
         }
       }
 
-      document.addEventListener('keydown', clavier, { once: false });
+      clavierActif = clavier;
+      document.addEventListener('keydown', clavier);
+    });
+  }
+
+  function alert(options = {}) {
+    return confirm({
+      eyebrow: options.eyebrow,
+      title: options.title || 'INFORMATION',
+      message: options.message || '',
+      confirmText: options.confirmText || 'Compris',
+      cancelText: null
     });
   }
 
   window.triedreModal = {
-    confirm: confirm
+    confirm: confirm,
+    alert: alert
   };
 })();

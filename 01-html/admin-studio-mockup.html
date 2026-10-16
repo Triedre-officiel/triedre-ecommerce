@@ -5,6 +5,7 @@
 <title>Studio Mockup — Produits & Visuels - TRIÈDRE</title>
 <link rel="icon" type="image/png" href="../05-images/icons/favicon-triedre.svg">
 <link rel="stylesheet" href="../02-css/style.css"><link rel="stylesheet" href="../02-css/sections/admin.css"><link rel="stylesheet" href="../02-css/sections/admin-studio-mockup.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../03-js/supabase-config.js"></script><script src="../03-js/admin-garde.js"></script>
 </head>
 <body>
 <div class="top-banner"><p>TRIÈDRE ATHLETIC - ESPACE ADMIN</p></div>
@@ -14,13 +15,116 @@
 <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
 <div class="header-icons"><a href="/membre" aria-label="Mon compte"><img src="../05-images/icons/icon-account.svg" alt=""></a></div>
 </header>
-<main class="studio-page"><div class="studio-top"><div><p class="studio-kicker">ADMINISTRATION / ATELIER DE CRÉATION</p><h1>STUDIO <em>MOCKUP.</em></h1><p>Crée des visuels à partir de vêtements vierges. Les zones sont verrouillées pendant la conception.</p></div><a href="/admin-visuels" class="studio-back" id="studio-back">← Produits & visuels</a></div>
-<div id="studio-alert" role="status" aria-live="polite"></div><div id="studio-zone-info" class="studio-zone-info" role="status"></div>
-<div class="studio-layout">
-<aside class="studio-panel"><h2>01 · Support vierge</h2><label for="studio-product">Type de produit</label><select id="studio-product"><option value="tshirt">T-shirt</option><option value="hoodie">Hoodie</option><option value="casquette">Casquette</option><option value="brassiere">Brassière</option><option value="legging">Legging</option><option value="veste">Veste légère</option></select><select id="studio-view" hidden aria-label="Vue actuelle"></select><label for="studio-base-upload">Importer la photo vierge</label><input id="studio-base-upload" type="file" accept="image/png,image/jpeg,image/webp"><button type="button" id="studio-clear-base">Supprimer la photo</button><p class="studio-hint">Une image vierge par vue. Formats PNG, JPG ou WebP.</p><div class="studio-sep"></div><h2>02 · Emplacement</h2><label for="studio-zone">Zone prédéfinie</label><select id="studio-zone"></select><p class="studio-hint">Les zones changent selon la vue sélectionnée. Un design sur le devant ne sera pas reproduit automatiquement au dos.</p><div class="studio-sep"></div><h2>03 · Design</h2><label for="studio-logo-upload">Importer le logo pour cette vue</label><input id="studio-logo-upload" type="file" accept="image/png,image/webp,image/svg+xml"><p class="studio-hint">PNG/WebP transparents conseillés. Les SVG sont vérifiés avant affichage.</p><div id="studio-background-tools" class="studio-background-tools" hidden><div class="studio-background-title">Fond du logo <span id="studio-background-state">Original</span></div><div class="studio-background-compare"><div><canvas id="studio-before" width="140" height="120"></canvas><small>Original</small></div><div><canvas id="studio-after" width="140" height="120"></canvas><small>Sans fond</small></div></div><label for="studio-bg-tolerance">Tolérance du noir <output id="studio-bg-tolerance-value">30</output></label><input type="range" id="studio-bg-tolerance" min="5" max="100" step="1" value="30"><div class="studio-background-actions"><button type="button" id="studio-remove-bg">Supprimer le fond</button><button type="button" id="studio-restore-bg">Restaurer l’original</button></div><p class="studio-hint">Aperçu avant/après. L’original reste conservé. Le noir est rendu transparent, y compris à l’intérieur du triangle.</p></div><button type="button" id="studio-clear-logo">Retirer le design</button></aside>
-<section class="studio-preview"><div class="studio-preview-head"><h2>Aperçu de conception</h2><span id="studio-status">Brouillon local</span></div><div class="studio-viewbar" id="studio-viewbar" role="group" aria-label="Vues du produit"></div><div class="studio-canvas" id="studio-canvas"><canvas id="studio-render" width="900" height="1000" aria-label="Prévisualisation du mockup"></canvas></div><p class="studio-hint">Le rendu exporté utilise les dimensions de la photo vierge. Une image 2D ne simule pas automatiquement les plis du tissu.</p></section>
-<aside class="studio-panel studio-tools"><div class="studio-sep"></div><h2>Réglages du design</h2><div class="studio-measure-grid"><label for="studio-width-cm">Largeur (cm)<input id="studio-width-cm" type="number" min="0.1" max="100" step="0.1" value="4"></label><label for="studio-height-cm">Hauteur (cm)<input id="studio-height-cm" type="number" min="0.1" max="100" step="0.1" value="4"></label></div><label class="studio-lock"><input type="checkbox" id="studio-lock-ratio" checked> Conserver les proportions</label><p class="studio-hint" id="studio-measure-note">Dimensions de simulation, à calibrer selon le fournisseur.</p><label for="studio-rotation">Rotation <output id="studio-rotation-value">0°</output></label><input id="studio-rotation" type="range" min="-180" max="180" value="0"><p class="studio-hint">Déplacement par pas de 0,1 cm, sans glisser-déposer.</p><div class="studio-nudges"><button type="button" data-move="left" aria-label="Décaler à gauche">←</button><button type="button" data-move="up" aria-label="Décaler vers le haut">↑</button><button type="button" data-move="down" aria-label="Décaler vers le bas">↓</button><button type="button" data-move="right" aria-label="Décaler à droite">→</button></div><div class="studio-nudges"><button type="button" id="studio-center">Centrer</button><button type="button" id="studio-flip-x">Pivot X</button><button type="button" id="studio-flip-y">Pivot Y</button></div><p class="studio-hint" id="studio-quality" role="status"></p><div hidden aria-hidden="true"><input id="studio-garment-cm" type="number"><input id="studio-garment-pct" type="number" value="65"><span id="studio-calibration-status"></span></div><div class="studio-sep"></div><h2>04 · Modèle de placement</h2><p class="studio-hint">Les coordonnées sont enregistrées par type de produit, vue et zone.</p><label class="studio-switch"><input id="studio-calibrate" type="checkbox"> Mode calibrage administrateur</label><div id="studio-calibration" hidden><label for="studio-x">Centre horizontal <output id="studio-x-value"></output></label><input id="studio-x" type="range" min="0" max="100" step="1"><label for="studio-y">Centre vertical <output id="studio-y-value"></output></label><input id="studio-y" type="range" min="0" max="100" step="1"><label for="studio-w">Largeur <output id="studio-w-value"></output></label><input id="studio-w" type="range" min="3" max="75" step="1"><label for="studio-h">Hauteur <output id="studio-h-value"></output></label><input id="studio-h" type="range" min="3" max="75" step="1"><label for="studio-margin">Marge intérieure <output id="studio-margin-value"></output></label><input id="studio-margin" type="range" min="0" max="20" step="1"><button type="button" id="studio-save-template">Enregistrer cette zone</button><button type="button" id="studio-reset-template">Restaurer la zone par défaut</button></div><div class="studio-sep"></div><h2>05 · Finalisation</h2><div class="studio-final-actions"><button type="button" id="studio-save" class="studio-primary">Enregistrer le design</button><button type="button" id="studio-export">Exporter le PNG</button></div><div class="studio-publish-row"><span>Publication boutique <small>Connexion sécurisée à venir</small></span><button type="button" id="studio-publish" disabled title="Publication sécurisée à connecter au catalogue">Publier</button></div><p class="studio-hint">Enregistrement manuel dans ce navigateur. La publication dans la boutique sera activée après connexion sécurisée.</p></aside>
-</div></main>  <footer class="site-footer">
+<main class="studio-page">
+<div class="studio-top"><div><p class="studio-kicker">ADMINISTRATION / ATELIER DE CRÉATION</p><h1>STUDIO <em>MOCKUP.</em></h1><p>Un projet par produit et par couleur. Chaque emplacement reçoit son design ; chaque vue affiche les emplacements visibles sous son angle.</p></div><a href="/admin-visuels" class="studio-back" id="studio-back"> Produits & visuels</a></div>
+<div class="studio-modes" role="tablist" aria-label="Mode du studio"><button type="button" role="tab" id="studio-mode-creation" class="active" aria-selected="true" aria-controls="studio-layout" title="Création"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 10-10-3-3L5 16l-1 4z"/><path d="M14 7l3 3"/><path d="M3 5l2-2 4 4-2 2z"/><path d="M15 17l2-2 4 4-2 2z"/></svg><span>Création</span></button><button type="button" role="tab" id="studio-mode-apercu" aria-selected="false" aria-controls="studio-apercu" title="Aperçu des vues"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 17l5-5 4 4 3-3 6 6"/><circle cx="15.5" cy="8.5" r="1.5"/></svg><span>Aperçu</span></button><span id="studio-status" class="studio-status">Chargement…</span></div>
+<div class="studio-layout" id="studio-layout" role="tabpanel" aria-labelledby="studio-mode-creation">
+
+<aside class="studio-panel">
+  <h2>01 · Produit</h2>
+  <label for="studio-product">Produit du catalogue</label>
+  <select id="studio-product"></select>
+  <label for="studio-color">Couleur</label>
+  <select id="studio-color"></select>
+  <label for="studio-gabarit">Gabarit (forme du vêtement)</label>
+  <select id="studio-gabarit"></select>
+  <div id="studio-gabarit-conseil" class="studio-conseil" role="status" hidden><p id="studio-gabarit-conseil-texte"></p><button type="button" id="studio-gabarit-appliquer"></button></div>
+  <p class="studio-hint">Choisi automatiquement selon le produit. Change-le si la photo vierge est d’un autre type (ex. t-shirt testé sur un produit hoodie).</p>
+
+  <div class="studio-sep"></div>
+  <h2>02 · Photos vierges</h2>
+  <label for="studio-base-upload">Importer pour la vue active</label>
+  <input id="studio-base-upload" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+  <button type="button" id="studio-clear-base">Retirer la photo de cette vue</button>
+  <label class="studio-lock"><input type="checkbox" id="studio-fond-blanc" checked> Fond blanc automatique</label>
+  <label for="studio-longueur">Longueur réelle du vêtement (cm)</label>
+  <input id="studio-longueur" type="number" min="10" max="200" step="0.5">
+  <p class="studio-hint" id="studio-longueur-aide"></p>
+  <p class="studio-hint">Plusieurs fichiers d’un coup : le nom doit contenir <em>face</em>, <em>dos</em>, <em>gauche</em>, <em>droite</em> ou <em>iso</em>. PNG, JPG ou WebP, 15 Mo max.</p>
+
+  <div class="studio-sep"></div>
+  <h2>03 · Emplacement & design</h2>
+  <label for="studio-zone">Emplacement d’impression</label>
+  <select id="studio-zone"></select>
+  <p class="studio-hint" id="studio-emplacement-vues"></p>
+  <label for="studio-design-select">Design sur cet emplacement</label>
+  <select id="studio-design-select"></select>
+  <label for="studio-logo-upload">Importer un nouveau design</label>
+  <input id="studio-logo-upload" type="file" accept="image/png,image/webp,image/svg+xml">
+  <p class="studio-hint">PNG/WebP transparents conseillés. Les SVG sont vérifiés avant affichage. Un même design peut servir sur plusieurs emplacements.</p>
+  <div id="studio-background-tools" class="studio-background-tools" hidden>
+    <div class="studio-background-title">Fond du design <span id="studio-background-state">Original</span></div>
+    <div class="studio-background-compare"><div><canvas id="studio-before" width="140" height="120"></canvas><small>Original</small></div><div><canvas id="studio-after" width="140" height="120"></canvas><small>Sans fond</small></div></div>
+    <label for="studio-bg-tolerance">Tolérance du noir <output id="studio-bg-tolerance-value">30</output></label>
+    <input type="range" id="studio-bg-tolerance" min="5" max="100" step="1" value="30">
+    <div class="studio-background-actions"><button type="button" id="studio-remove-bg">Supprimer le fond</button><button type="button" id="studio-restore-bg">Restaurer l’original</button></div>
+  </div>
+  <button type="button" id="studio-clear-logo">Retirer le design de cet emplacement</button>
+</aside>
+
+<section class="studio-preview">
+  <div class="studio-preview-head"><h2>Plan de travail</h2><div class="studio-zoom" role="group" aria-label="Cadrage du plan de travail"><button type="button" data-zoom="vetement" class="active" aria-pressed="true">Vêtement entier</button><button type="button" data-zoom="zone" aria-pressed="false">Zoom emplacement</button></div></div>
+  <div class="studio-viewbar" id="studio-viewbar" role="group" aria-label="Vues du produit"></div>
+  <div class="studio-canvas" id="studio-canvas"><canvas id="studio-render" width="900" height="1000" aria-label="Prévisualisation du mockup"></canvas></div>
+  <label class="studio-lock studio-guides-toggle"><input type="checkbox" id="studio-guides"> Afficher les zones d’impression</label>
+</section>
+
+<aside class="studio-panel studio-tools">
+  <h2>Réglages du design</h2>
+  <div class="studio-measure-grid"><label for="studio-width-cm">Largeur (cm)<input id="studio-width-cm" type="number" min="0.1" max="100" step="0.1"></label><label for="studio-height-cm">Hauteur (cm)<input id="studio-height-cm" type="number" min="0.1" max="100" step="0.1"></label></div>
+  <label class="studio-lock"><input type="checkbox" id="studio-lock-ratio" checked> Conserver les proportions</label>
+  <label for="studio-rotation">Rotation <output id="studio-rotation-value">0°</output></label>
+  <input id="studio-rotation" type="range" min="-180" max="180" value="0">
+  <p class="studio-hint">Déplacement par pas de 0,5 cm (Maj + clic : 0,1 cm). Le design reste toujours dans la zone d’impression.</p>
+  <div class="studio-nudges"><button type="button" data-move="left" aria-label="Décaler à gauche">←</button><button type="button" data-move="up" aria-label="Décaler vers le haut">↑</button><button type="button" data-move="down" aria-label="Décaler vers le bas">↓</button><button type="button" data-move="right" aria-label="Décaler à droite">→</button></div>
+  <p class="studio-subtitle">Aligner dans la zone</p><div class="studio-nudges studio-align"><button type="button" data-align="centre-v" title="Centrer verticalement" aria-label="Centrer verticalement"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M12 3v6M9 6l3 3 3-3M12 21v-6M9 18l3-3 3 3"/></svg></button><button type="button" data-align="centre-h" title="Centrer horizontalement" aria-label="Centrer horizontalement"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M3 12h6M6 9l3 3-3 3M21 12h-6M18 9l-3 3 3 3"/></svg></button><button type="button" data-align="gauche" title="Aligner à gauche" aria-label="Aligner à gauche"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16M20 12H8M12 8l-4 4 4 4"/></svg></button><button type="button" data-align="droite" title="Aligner à droite" aria-label="Aligner à droite"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4v16M4 12h12M12 8l4 4-4 4"/></svg></button><button type="button" data-align="haut" title="Aligner en haut" aria-label="Aligner en haut"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16M12 20V8M8 12l4-4 4 4"/></svg></button><button type="button" data-align="bas" title="Aligner en bas" aria-label="Aligner en bas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M12 4v12M8 12l4 4 4-4"/></svg></button></div>
+  <div class="studio-nudges"><button type="button" id="studio-flip-x">Pivot X</button><button type="button" id="studio-flip-y">Pivot Y</button></div>
+  <p class="studio-hint" id="studio-quality" role="status"></p>
+
+  <div class="studio-sep"></div>
+  <h2>04 · Projection sur cette vue</h2>
+  <p class="studio-hint">Repères en cm : le studio détecte le vêtement (cadre gris) et le col (ligne rouge). Les positions par défaut suivent le guide Shopify (ex. poitrine gauche : haut du logo à 7,5 cm sous le col). Enregistré par gabarit, vue et emplacement.</p>
+  <label class="studio-switch"><input id="studio-calibrate" type="checkbox"> Mode calibrage administrateur</label>
+  <div id="studio-calibration" hidden>
+    <p class="studio-subtitle">Repères de cette photo</p>
+    <label for="studio-coly">Ligne du col (rouge) <output id="studio-coly-value"></output></label><input id="studio-coly" type="range" min="0" max="100" step="0.1">
+    <label for="studio-echp">Échelle de la photo <output id="studio-echp-value"></output></label><input id="studio-echp" type="range" min="60" max="140" step="1">
+    <p class="studio-hint" id="studio-reperes-etat"></p>
+    <button type="button" id="studio-reperes-auto">Revenir aux repères automatiques</button>
+    <p class="studio-subtitle">Emplacement actif sur cette vue</p>
+    <label class="studio-lock"><input type="checkbox" id="studio-visible"> Emplacement visible sur cette vue</label>
+    <div id="studio-calibration-champs">
+      <label for="studio-dx">Décalage depuis le milieu <output id="studio-dx-value"></output></label><input id="studio-dx" type="range" min="-40" max="40" step="0.5">
+      <label for="studio-col">Haut de la zone sous le col <output id="studio-col-value"></output></label><input id="studio-col" type="range" min="-20" max="70" step="0.5">
+      <label for="studio-sx">Compression (vue en biais) <output id="studio-sx-value"></output></label><input id="studio-sx" type="range" min="15" max="100" step="1">
+      <label for="studio-rot">Inclinaison <output id="studio-rot-value"></output></label><input id="studio-rot" type="range" min="-45" max="45" step="1">
+    </div>
+    <button type="button" id="studio-save-template">Enregistrer cette projection</button>
+    <button type="button" id="studio-reset-template">Restaurer la projection par défaut</button>
+  </div>
+
+  <div class="studio-sep"></div>
+  <h2>05 · Finalisation</h2>
+  <div class="studio-final-actions"><button type="button" id="studio-save" class="studio-primary">Enregistrer le projet</button><button type="button" id="studio-export">Exporter cette vue</button></div>
+  <button type="button" id="studio-export-all" class="studio-export-all">Exporter toutes les vues (PNG)</button>
+  <p class="studio-hint">Fichiers nommés comme le catalogue : <code>produit-hoodie-noir-dos.png</code>, etc.</p>
+  <div class="studio-publish-row"><span>Publication boutique <small>Connexion sécurisée à venir</small></span><button type="button" id="studio-publish" disabled title="Publication sécurisée à connecter au catalogue">Publier</button></div>
+  <button type="button" id="studio-delete-project" class="studio-danger">Supprimer ce projet</button>
+  <p class="studio-hint">Enregistrement dans ce navigateur (IndexedDB). Vider les données du site efface les projets.</p>
+</aside>
+
+</div>
+
+<section class="studio-apercu" id="studio-apercu" role="tabpanel" aria-labelledby="studio-mode-apercu" hidden>
+  <div class="studio-apercu-grille" id="studio-apercu-grille" role="group" aria-label="Vues du produit"></div>
+  <div class="studio-apercu-droite">
+    <div class="studio-apercu-principale"><canvas id="studio-apercu-main" width="800" height="1000" aria-label="Vue sélectionnée"></canvas></div>
+    <div class="studio-apercu-pied"><span id="studio-apercu-legende"></span><div class="studio-apercu-actions"><button type="button" id="studio-apercu-export">Exporter cette vue</button><button type="button" id="studio-apercu-export-all" class="studio-primary">Exporter toutes les vues</button></div></div>
+  </div>
+  <input type="file" id="studio-apercu-upload" accept="image/png,image/jpeg,image/webp" hidden>
+</section>
+</main>
+<footer class="site-footer">
     <div class="footer-brand">
       <div class="footer-logo-ligne">
         <img class="footer-logo-img" src="../05-images/logo/logo-triedre.svg" alt="Logo TRIÈDRE">

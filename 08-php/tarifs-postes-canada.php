@@ -8,6 +8,8 @@ declare(strict_types=1);
  * N'achète aucune étiquette.
  */
 
+require_once __DIR__ . '/livraison-lib.php';
+
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
@@ -109,6 +111,7 @@ if (!is_array($catalogue) || !isset($catalogue['produits']) || !is_array($catalo
 }
 
 $poidsSku = [];
+$prixSku = [];
 foreach ($catalogue['produits'] as $produit) {
     if (!is_array($produit) || empty($produit['actif'])) continue;
     foreach ((array)($produit['variantes'] ?? []) as $variante) {
@@ -117,6 +120,9 @@ foreach ($catalogue['produits'] as $produit) {
         $poids = $variante['poids_g'] ?? null;
         if ($sku !== '' && is_numeric($poids) && (float)$poids > 0) {
             $poidsSku[$sku] = (float)$poids;
+        }
+        if ($sku !== '' && isset($variante['prix']) && is_numeric($variante['prix'])) {
+            $prixSku[$sku] = (float)$variante['prix'];
         }
     }
 }
@@ -144,16 +150,18 @@ foreach ($quantites as $sku => $qte) {
     $poidsProduitsG += $poidsSku[$sku] * $qte;
 }
 
-if ($nombreArticles < 1 || $nombreArticles > 2) {
+/* Emballage : pochette (1–2 articles), boîte, ou plusieurs colis */
+try {
+    $colis = trLivPreparerColis($quantites, $poidsSku);
+} catch (LengthException $e) {
     sortir(422, [
         'success' => false,
-        'error' => 'Emballage non encore défini pour ce nombre d’articles.'
+        'error' => 'Quantité trop élevée pour une seule commande. Réduis les quantités ou passe deux commandes.'
     ]);
+} catch (Throwable $e) {
+    sortir(422, ['success' => false, 'error' => 'Emballage indisponible pour ce panier.']);
 }
-
-/* Emballage validé 1–2 articles */
-$poidsTotalG = $poidsProduitsG + 9.1;
-$poidsKg = ceil($poidsTotalG) / 1000;
+$poidsTotalG = array_sum(array_column($colis, 'poids_g'));
 
 /* OAuth LIVE */
 $tokenUrl =
@@ -200,133 +208,114 @@ if ($accessToken === '') {
     sortir(502, ['success' => false, 'error' => 'Postes Canada : jeton OAuth absent.']);
 }
 
-/* Rating LIVE — schéma moderne REST/JSON */
+/* Rating LIVE — un appel par colis, puis addition des tarifs */
 $ratingUrl =
     'https://api.canadapost-postescanada.ca/prod/' .
     'devportal-portaildesdeveloppeurs/rating/v1/prices';
 
-$payload = [
-    'customerNumber' => $customerNumber,
-    'quoteType' => 'commercial',
-    'originPostalCode' => $originPostalCode,
-    'parcelCharacteristics' => [
-        'weight' => round($poidsKg, 3),
-        'dimensions' => [
-            'length' => 33.0,
-            'width' => 25.4,
-            'height' => 5.1
-        ]
-    ],
-    'destination' => [
-        'domestic' => [
-            'postalCode' => $destinationPostal
-        ]
-    ]
-];
-
-$ch = curl_init($ratingUrl);
-curl_setopt_array($ch, [
-    CURLOPT_POST => true,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_TIMEOUT => 30,
-    CURLOPT_HTTPHEADER => [
-        'Accept: application/json',
-        'Content-Type: application/json',
-        'Authorization: Bearer ' . $accessToken,
-        'User-Agent: Triedre-Ecommerce/1.0'
-    ],
-    CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_SLASHES)
-]);
-
-/* TEMPORAIRE — diagnostic Postes Canada */
-$responseHeaders = [];
-
-curl_setopt($ch, CURLOPT_HEADERFUNCTION, function ($curl, $headerLine) use (&$responseHeaders) {
-    $length = strlen($headerLine);
-    $header = explode(':', $headerLine, 2);
-
-    if (count($header) === 2) {
-        $responseHeaders[strtolower(trim($header[0]))] = trim($header[1]);
+$optionsParColis = [];
+$tarifsDejaObtenus = []; // Colis identiques (même emballage, même poids) : un seul appel à Postes Canada
+foreach ($colis as $unColis) {
+    $signatureColis = json_encode([$unColis['dimensions'], $unColis['poids_kg']]);
+    if (isset($tarifsDejaObtenus[$signatureColis])) {
+        $optionsParColis[] = $tarifsDejaObtenus[$signatureColis];
+        continue;
     }
 
-    return $length;
-});
-
-$body = curl_exec($ch);
-$http = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlError = curl_error($ch);
-
-$globalTransactionId = $responseHeaders['x-global-transaction-id'] ?? null;
-/* FIN TEMPORAIRE */
-
-curl_close($ch);
-
-if ($body === false || $http < 200 || $http >= 300) {
-    $provider = json_decode((string)$body, true);
-
-    sortir(502, [
-        'success' => false,
-        'error' => 'Postes Canada a refusé la tarification LIVE.',
-        'provider_http' => $http,
-        'x_global_transaction_id' => $globalTransactionId,
-        'provider' => is_array($provider) ? $provider : null,
-        'provider_error' => $curlError ?: null
-    ]);
-}
-
-$data = json_decode((string)$body, true);
-if (!is_array($data)) {
-    sortir(502, [
-        'success' => false,
-        'error' => 'Réponse Postes Canada invalide.',
-        'diagnostic' => [
-            'rating_http' => $http,
-            'x_global_transaction_id' => $globalTransactionId,
-            'json_valide' => false
+    $payload = [
+        'customerNumber' => $customerNumber,
+        'quoteType' => 'commercial',
+        'originPostalCode' => $originPostalCode,
+        'parcelCharacteristics' => [
+            'weight' => round($unColis['poids_kg'], 3),
+            'dimensions' => $unColis['dimensions']
+        ],
+        'destination' => [
+            'domestic' => [
+                'postalCode' => $destinationPostal
+            ]
         ]
+    ];
+
+    $ch = curl_init($ratingUrl);
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTPHEADER => [
+            'Accept: application/json',
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $accessToken,
+            'User-Agent: Triedre-Ecommerce/1.0'
+        ],
+        CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_SLASHES)
     ]);
-}
 
-/*
- * TEMPORAIRE — diagnostic sécurisé.
- * Ne renvoie aucun identifiant, secret, token, numéro client
- * ni code postal d'origine.
- */
-$topLevelKeys = array_keys($data);
-$structure = [];
+    $body = curl_exec($ch);
+    $http = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
 
-foreach ($data as $key => $value) {
-    if (is_array($value)) {
-        $structure[$key] = [
-            'type' => 'array',
-            'count' => count($value),
-            'keys' => array_is_list($value) ? null : array_keys($value)
-        ];
-    } else {
-        $structure[$key] = [
-            'type' => gettype($value)
-        ];
+    if ($body === false || $http < 200 || $http >= 300) {
+        $provider = json_decode((string)$body, true);
+        sortir(502, [
+            'success' => false,
+            'error' => 'Postes Canada a refusé la tarification LIVE.',
+            'provider_http' => $http,
+            'provider' => is_array($provider) ? $provider : null,
+            'provider_error' => $curlError ?: null
+        ]);
     }
+
+    $data = json_decode((string)$body, true);
+    if (!is_array($data)) {
+        sortir(502, ['success' => false, 'error' => 'Réponse Postes Canada invalide.']);
+    }
+
+    $tarifsDejaObtenus[$signatureColis] = trLivExtraireOptions($data);
+    $optionsParColis[] = $tarifsDejaObtenus[$signatureColis];
 }
 
-/*
- * On renvoie la réponse fournisseur au checkout sans acheter de label,
- * plus un diagnostic temporaire non sensible.
- */
+/* Options de livraison lisibles (code, nom français, prix total, délai) */
+$options = trLivCombinerOptions($optionsParColis);
+
+if ($options === []) {
+    error_log('[TRIÈDRE] Aucun service reconnu dans la réponse Postes Canada.');
+    sortir(502, ['success' => false, 'error' => 'Aucun tarif de livraison disponible pour cette adresse.']);
+}
+
+/* Sous-total indicatif (catalogue) : le montant définitif est recalculé à la création de la commande */
+$sousTotal = 0.0;
+foreach ($quantites as $sku => $qte) {
+    $sousTotal += ($prixSku[$sku] ?? 0) * $qte;
+}
+$sousTotal = round($sousTotal, 2);
+
+$options = trLivAppliquerGratuite($options, $sousTotal);
+
+/* Chaque tarif est signé : il ne peut pas être modifié dans le navigateur */
+$empreinte = trLivEmpreintePanier($quantites);
+$expiration = time() + TR_LIV_DUREE_VALIDITE;
+
+foreach ($options as &$option) {
+    $option['expiration'] = $expiration;
+    $option['jeton'] = trLivSigner($config, $option['code'], $option['montant_original'], $destinationPostal, $empreinte, $expiration);
+}
+unset($option);
+
+$codesDisponibles = array_column($options, 'code');
+$parDefaut = in_array(TR_LIV_CODE_STANDARD, $codesDisponibles, true) ? TR_LIV_CODE_STANDARD : $options[0]['code'];
+
 sortir(200, [
     'success' => true,
-    'diagnostic' => [
-        'rating_http' => $http,
-        'x_global_transaction_id' => $globalTransactionId,
-        'json_valide' => true,
-        'cles_reponse' => $topLevelKeys,
-        'structure_reponse' => $structure
-    ],
+    'options' => $options,
+    'option_par_defaut' => $parDefaut,
+    'seuil_livraison_gratuite' => TR_LIV_SEUIL_GRATUITE,
+    'sous_total' => $sousTotal,
     'colis' => [
         'nombre_articles' => $nombreArticles,
-        'poids_total_g' => round($poidsTotalG, 1),
-        'poids_total_kg' => number_format($poidsKg, 3, '.', ''),
-        'dimensions_cm' => ['longueur' => 33.0, 'largeur' => 25.4, 'hauteur' => 5.1]
-    ],
-    'canada_post' => $data
+        'nombre_colis' => count($colis),
+        'emballages' => array_column($colis, 'emballage'),
+        'poids_total_g' => round($poidsTotalG, 1)
+    ]
 ]);

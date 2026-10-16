@@ -5,6 +5,7 @@
 <title>Produits & Visuels - TRIÈDRE</title>
 <link rel="icon" type="image/png" href="../05-images/icons/favicon-triedre.svg">
 <link rel="stylesheet" href="../02-css/style.css"><link rel="stylesheet" href="../02-css/sections/admin.css"><link rel="stylesheet" href="../02-css/sections/admin-visuels.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../03-js/supabase-config.js"></script><script src="../03-js/admin-garde.js"></script>
 </head>
 <body>
 <div class="top-banner"><p>TRIÈDRE ATHLETIC - ESPACE ADMIN</p></div>
@@ -21,7 +22,7 @@
 <a class="admin-tab" href="/admin#equipe">Équipe & membres</a>
 </nav>
 <section class="admin-hero"><p class="section-eyebrow">TRIÈDRE APPAREL</p><h1>PRODUITS <span class="accent">& VISUELS.</span></h1><p>Sélectionne un produit pour créer, importer, contrôler et publier ses visuels.</p></section>
-<div class="admin-visuels-toolbar"><a class="btn btn-secondaire" href="/admin">← Retour à l’Admin</a><label class="admin-visuels-search"><span class="sr-only">Rechercher un produit</span><input id="admin-visuels-search" type="search" placeholder="Rechercher un produit…"></label></div>
+<div class="admin-visuels-toolbar"><a class="btn btn-secondaire" href="/admin"> Retour à l’Admin</a><label class="admin-visuels-search"><span class="sr-only">Rechercher un produit</span><input id="admin-visuels-search" type="search" placeholder="Rechercher un produit…"></label></div>
 <div id="admin-visuels-message" class="admin-message" hidden aria-live="polite"></div>
 <section class="admin-card"><div class="admin-section-heading"><div><p class="section-eyebrow">Catalogue</p><h2>NOS PRODUITS</h2></div><span id="admin-visuels-count" class="admin-visuels-count">— produits</span></div>
 <div id="admin-visuels-produits" class="admin-visuels-grid" aria-live="polite"><p class="admin-empty">Chargement des produits…</p></div></section>

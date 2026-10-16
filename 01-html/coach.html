@@ -55,6 +55,59 @@
     </section>
 
     <div id="coach-zone" hidden>
+      <div id="coach-draft" class="coach-draft" hidden>
+        <p id="coach-draft-text">Brouillon restauré.</p>
+        <button id="coach-draft-clear" type="button" class="coach-action-btn is-danger">
+          Effacer le brouillon
+        </button>
+      </div>
+
+      <section class="coach-card">
+        <div class="coach-section-heading">
+          <div>
+            <p class="section-eyebrow">Suivi</p>
+            <h2>SUIVI DES MEMBRES</h2>
+            <p id="coach-followup-summary" class="coach-section-note"></p>
+          </div>
+          <button id="coach-followup-refresh" type="button" class="btn btn-secondaire">
+            Actualiser
+          </button>
+        </div>
+
+        <div id="coach-followup" class="coach-followup">
+          <p class="coach-empty">Chargement du suivi…</p>
+        </div>
+      </section>
+
+      <section class="coach-card">
+        <div class="coach-section-heading">
+          <div>
+            <p class="section-eyebrow">Bibliothèque</p>
+            <h2>PARTIR D’UN MODÈLE</h2>
+          </div>
+          <p class="coach-section-note">
+            Charge un programme déjà construit, puis ajuste-le pour ce membre. Les modèles sont partagés entre tous les coachs TRIÈDRE.
+          </p>
+        </div>
+
+        <div class="coach-template-bar">
+          <label class="coach-field">
+            <span>Modèle</span>
+            <select id="coach-template-select">
+              <option value="">Nouveau programme</option>
+            </select>
+          </label>
+
+          <button id="coach-template-load" type="button" class="btn btn-secondaire" disabled>
+            Charger
+          </button>
+
+          <button id="coach-template-delete" type="button" class="coach-action-btn is-danger" hidden>
+            Supprimer
+          </button>
+        </div>
+      </section>
+
       <section class="coach-card">
         <div class="coach-section-heading">
           <div>
@@ -153,15 +206,21 @@
           </p>
         </div>
 
-        <button id="coach-submit" type="button" class="btn btn-primary">
-          Créer, attribuer et dupliquer
-        </button>
+        <div class="coach-finalisation-actions">
+          <button id="coach-template-save" type="button" class="btn btn-secondaire">
+            Enregistrer comme modèle
+          </button>
+
+          <button id="coach-submit" type="button" class="btn btn-primary">
+            Créer, attribuer et dupliquer
+          </button>
+        </div>
       </section>
 
       <section class="coach-card">
         <div class="coach-section-heading">
           <div>
-            <p class="section-eyebrow">Suivi</p>
+            <p class="section-eyebrow">Historique</p>
             <h2>PROGRAMMES ATTRIBUÉS</h2>
           </div>
           <button id="coach-refresh" type="button" class="btn btn-secondaire">
@@ -172,6 +231,49 @@
         <div id="coach-assignments" class="coach-assignments">
           <p class="coach-empty">Aucun programme chargé.</p>
         </div>
+      </section>
+
+      <section id="coach-editor" class="coach-card coach-editor" hidden>
+        <div class="coach-section-heading">
+          <div>
+            <p class="section-eyebrow">Modification</p>
+            <h2 id="coach-editor-title">PROGRAMME</h2>
+            <p id="coach-editor-subtitle" class="coach-section-note"></p>
+          </div>
+          <button id="coach-editor-close" type="button" class="coach-action-btn">
+            Fermer
+          </button>
+        </div>
+
+        <div id="coach-editor-message" class="coach-message" hidden aria-live="polite"></div>
+
+        <div class="coach-editor-tools">
+          <div class="coach-editor-tool">
+            <label class="coach-field">
+              <span>Durée totale du programme</span>
+              <select id="coach-editor-weeks"></select>
+            </label>
+            <button id="coach-editor-resize" type="button" class="btn btn-secondaire">
+              Appliquer la durée
+            </button>
+          </div>
+
+          <div class="coach-editor-tool">
+            <label class="coach-field">
+              <span>Reprendre les séances restantes le</span>
+              <input id="coach-editor-resume" type="date">
+            </label>
+            <button id="coach-editor-reschedule" type="button" class="btn btn-secondaire">
+              Décaler
+            </button>
+          </div>
+        </div>
+
+        <p class="coach-section-note coach-editor-legend">
+          Les séances faites, ou commencées par le membre, sont verrouillées 🔒. Prolonger copie la dernière semaine, ajustements compris.
+        </p>
+
+        <div id="coach-editor-list" class="coach-editor-list"></div>
       </section>
     </div>
   </main>

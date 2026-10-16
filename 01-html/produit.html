@@ -7,6 +7,7 @@
   <title id="page-title">Produit - TRIÈDRE</title>
   <link rel="icon" type="image/png" href="../05-images/icons/favicon-triedre.svg">
   <link rel="stylesheet" href="../02-css/style.css">
+  <link rel="stylesheet" href="../02-css/produits-disponibilite.css">
 </head>
 <body>
 
@@ -63,8 +64,6 @@
         <h1 id="produit-nom">Chargement...</h1>
         <p class="produit-prix" id="produit-prix"></p>
         <p class="produit-description" id="produit-description"></p>
-        <p class="stock-message" id="produit-stock"></p>
-
         <div class="produit-option" id="bloc-couleur">
           <p class="produit-option-label">
             Couleur : <span id="couleur-selectionnee"></span>
@@ -80,6 +79,9 @@
           </button>
         </div>
 
+        <!-- Disponibilité de la sélection (mise à jour par produits.js) -->
+        <p class="stock-message" id="produit-stock" aria-live="polite"></p>
+
         <div class="produit-actions">
           <div class="quantite-selecteur">
             <button class="quantite-moins" aria-label="Diminuer la quantité">−</button>
@@ -94,7 +96,7 @@
             >
             <button class="quantite-plus" aria-label="Augmenter la quantité">+</button>
           </div>
-          <button class="btn btn-primary btn-ajouter-panier">Ajouter au panier</button>
+          <button type="button" class="btn btn-primary btn-ajouter-panier">Choisis ta taille</button>
         </div>
 
         <button class="btn-favori" type="button" aria-label="Ajouter aux favoris" aria-pressed="false">

@@ -16,6 +16,13 @@ document.addEventListener('DOMContentLoaded', async function () {
   let produitActuel = null;
   let stockSupabaseCharge = false;
 
+  // Sélection en cours (déclarées ici, avant le premier affichage du produit).
+  let couleurActive = '';
+  let tailleActive = '';
+
+  // Au-delà de ce seuil, une taille n'est plus signalée « stock limité ».
+  const SEUIL_STOCK_FAIBLE = 5;
+
   const guideTaillesBouton = document.getElementById('guide-tailles-bouton');
   const guideTaillesModal = document.getElementById('guide-tailles-modal');
   const guideTaillesProduit = document.getElementById('guide-tailles-produit');
@@ -124,6 +131,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
   }
 
+  // ==========================================================================
+  // Disponibilité — couleur + taille visibles d'un coup d'œil
+  // ==========================================================================
+
   function variantesActives(produit) {
     return (produit.variantes || []).filter(function (v) {
       return v.actif !== false;
@@ -145,73 +156,46 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
   }
 
-  function afficherProduit(produit) {
-    const reference = prixReference(produit);
-
-    document.getElementById('page-title').textContent = produit.nom + ' — TRIÈDRE';
-    document.getElementById('breadcrumb-produit').textContent = produit.nom;
-    document.getElementById('produit-categorie').textContent = produit.categorie;
-    document.getElementById('produit-nom').textContent = produit.nom;
-    document.getElementById('produit-description').textContent = produit.description;
-
-    if (reference) {
-      document.getElementById('produit-prix').textContent =
-        reference.prix.toFixed(2) + ' $';
-    }
-
-    listeVues = produit.vuesCommunes || [];
-    vueActuelle = 0;
-
-    const imagePrincipale = document.getElementById('image-principale');
-
-    if (listeVues.length > 0) {
-      imagePrincipale.src = cheminImages + listeVues[0];
-      imagePrincipale.alt = produit.nom;
-    }
-
-    const variantes = variantesActives(produit);
-    const couleurs = valeursUniques(variantes.map(function (v) {
-      return v.couleur;
-    }));
-
-    const premiereCouleur = couleurs[0] || '';
-    document.getElementById('couleur-selectionnee').textContent = premiereCouleur;
-
-    afficherMiniatures(produit);
-    afficherCouleurs(produit, premiereCouleur);
-    afficherTailles(produit, premiereCouleur);
-    mettreAJourStockEtPrix();
-
-    activerInteractivite();
+  function formaterPrix(montant) {
+    return Number(montant).toFixed(2).replace('.', ',') + ' $';
   }
 
-  function afficherMiniatures(produit) {
-    const listeMiniatures = document.getElementById('miniatures-liste');
-    listeMiniatures.innerHTML = '';
+  function normaliser(texte) {
+    return String(texte || '')
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .trim()
+      .toLowerCase();
+  }
 
-    listeVues.forEach(function (vue, index) {
-      const li = document.createElement('li');
-      const bouton = document.createElement('button');
-      bouton.className = 'miniature' + (index === 0 ? ' active' : '');
-      bouton.setAttribute('data-index', index);
+  function estDisponible(variante) {
+    return Boolean(
+      stockSupabaseCharge &&
+      variante &&
+      variante.actif !== false &&
+      typeof variante.stock === 'number' &&
+      variante.stock > 0
+    );
+  }
 
-      const img = document.createElement('img');
-      img.src = cheminImages + vue;
-      img.alt = produit.nom;
+  function estStockFaible(variante) {
+    return estDisponible(variante) && variante.stock <= SEUIL_STOCK_FAIBLE;
+  }
 
-      bouton.appendChild(img);
-      li.appendChild(bouton);
-      listeMiniatures.appendChild(li);
+  function variantesDeCouleur(couleur) {
+    return variantesActives(produitActuel).filter(function (v) {
+      return v.couleur === couleur;
     });
   }
 
-  function afficherCouleurs(produit, couleurActive) {
-    const blocCouleur = document.getElementById('bloc-couleur');
-    const listeCouleurs = document.getElementById('couleur-options-liste');
-    const variantes = variantesActives(produit);
+  function couleurDisponible(couleur) {
+    return variantesDeCouleur(couleur).some(estDisponible);
+  }
 
+  function listeCouleurs(produit) {
     const couleurs = [];
-    variantes.forEach(function (variante) {
+
+    variantesActives(produit).forEach(function (variante) {
       if (!couleurs.some(function (c) { return c.nom === variante.couleur; })) {
         couleurs.push({
           nom: variante.couleur,
@@ -221,64 +205,191 @@ document.addEventListener('DOMContentLoaded', async function () {
       }
     });
 
-    listeCouleurs.innerHTML = '';
+    return couleurs;
+  }
+
+  // Couleur d'arrivée : celle de l'adresse (?couleur=noir), sinon la première disponible.
+  function choisirCouleurInitiale(produit) {
+    const couleurs = listeCouleurs(produit);
+    const demandee = parametres.get('couleur');
+
+    if (demandee) {
+      const trouvee = couleurs.find(function (c) {
+        return normaliser(c.nom) === normaliser(demandee);
+      });
+      if (trouvee) return trouvee.nom;
+    }
+
+    const disponible = couleurs.find(function (c) {
+      return couleurDisponible(c.nom);
+    });
+
+    return (disponible || couleurs[0] || { nom: '' }).nom;
+  }
+
+  function photoDeCouleur(couleur) {
+    const variante = variantesDeCouleur(couleur)[0];
+    return variante ? variante.photoFace : '';
+  }
+
+  // Galerie : la photo de face de la couleur choisie, puis les vues communes (dos, côtés…).
+  function construireVues(produit) {
+    const face = photoDeCouleur(couleurActive);
+    const vuesCommunes = produit.vuesCommunes || [];
+
+    if (!face) return vuesCommunes.slice();
+
+    const autresVues = vuesCommunes.filter(function (vue) {
+      return !/-face\.[a-z0-9]+$/i.test(vue);
+    });
+
+    return [face].concat(autresVues);
+  }
+
+  function memoriserCouleurDansAdresse() {
+    if (!window.history || !window.history.replaceState || !couleurActive) return;
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('couleur', normaliser(couleurActive));
+    window.history.replaceState(null, '', url.pathname + url.search);
+  }
+
+  function afficherProduit(produit) {
+    const reference = prixReference(produit);
+
+    document.getElementById('page-title').textContent = produit.nom + ' - TRIÈDRE';
+    document.getElementById('breadcrumb-produit').textContent = produit.nom;
+    document.getElementById('produit-categorie').textContent = produit.categorie;
+    document.getElementById('produit-nom').textContent = produit.nom;
+    document.getElementById('produit-description').textContent = produit.description;
+
+    if (reference) {
+      document.getElementById('produit-prix').textContent = formaterPrix(reference.prix);
+    }
+
+    couleurActive = choisirCouleurInitiale(produit);
+    tailleActive = '';
+
+    // Taille unique disponible : sélection automatique.
+    const tailles = valeursUniques(variantesDeCouleur(couleurActive).map(function (v) {
+      return v.taille;
+    }));
+    if (tailles.length === 1) {
+      const seule = variantesDeCouleur(couleurActive)[0];
+      if (estDisponible(seule)) tailleActive = seule.taille;
+    }
+
+    rafraichirSelection(produit, true);
+    activerInteractivite();
+  }
+
+  // Met à jour tout l'affichage à partir de couleurActive / tailleActive.
+  function rafraichirSelection(produit, reconstruireGalerie) {
+    document.getElementById('couleur-selectionnee').textContent =
+      couleurActive + (couleurActive && !couleurDisponible(couleurActive) ? ' - épuisé' : '');
+
+    if (reconstruireGalerie) {
+      listeVues = construireVues(produit);
+      vueActuelle = 0;
+      afficherMiniatures(produit);
+      afficherVue(0);
+    }
+
+    afficherCouleurs(produit);
+    afficherTailles(produit);
+    mettreAJourStockEtPrix();
+  }
+
+  function afficherMiniatures(produit) {
+    const listeMiniatures = document.getElementById('miniatures-liste');
+    listeMiniatures.innerHTML = '';
+
+    listeVues.forEach(function (vue, index) {
+      const li = document.createElement('li');
+      const bouton = document.createElement('button');
+      bouton.type = 'button';
+      bouton.className = 'miniature' + (index === 0 ? ' active' : '');
+      bouton.setAttribute('data-index', index);
+      bouton.setAttribute('aria-label', 'Voir la photo ' + (index + 1));
+
+      const img = document.createElement('img');
+      img.src = cheminImages + vue;
+      img.alt = produit.nom + (index === 0 && couleurActive ? ' - ' + couleurActive : '');
+
+      bouton.appendChild(img);
+      li.appendChild(bouton);
+      listeMiniatures.appendChild(li);
+    });
+  }
+
+  function afficherCouleurs(produit) {
+    const blocCouleur = document.getElementById('bloc-couleur');
+    const conteneur = document.getElementById('couleur-options-liste');
+    const couleurs = listeCouleurs(produit);
+
+    conteneur.innerHTML = '';
 
     if (couleurs.length <= 1) {
       blocCouleur.style.display = 'none';
-    } else {
-      blocCouleur.style.display = '';
-
-      couleurs.forEach(function (couleur) {
-        const li = document.createElement('li');
-        const bouton = document.createElement('button');
-
-        bouton.className =
-          'couleur-swatch' + (couleur.nom === couleurActive ? ' active' : '');
-        bouton.setAttribute('data-couleur', couleur.nom);
-        bouton.setAttribute('data-photo', cheminImages + couleur.photoFace);
-        bouton.setAttribute('aria-label', couleur.nom);
-        bouton.style.backgroundColor = couleur.hex;
-
-        li.appendChild(bouton);
-        listeCouleurs.appendChild(li);
-      });
+      return;
     }
+
+    blocCouleur.style.display = '';
+
+    couleurs.forEach(function (couleur) {
+      const disponible = couleurDisponible(couleur.nom);
+      const li = document.createElement('li');
+      const bouton = document.createElement('button');
+
+      bouton.type = 'button';
+      bouton.className = 'couleur-swatch' +
+        (couleur.nom === couleurActive ? ' active' : '') +
+        (stockSupabaseCharge && !disponible ? ' epuise' : '');
+      bouton.setAttribute('data-couleur', couleur.nom);
+      bouton.setAttribute('aria-pressed', couleur.nom === couleurActive ? 'true' : 'false');
+      bouton.setAttribute(
+        'aria-label',
+        couleur.nom + (stockSupabaseCharge && !disponible ? ' - épuisé' : '')
+      );
+      bouton.title = bouton.getAttribute('aria-label');
+      bouton.style.backgroundColor = couleur.hex;
+
+      li.appendChild(bouton);
+      conteneur.appendChild(li);
+    });
   }
 
-  function afficherTailles(produit, couleur) {
+  function afficherTailles(produit) {
     const listeTailles = document.getElementById('taille-options-liste');
-    const variantes = variantesActives(produit).filter(function (v) {
-      return v.couleur === couleur;
-    });
-
-    const tailles = valeursUniques(variantes.map(function (v) {
-      return v.taille;
-    }));
+    const variantes = variantesDeCouleur(couleurActive);
+    const tailles = valeursUniques(variantes.map(function (v) { return v.taille; }));
 
     listeTailles.innerHTML = '';
 
     tailles.forEach(function (taille) {
-      const variante = variantes.find(function (v) {
-        return v.taille === taille;
-      });
+      const variante = variantes.find(function (v) { return v.taille === taille; });
+      const disponible = estDisponible(variante);
+      const faible = estStockFaible(variante);
 
       const li = document.createElement('li');
       const bouton = document.createElement('button');
 
-      bouton.className = 'taille-btn';
+      bouton.type = 'button';
+      bouton.className = 'taille-btn' +
+        (taille === tailleActive ? ' active' : '') +
+        (!disponible ? ' indisponible' : '') +
+        (faible ? ' stock-faible' : '');
       bouton.textContent = taille;
       bouton.setAttribute('data-taille', taille);
+      bouton.setAttribute('aria-pressed', taille === tailleActive ? 'true' : 'false');
 
-      if (!stockSupabaseCharge) {
+      if (!disponible) {
         bouton.disabled = true;
-      }
-
-      if (variante && variante.stock === 0) {
-        bouton.classList.add('indisponible');
-      }
-
-      if (tailles.length === 1 && stockSupabaseCharge) {
-        bouton.classList.add('active');
+        bouton.setAttribute('aria-label', taille + ' - épuisé');
+        bouton.title = 'Épuisé';
+      } else if (faible) {
+        bouton.setAttribute('aria-label', taille + ' - stock limité');
+        bouton.title = 'Plus que ' + variante.stock;
       }
 
       li.appendChild(bouton);
@@ -287,18 +398,10 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   function varianteSelectionnee() {
-    if (!produitActuel) return null;
+    if (!produitActuel || !tailleActive) return null;
 
-    const couleur = document.getElementById('couleur-selectionnee').textContent;
-    const tailleBouton = document.querySelector('.taille-btn.active');
-
-    if (!tailleBouton) return null;
-
-    const taille =
-      tailleBouton.getAttribute('data-taille') || tailleBouton.textContent;
-
-    return variantesActives(produitActuel).find(function (v) {
-      return v.couleur === couleur && v.taille === taille;
+    return variantesDeCouleur(couleurActive).find(function (v) {
+      return v.taille === tailleActive;
     }) || null;
   }
 
@@ -306,50 +409,61 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (!produitActuel) return;
 
     const stockMessage = document.getElementById('produit-stock');
-    const boutonAjouterPanier = document.querySelector('.btn-ajouter-panier');
+    const bouton = document.querySelector('.btn-ajouter-panier');
+    const quantiteInput = document.querySelector('.quantite-input');
     const variante = varianteSelectionnee();
+    const reference = prixReference(produitActuel);
+    const prix = variante ? variante.prix : (reference ? reference.prix : 0);
 
-    if (variante) {
-      document.getElementById('produit-prix').textContent =
-        variante.prix.toFixed(2) + ' $';
+    document.getElementById('produit-prix').textContent = formaterPrix(prix);
+
+    if (!stockMessage || !bouton) return;
+
+    function definirMessage(texte, classe) {
+      stockMessage.textContent = texte;
+      stockMessage.className = 'stock-message' + (classe ? ' ' + classe : '');
     }
 
-    if (!stockMessage || !boutonAjouterPanier) return;
-
     if (!stockSupabaseCharge) {
-      stockMessage.textContent =
-        'Stock momentanément indisponible. Réessaie dans quelques instants.';
-      stockMessage.className = 'stock-message stock-limite-texte';
-      boutonAjouterPanier.disabled = true;
-      boutonAjouterPanier.textContent = 'Stock indisponible';
+      definirMessage('Stock momentanément indisponible. Réessaie dans quelques instants.', 'stock-limite-texte');
+      bouton.disabled = true;
+      bouton.textContent = 'Stock indisponible';
+      return;
+    }
+
+    if (!couleurDisponible(couleurActive)) {
+      definirMessage('Cette couleur est épuisée pour le moment. Découvre les autres coloris.', 'stock-rupture');
+      bouton.disabled = true;
+      bouton.textContent = 'Épuisé';
       return;
     }
 
     if (!variante) {
-      stockMessage.textContent = '';
-      stockMessage.className = 'stock-message';
-      boutonAjouterPanier.disabled = false;
-      boutonAjouterPanier.textContent = 'Ajouter au panier';
+      const faibles = variantesDeCouleur(couleurActive).filter(estStockFaible);
+      definirMessage(faibles.length ? 'Stock limité sur certaines tailles.' : '', faibles.length ? 'stock-limite-texte' : '');
+      bouton.disabled = false;
+      bouton.textContent = 'Choisis ta taille';
+      bouton.classList.add('btn-attente-taille');
       return;
     }
 
-    if (variante.stock === 0) {
-      stockMessage.textContent = 'Indisponible';
-      stockMessage.className = 'stock-message stock-limite-texte';
-      boutonAjouterPanier.disabled = true;
-      boutonAjouterPanier.textContent = 'Indisponible';
-    } else if (typeof variante.stock === 'number' && variante.stock > 0) {
-      stockMessage.textContent =
-        'Plus que ' + variante.stock + ' en stock';
-      stockMessage.className = 'stock-message stock-limite-texte';
-      boutonAjouterPanier.disabled = false;
-      boutonAjouterPanier.textContent = 'Ajouter au panier';
-    } else {
-      stockMessage.textContent = '';
-      stockMessage.className = 'stock-message';
-      boutonAjouterPanier.disabled = false;
-      boutonAjouterPanier.textContent = 'Ajouter au panier';
+    bouton.classList.remove('btn-attente-taille');
+
+    // La quantité ne peut jamais dépasser le stock de la taille choisie.
+    if (quantiteInput) {
+      const quantite = parseInt(quantiteInput.value, 10) || 1;
+      if (quantite > variante.stock) quantiteInput.value = variante.stock;
+      quantiteInput.max = variante.stock;
     }
+
+    if (estStockFaible(variante)) {
+      definirMessage('Plus que ' + variante.stock + ' en ' + variante.taille + ' - ' + variante.couleur, 'stock-limite-texte');
+    } else {
+      definirMessage('En stock', 'stock-ok');
+    }
+
+    bouton.disabled = false;
+    bouton.textContent = 'Ajouter au panier';
   }
 
   function afficherVue(index) {
@@ -359,6 +473,9 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     const imagePrincipale = document.getElementById('image-principale');
     imagePrincipale.src = cheminImages + listeVues[vueActuelle];
+    imagePrincipale.alt = produitActuel
+      ? produitActuel.nom + (couleurActive ? ' - ' + couleurActive : '')
+      : '';
 
     document.querySelectorAll('.miniature').forEach(function (m) {
       m.classList.toggle(
@@ -366,6 +483,19 @@ document.addEventListener('DOMContentLoaded', async function () {
         parseInt(m.getAttribute('data-index'), 10) === vueActuelle
       );
     });
+  }
+
+  function signalerTailleManquante() {
+    const listeTailles = document.getElementById('taille-options-liste');
+    afficherToast('Choisis ta taille pour ajouter ce produit au panier.', 'avertissement');
+
+    if (listeTailles) {
+      listeTailles.classList.remove('taille-attention');
+      void listeTailles.offsetWidth; // relance l'animation
+      listeTailles.classList.add('taille-attention');
+      const premiere = listeTailles.querySelector('.taille-btn:not(:disabled)');
+      if (premiere) premiere.focus();
+    }
   }
 
   function activerInteractivite() {
@@ -376,7 +506,6 @@ document.addEventListener('DOMContentLoaded', async function () {
       listeMiniatures.addEventListener('click', function (e) {
         const bouton = e.target.closest('.miniature');
         if (!bouton) return;
-
         afficherVue(parseInt(bouton.getAttribute('data-index'), 10));
       });
     }
@@ -385,15 +514,11 @@ document.addEventListener('DOMContentLoaded', async function () {
     const flecheDroite = document.querySelector('.galerie-fleche-droite');
 
     if (flecheGauche) {
-      flecheGauche.addEventListener('click', function () {
-        afficherVue(vueActuelle - 1);
-      });
+      flecheGauche.addEventListener('click', function () { afficherVue(vueActuelle - 1); });
     }
 
     if (flecheDroite) {
-      flecheDroite.addEventListener('click', function () {
-        afficherVue(vueActuelle + 1);
-      });
+      flecheDroite.addEventListener('click', function () { afficherVue(vueActuelle + 1); });
     }
 
     if (imagePrincipale) {
@@ -404,36 +529,32 @@ document.addEventListener('DOMContentLoaded', async function () {
       });
 
       imagePrincipale.addEventListener('touchend', function (e) {
-        const positionFin = e.changedTouches[0].clientX;
-        const difference = positionFin - positionDepart;
-
+        const difference = e.changedTouches[0].clientX - positionDepart;
         if (difference > 50) afficherVue(vueActuelle - 1);
         if (difference < -50) afficherVue(vueActuelle + 1);
       });
     }
 
-    const listeCouleurs = document.getElementById('couleur-options-liste');
+    const conteneurCouleurs = document.getElementById('couleur-options-liste');
 
-    if (listeCouleurs) {
-      listeCouleurs.addEventListener('click', function (e) {
+    if (conteneurCouleurs) {
+      conteneurCouleurs.addEventListener('click', function (e) {
         const bouton = e.target.closest('.couleur-swatch');
         if (!bouton) return;
 
         const couleur = bouton.getAttribute('data-couleur');
+        if (couleur === couleurActive) return;
 
-        imagePrincipale.src = bouton.getAttribute('data-photo');
-        document.getElementById('couleur-selectionnee').textContent = couleur;
+        couleurActive = couleur;
 
-        document.querySelectorAll('.couleur-swatch').forEach(function (el) {
-          el.classList.toggle('active', el === bouton);
+        // On garde la taille choisie si elle existe aussi dans la nouvelle couleur.
+        const memeTaille = variantesDeCouleur(couleur).find(function (v) {
+          return v.taille === tailleActive;
         });
+        if (!estDisponible(memeTaille)) tailleActive = '';
 
-        document.querySelectorAll('.miniature').forEach(function (m) {
-          m.classList.remove('active');
-        });
-
-        afficherTailles(produitActuel, couleur);
-        mettreAJourStockEtPrix();
+        rafraichirSelection(produitActuel, true);
+        memoriserCouleurDansAdresse();
       });
     }
 
@@ -442,13 +563,11 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (listeTailles) {
       listeTailles.addEventListener('click', function (e) {
         const bouton = e.target.closest('.taille-btn');
-        if (!bouton || !stockSupabaseCharge) return;
+        if (!bouton || bouton.disabled || !stockSupabaseCharge) return;
 
-        document.querySelectorAll('.taille-btn').forEach(function (b) {
-          b.classList.remove('active');
-        });
-
-        bouton.classList.add('active');
+        tailleActive = bouton.getAttribute('data-taille');
+        listeTailles.classList.remove('taille-attention');
+        afficherTailles(produitActuel);
         mettreAJourStockEtPrix();
       });
     }
@@ -469,11 +588,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         const valeur = parseInt(quantiteInput.value, 10);
         const variante = varianteSelectionnee();
 
-        if (
-          variante &&
-          typeof variante.stock === 'number' &&
-          valeur >= variante.stock
-        ) {
+        if (variante && typeof variante.stock === 'number' && valeur >= variante.stock) {
+          afficherToast('Quantité maximale disponible atteinte.', 'info');
           return;
         }
 
@@ -486,42 +602,26 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (boutonAjouter) {
       boutonAjouter.addEventListener('click', function () {
         if (!stockSupabaseCharge) {
-          afficherToast(
-            'Le stock ne peut pas être vérifié pour le moment.',
-            'avertissement'
-          );
+          afficherToast('Le stock ne peut pas être vérifié pour le moment.', 'avertissement');
           return;
         }
 
         const variante = varianteSelectionnee();
 
         if (!variante) {
-          afficherToast(
-            'Sélectionne une taille avant d\'ajouter ce produit au panier.',
-            'avertissement'
-          );
+          signalerTailleManquante();
           return;
         }
 
-        if (variante.stock === 0) {
-          afficherToast(
-            'Cette variante est en rupture de stock.',
-            'avertissement'
-          );
+        if (!estDisponible(variante)) {
+          afficherToast('Cette taille est épuisée.', 'avertissement');
           return;
         }
 
-        const quantite =
-          parseInt(document.querySelector('.quantite-input').value, 10);
+        const quantite = parseInt(document.querySelector('.quantite-input').value, 10) || 1;
 
-        if (
-          typeof variante.stock === 'number' &&
-          quantite > variante.stock
-        ) {
-          afficherToast(
-            'La quantité demandée dépasse le stock disponible.',
-            'avertissement'
-          );
+        if (quantite > variante.stock) {
+          afficherToast('La quantité demandée dépasse le stock disponible.', 'avertissement');
           return;
         }
 
@@ -533,7 +633,8 @@ document.addEventListener('DOMContentLoaded', async function () {
           prix: variante.prix,
           couleur: variante.couleur,
           taille: variante.taille,
-          image: document.getElementById('image-principale').src,
+          // Toujours la photo de face de la couleur achetée (et non la vue affichée).
+          image: new URL(cheminImages + (variante.photoFace || listeVues[0] || ''), window.location.href).href,
           quantite: quantite
         };
 
@@ -547,6 +648,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       });
     }
   }
+
 
   function afficherProduitsSimilaires(tousLesProduits, produitActuel) {
     const conteneur = document.getElementById('produits-similaires-liste');
@@ -672,7 +774,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
       if (liste.length === 0) {
         conteneurResume.innerHTML =
-          '<p class="avis-aucun">Aucun avis pour l\'instant — sois le premier à en laisser un !</p>';
+          '<p class="avis-aucun">Aucun avis pour l\'instant - sois le premier à en laisser un !</p>';
         conteneurListe.innerHTML = '';
         return;
       }
@@ -779,6 +881,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     guideTaillesProduit.textContent = produitActuel.nom;
     guideTaillesCorps.innerHTML = '';
 
+    guideTaillesProduit.textContent =
+      produitActuel.nom + (couleurActive ? ' - ' + couleurActive : '');
+
     tailles.forEach(function (taille) {
       const ligne = document.createElement('tr');
 
@@ -786,9 +891,14 @@ document.addEventListener('DOMContentLoaded', async function () {
       celluleTaille.scope = 'row';
       celluleTaille.textContent = taille;
 
+      // Disponibilité réelle de la taille dans la couleur sélectionnée.
+      const variante = variantesDeCouleur(couleurActive).find(function (v) {
+        return v.taille === taille;
+      });
       const celluleDisponibilite = document.createElement('td');
-      celluleDisponibilite.textContent =
-        taille === 'Taille unique' ? 'Taille unique' : 'Disponible';
+      celluleDisponibilite.textContent = !estDisponible(variante)
+        ? 'Épuisé'
+        : (estStockFaible(variante) ? 'Stock limité' : 'Disponible');
 
       ligne.appendChild(celluleTaille);
       ligne.appendChild(celluleDisponibilite);

@@ -1,0 +1,402 @@
+/* ==========================================================================
+   TRIÈDRE — Carnet d'entraînement + barres dynamiques de la semaine
+   Chargé automatiquement par membre.js (aucune modification de membre.html).
+   ========================================================================== */
+
+/* ---------- Barres de la semaine ----------
+   Une piste pleine et discrète = la séance prévue ; l'or qui monte = la part
+   réellement faite (variable --progression posée par membre.js). */
+
+.programme-entrainement-jour.is-planifie .programme-entrainement-barre {
+  border: 0;
+  box-shadow: none;
+  background:
+    linear-gradient(
+      to top,
+      #b8901f 0,
+      #e1bd55 var(--progression, 0%),
+      rgba(255, 255, 255, .06) var(--progression, 0%)
+    );
+}
+
+.programme-entrainement-jour.is-completed .programme-entrainement-barre {
+  background: linear-gradient(180deg, #e1bd55, #9b7420);
+  box-shadow: 0 0 18px rgba(212, 175, 55, .16);
+}
+
+/* Séance passée jamais commencée : piste légèrement teintée de rouge */
+.programme-entrainement-jour.is-manquee .programme-entrainement-barre {
+  background: rgba(255, 92, 92, .10);
+}
+
+/* ---------- Progression de la séance ---------- */
+
+.programme-seance-progression {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: .75rem;
+  margin: .25rem 0 .9rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  font-size: .8rem;
+}
+
+.programme-seance-jauge {
+  position: relative;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+}
+
+.programme-seance-jauge::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--progression, 0%);
+  border-radius: inherit;
+  background: linear-gradient(90deg, #9b7420, #e1bd55);
+  transition: width .3s ease;
+}
+
+/* ---------- Séries à cocher ---------- */
+
+.programme-carnet {
+  display: grid;
+  gap: .4rem;
+  margin: -.2rem 0 .9rem;
+  padding: .6rem;
+  border: 1px solid rgba(255, 255, 255, .06);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, .16);
+}
+
+.programme-carnet-serie {
+  display: grid;
+  grid-template-columns: 4.2rem 5.5rem minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: .45rem;
+}
+
+.programme-carnet-libelle {
+  color: var(--color-text-secondary, #b7b7b7);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.programme-carnet-serie input {
+  width: 100%;
+  min-width: 0;
+  height: 38px;
+  padding: .4rem .6rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .03);
+  color: var(--color-text-primary, #fff);
+  font: inherit;
+  font-size: .9rem;
+}
+
+.programme-carnet-serie input::placeholder {
+  color: var(--color-text-secondary, #b7b7b7);
+  opacity: .45;
+  font-style: italic;
+}
+
+.programme-carnet-serie input:focus {
+  outline: 2px solid var(--color-accent, #d4af37);
+  outline-offset: 1px;
+}
+
+.programme-carnet-check {
+  width: 40px;
+  height: 38px;
+  border: 1px solid rgba(212, 175, 55, .45);
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(212, 175, 55, .7);
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease, transform .1s ease;
+}
+
+.programme-carnet-check:hover,
+.programme-carnet-check:focus-visible {
+  background: rgba(212, 175, 55, .12);
+}
+
+.programme-carnet-check:active {
+  transform: scale(.94);
+}
+
+.programme-carnet-check:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.programme-carnet-serie.is-done .programme-carnet-check {
+  background: #d4af37;
+  border-color: #d4af37;
+  color: #0d0d0d;
+}
+
+.programme-carnet-serie.is-done .programme-carnet-libelle {
+  color: var(--color-accent, #d4af37);
+}
+
+.programme-carnet-serie.is-done input {
+  border-color: rgba(212, 175, 55, .35);
+}
+
+/* Répétitions : imposées par le coach, affichées sans saisie */
+.programme-carnet-reps {
+  color: var(--color-text-primary, #fff);
+  font-size: .88rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Déroulé exercice par exercice ---------- */
+
+.programme-carnet.is-en-cours {
+  border-color: rgba(212, 175, 55, .45);
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, .08);
+}
+
+.programme-exercice.is-verrouille,
+.programme-carnet.is-verrouille {
+  opacity: .45;
+}
+
+.programme-exercice.is-valide strong::before {
+  content: "✓ ";
+  color: var(--color-accent, #d4af37);
+}
+
+.programme-carnet-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin-top: .3rem;
+}
+
+.programme-carnet-valider {
+  min-height: 40px;
+  padding: .55rem 1.1rem;
+}
+
+.programme-carnet-lien {
+  padding: .3rem 0;
+  border: 0;
+  background: none;
+  color: var(--color-text-secondary, #b7b7b7);
+  font: inherit;
+  font-size: .78rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.programme-carnet-lien:hover,
+.programme-carnet-lien:focus-visible {
+  color: var(--color-accent, #d4af37);
+}
+
+.programme-carnet-lien[data-confirmation="oui"] {
+  color: rgba(255, 140, 140, .95);
+}
+
+.programme-carnet-resume {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  color: var(--color-accent, #d4af37);
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+.programme-carnet-note {
+  margin: .2rem 0 0;
+  color: var(--color-text-secondary, #b7b7b7);
+  font-size: .75rem;
+  font-style: italic;
+}
+
+@media (max-width: 520px) {
+  .programme-carnet-serie {
+    grid-template-columns: 3.4rem 4.2rem minmax(0, 1fr) 40px;
+    gap: .35rem;
+  }
+
+  .programme-carnet-actions {
+    justify-content: space-between;
+  }
+
+  .programme-carnet-serie input {
+    padding: .4rem .45rem;
+  }
+}
+
+/* ==========================================================================
+   Ressenti après séance
+   ========================================================================== */
+
+.programme-ressenti-dialog {
+  max-width: 520px;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+}
+
+.programme-ressenti-groupe {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 0;
+}
+
+.programme-ressenti-groupe legend {
+  margin-bottom: .55rem;
+  font-family: var(--font-heading);
+  font-size: .95rem;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.programme-ressenti-echelle {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: .3rem;
+}
+
+.programme-ressenti-echelle button,
+.programme-ressenti-douleur button {
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .03);
+  color: var(--color-text-primary, #fff);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.programme-ressenti-echelle button.is-filled {
+  border-color: rgba(212, 175, 55, .45);
+  background: rgba(212, 175, 55, .14);
+}
+
+.programme-ressenti-echelle button.is-selected,
+.programme-ressenti-douleur button.is-selected {
+  border-color: #d4af37;
+  background: #d4af37;
+  color: #0d0d0d;
+}
+
+.programme-ressenti-echelle button:focus-visible,
+.programme-ressenti-douleur button:focus-visible {
+  outline: 2px solid var(--color-accent, #d4af37);
+  outline-offset: 2px;
+}
+
+.programme-ressenti-indice {
+  margin: .45rem 0 0;
+  color: var(--color-text-secondary, #b7b7b7);
+  font-size: .8rem;
+}
+
+.programme-ressenti-douleur {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .4rem;
+}
+
+.programme-ressenti-champ {
+  display: grid;
+  gap: .35rem;
+  margin: .7rem 0 0;
+  color: var(--color-text-secondary, #b7b7b7);
+  font-size: .82rem;
+}
+
+.programme-ressenti-champ[hidden] {
+  display: none;
+}
+
+.programme-ressenti-champ input,
+.programme-ressenti-champ textarea {
+  width: 100%;
+  padding: .6rem .7rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .03);
+  color: var(--color-text-primary, #fff);
+  font: inherit;
+  resize: vertical;
+}
+
+/* Sélecteur renforcé : les libellés de la fenêtre héritent d'un style en
+   colonne ; ici la case doit rester à gauche de son texte. */
+.programme-poids-modal .programme-ressenti-partage {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  gap: .6rem;
+  margin: 1rem 0 .35rem;
+  font-size: .85rem;
+  line-height: 1.45;
+  cursor: pointer;
+}
+
+.programme-poids-modal .programme-ressenti-partage input {
+  flex: 0 0 auto;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: .1rem;
+  accent-color: #d4af37;
+}
+
+.programme-ressenti-note {
+  margin: 0 0 .9rem;
+  color: var(--color-text-secondary, #b7b7b7);
+  font-size: .74rem;
+  line-height: 1.5;
+}
+
+.programme-ressenti-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.programme-ressenti-resume {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-top: .8rem;
+  padding: .7rem .9rem;
+  border: 1px solid rgba(212, 175, 55, .25);
+  border-radius: 10px;
+  background: rgba(212, 175, 55, .05);
+  font-size: .85rem;
+}
+
+.programme-ressenti-resume[hidden] {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  .programme-ressenti-echelle {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}

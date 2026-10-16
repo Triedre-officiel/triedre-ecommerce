@@ -1,0 +1,197 @@
+/* ==========================================================================
+   TRIÈDRE — Disponibilité couleur / taille (fiche produit + cartes boutique)
+   ========================================================================== */
+
+/* ---------- Fiche produit : pastilles de couleur ---------- */
+
+.couleur-swatch {
+  position: relative;
+}
+
+/* Couleur épuisée : pastille estompée et barrée d'un trait */
+.couleur-swatch.epuise {
+  opacity: 0.45;
+}
+
+.couleur-swatch.epuise::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -2px;
+  right: -2px;
+  height: 2px;
+  background: var(--color-text-primary, #ffffff);
+  transform: rotate(-45deg);
+  pointer-events: none;
+}
+
+.couleur-swatch.epuise.active {
+  opacity: 0.7;
+}
+
+/* ---------- Fiche produit : tailles ---------- */
+
+.taille-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Taille épuisée : grisée, barrée, non cliquable */
+.taille-btn.indisponible,
+.taille-btn:disabled {
+  color: var(--color-text-secondary, #8a8a8a);
+  border-color: rgba(255, 255, 255, 0.12);
+  background: transparent;
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.taille-btn.indisponible::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top right,
+    transparent calc(50% - 1px),
+    var(--color-text-secondary, #8a8a8a) calc(50% - 1px),
+    var(--color-text-secondary, #8a8a8a) calc(50% + 1px),
+    transparent calc(50% + 1px)
+  );
+  pointer-events: none;
+}
+
+/* Stock limité : petit point orange en haut à droite */
+.taille-btn.stock-faible::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e8833a;
+}
+
+/* Rappel visuel quand on clique « Choisis ta taille » sans taille */
+@keyframes triedre-taille-attention {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.taille-options.taille-attention {
+  animation: triedre-taille-attention 0.45s ease;
+}
+
+.taille-options.taille-attention .taille-btn:not(:disabled) {
+  border-color: var(--color-accent, #C9A227);
+}
+
+/* Bouton tant qu'aucune taille n'est choisie */
+.btn-ajouter-panier.btn-attente-taille {
+  opacity: 0.85;
+}
+
+/* Message de disponibilité (sous les tailles) */
+.stock-message:empty {
+  display: none;
+}
+
+.stock-message.stock-ok {
+  color: #5fb878;
+  font-weight: var(--font-weight-medium, 500);
+}
+
+.stock-message.stock-ok::before {
+  content: "● ";
+}
+
+/* ---------- Boutique : pastilles de couleur sur les cartes ---------- */
+
+.carte-couleurs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.carte-couleur {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.carte-couleur:hover {
+  transform: scale(1.2);
+  border-color: var(--color-accent, #C9A227);
+}
+
+.carte-couleur.epuise {
+  opacity: 0.45;
+}
+
+.carte-couleur.epuise::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -2px;
+  right: -2px;
+  height: 1.5px;
+  background: #ffffff;
+  transform: rotate(-45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .taille-options.taille-attention {
+    animation: none;
+  }
+  .carte-couleur {
+    transition: none;
+  }
+}
+
+/* ---------- Fiche produit : survol des boutons d'action ----------
+   Même comportement que « Ajouter aux favoris » : contour et texte dorés. */
+
+.produit-actions .btn-ajouter-panier,
+.produit-actions .quantite-selecteur button {
+  transition: color 0.2s ease, border-color 0.2s ease,
+              background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+.produit-actions .btn-ajouter-panier:hover:not(:disabled),
+.produit-actions .btn-ajouter-panier:focus-visible:not(:disabled) {
+  color: var(--color-accent, #C9A227);
+  border-color: var(--color-accent, #C9A227);
+  background-color: rgba(201, 162, 39, 0.08);
+  box-shadow: 0 0 0 1px var(--color-accent, #C9A227);
+  opacity: 1;
+}
+
+.produit-actions .btn-ajouter-panier:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.produit-actions .btn-ajouter-panier:disabled {
+  cursor: not-allowed;
+}
+
+/* Boutons − et + de la quantité */
+.produit-actions .quantite-selecteur button:hover,
+.produit-actions .quantite-selecteur button:focus-visible {
+  color: var(--color-accent, #C9A227);
+  background-color: rgba(201, 162, 39, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .produit-actions .btn-ajouter-panier,
+  .produit-actions .quantite-selecteur button {
+    transition: none;
+  }
+}

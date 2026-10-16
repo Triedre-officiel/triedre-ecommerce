@@ -180,10 +180,22 @@ document.addEventListener('DOMContentLoaded', function () {
   let ignorerConnexionAutomatique = false;
   let emailRetourApresReset = '';
 
+  // Styles du carnet d'entraînement (fichier séparé, chargé une fois).
+  if (!document.querySelector('link[data-triedre-carnet]')) {
+    const lienCarnet = document.createElement('link');
+    lienCarnet.rel = 'stylesheet';
+    lienCarnet.href = '../02-css/sections/membre-carnet.css';
+    lienCarnet.setAttribute('data-triedre-carnet', '');
+    document.head.appendChild(lienCarnet);
+  }
+
   const etatProgrammesV11 = {
     userId: null,
     programmes: [],
     programmeActif: null,
+    programmeTermine: false,
+    prochainProgramme: null,
+    partageCoach: false,
     seances: [],
     mesures: [],
     debutSemaine: obtenirDebutSemaine(new Date()),
@@ -448,25 +460,40 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function activerOubli() {
+    let envoiEnCours = false;
+
     oubli.addEventListener('click', async function (event) {
       event.preventDefault();
+      if (envoiEnCours) return; // Évite les doubles envois en cas de double clic.
+
       const email = champConnexionEmail.value.trim();
 
       if (!email) {
-        afficherMessage('Entre d’abord ton adresse courriel.', 'avertissement');
+        afficherToast('Entre d’abord ton adresse courriel.', 'avertissement');
         return;
       }
 
-      const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: urlMembre() });
-      champConnexionMdp.value = '';
+      envoiEnCours = true;
+      oubli.setAttribute('aria-disabled', 'true');
+      masquerMessage();
 
-      if (error) {
-        console.error('[TRIÈDRE] Mot de passe oublié :', error);
-        afficherMessage('Impossible d’envoyer le courriel de réinitialisation.', 'erreur');
-        return;
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: urlMembre() });
+        champConnexionMdp.value = '';
+
+        if (error) {
+          console.error('[TRIÈDRE] Mot de passe oublié :', error);
+          afficherToast('Impossible d’envoyer le courriel de réinitialisation pour le moment.', 'erreur');
+          return;
+        }
+
+        // Retour à l'étape 1 (adresse courriel), puis notification premium.
+        afficherDeconnecte(true);
+        afficherToast('Si un compte correspond à cette adresse, un courriel de réinitialisation vient d’être envoyé.', 'succes');
+      } finally {
+        envoiEnCours = false;
+        oubli.removeAttribute('aria-disabled');
       }
-
-      afficherMessage('Si un compte correspond à cette adresse, un courriel de réinitialisation vient d’être envoyé.', 'succes');
     });
   }
 
@@ -495,11 +522,17 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      emailRetourApresReset = email;
+      // Retour à la page de connexion d'origine (étape « Entre ton adresse courriel. »).
+      emailRetourApresReset = '';
       await supabase.auth.signOut();
-      afficherDeconnecte(false);
-      afficherFormulaireConnexion(email);
-      afficherMessage('Ton mot de passe a été mis à jour. Connecte-toi maintenant avec ton nouveau mot de passe.', 'succes');
+      afficherDeconnecte(true);
+      masquerMessage();
+      // Retire de l'adresse les paramètres du lien de réinitialisation (code, tokens).
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      afficherToast('Ton mot de passe a été mis à jour. Connecte-toi avec ton nouveau mot de passe.', 'succes');
     });
   }
 
@@ -691,10 +724,32 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
 
-    etatProgrammesV11.programmeActif =
+    // Programme affiché dans le tableau : le programme en cours, sinon le
+    // dernier programme terminé (pour garder son bilan visible au lieu
+    // d'un tableau vide dès que le membre finit sa dernière séance).
+    const programmeEnCours =
       etatProgrammesV11.programmes.find(function (item) {
         return item.status === 'active';
       }) || null;
+
+    const dernierTermine = programmeEnCours
+      ? null
+      : (etatProgrammesV11.programmes.find(function (item) {
+          return item.status === 'completed';
+        }) || null);
+
+    etatProgrammesV11.programmeActif = programmeEnCours || dernierTermine;
+    etatProgrammesV11.programmeTermine = Boolean(dernierTermine);
+
+    // Prochain programme prévu (le plus proche dans le temps).
+    etatProgrammesV11.prochainProgramme =
+      etatProgrammesV11.programmes
+        .filter(function (item) {
+          return item.status === 'scheduled';
+        })
+        .sort(function (a, b) {
+          return String(a.start_date).localeCompare(String(b.start_date));
+        })[0] || null;
 
     etatProgrammesV11.seances = [];
     etatProgrammesV11.mesures = [];
@@ -754,27 +809,88 @@ document.addEventListener('DOMContentLoaded', function () {
     let exercices = [];
 
     if (idsSeances.length) {
-      const { data, error } = await supabase
+      const colonnes =
+        'id, session_id, position, name, sets, reps, load, rest_seconds, duration_seconds, notes';
+
+      let reponse = await supabase
         .from('training_exercises')
-        .select(`
-          id,
-          session_id,
-          position,
-          name,
-          sets,
-          reps,
-          rest_seconds,
-          duration_seconds,
-          notes
-        `)
+        .select(colonnes + ', completed_at')
         .in('session_id', idsSeances)
         .order('position', { ascending: true });
 
-      if (error) {
-        throw error;
+      // Repli si la colonne completed_at n'existe pas encore en base.
+      if (reponse.error) {
+        reponse = await supabase
+          .from('training_exercises')
+          .select(colonnes)
+          .in('session_id', idsSeances)
+          .order('position', { ascending: true });
       }
 
-      exercices = data || [];
+      if (reponse.error) {
+        throw reponse.error;
+      }
+
+      exercices = reponse.data || [];
+    }
+
+    // Carnet : séries réellement faites par le membre.
+    // Non bloquant : si la table n'existe pas encore, on continue sans.
+    let journal = [];
+
+    if (idsSeances.length) {
+      const { data: dataJournal, error: erreurJournal } = await supabase
+        .from('training_set_logs')
+        .select('exercise_id, set_number, reps_done, load_done')
+        .in('session_id', idsSeances);
+
+      if (erreurJournal) {
+        console.warn('[TRIÈDRE] Carnet indisponible :', erreurJournal);
+      } else {
+        journal = dataJournal || [];
+      }
+    }
+
+    const journalParExercice = new Map();
+
+    journal.forEach(function (serie) {
+      if (!journalParExercice.has(serie.exercise_id)) {
+        journalParExercice.set(serie.exercise_id, []);
+      }
+
+      journalParExercice.get(serie.exercise_id).push(serie);
+    });
+
+    exercices.forEach(function (exercice) {
+      exercice.series = journalParExercice.get(exercice.id) || [];
+    });
+
+    // Ressentis après séance + choix de partage (non bloquant).
+    const ressentiParSeance = new Map();
+
+    if (idsSeances.length) {
+      const { data: dataRessentis, error: erreurRessentis } = await supabase
+        .from('session_feedback')
+        .select('session_id, effort, pain, pain_area, comment, updated_at')
+        .in('session_id', idsSeances);
+
+      if (erreurRessentis) {
+        console.warn('[TRIÈDRE] Ressentis indisponibles :', erreurRessentis);
+      } else {
+        (dataRessentis || []).forEach(function (ressenti) {
+          ressentiParSeance.set(ressenti.session_id, ressenti);
+        });
+      }
+
+      const { data: consentement } = await supabase
+        .from('member_consents')
+        .select('coach_feedback_shared')
+        .eq('user_id', etatProgrammesV11.userId)
+        .maybeSingle();
+
+      etatProgrammesV11.partageCoach = Boolean(
+        consentement && consentement.coach_feedback_shared
+      );
     }
 
     const exercicesParSeance = new Map();
@@ -800,6 +916,7 @@ document.addEventListener('DOMContentLoaded', function () {
         objectif: seance.objective,
         startedAt: seance.started_at,
         completedAt: seance.completed_at,
+        ressenti: ressentiParSeance.get(seance.id) || null,
         exercices: exercicesParSeance.get(seance.id) || []
       };
     });
@@ -955,9 +1072,15 @@ document.addEventListener('DOMContentLoaded', function () {
     objectif.textContent = seance.objectif || '—';
     exercices.innerHTML = '';
 
-    (seance.exercices || []).forEach(function (exercice) {
+    // Un exercice n'est accessible qu'une fois les précédents validés.
+    const indexEnCours = (seance.exercices || []).findIndex(function (item) {
+      return !item.completed_at;
+    });
+
+    (seance.exercices || []).forEach(function (exercice, indexExercice) {
       const ligne = document.createElement('div');
       ligne.className = 'programme-exercice';
+      ligne.dataset.exerciceId = exercice.id;
 
       const info = document.createElement('div');
 
@@ -988,13 +1111,25 @@ document.addEventListener('DOMContentLoaded', function () {
       ligne.appendChild(info);
       ligne.appendChild(prescription);
       exercices.appendChild(ligne);
+      const etatCarnet = exercice.completed_at
+        ? 'valide'
+        : (indexEnCours === -1 || indexExercice === indexEnCours ? 'en-cours' : 'verrouille');
+
+      ligne.classList.add('is-' + etatCarnet);
+      exercices.appendChild(creerCarnetExerciceV13(exercice, seance, etatCarnet));
     });
+
+    mettreAJourProgressionSeanceV13(seance);
+    rendreRessentiSeanceV13(seance);
 
     if (bouton) {
       bouton.disabled = false;
 
       if (seance.completedAt) {
         bouton.textContent = 'Séance terminée ✓';
+        bouton.disabled = true;
+      } else if (etatProgrammesV11.programmeTermine) {
+        bouton.textContent = 'Programme terminé';
         bouton.disabled = true;
       } else if (seance.startedAt) {
         bouton.textContent = 'Terminer la séance';
@@ -1006,7 +1141,620 @@ document.addEventListener('DOMContentLoaded', function () {
     details.hidden = false;
   }
 
+  // Prescription + charge/intensité éventuelle (ex. « 3 × 8-12 · 60 kg »).
+  // ========================================================================
+  // Carnet d'entraînement : une ligne par série à cocher
+  // ========================================================================
+
+  // etatCarnet : 'en-cours' (exercice à faire maintenant), 'verrouille'
+  // (un exercice précédent n'est pas encore validé) ou 'valide'.
+  function creerCarnetExerciceV13(exercice, seance, etatCarnet) {
+    const total = Math.max(1, Number(exercice.sets) || 1);
+    const bloc = document.createElement('div');
+    bloc.className = 'programme-carnet is-' + etatCarnet;
+    bloc.dataset.exerciceId = exercice.id;
+
+    const programmeVerrouille = etatProgrammesV11.programmeTermine;
+    const faites = (exercice.series || []).length;
+
+    // ---- Exercice validé : résumé compact + possibilité de rouvrir ----
+    if (etatCarnet === 'valide') {
+      const resume = document.createElement('div');
+      resume.className = 'programme-carnet-resume';
+
+      const texte = document.createElement('span');
+      texte.textContent = faites > 0
+        ? '✓ Exercice validé · ' + faites + ' / ' + total + ' série' + (total > 1 ? 's' : '') +
+          resumerChargesV13(exercice)
+        : '↷ Exercice passé';
+
+      resume.appendChild(texte);
+
+      if (!programmeVerrouille) {
+        const rouvrir = document.createElement('button');
+        rouvrir.type = 'button';
+        rouvrir.className = 'programme-carnet-lien';
+        rouvrir.textContent = 'Modifier';
+        rouvrir.addEventListener('click', function () {
+          changerStatutExerciceV13(exercice, seance, false, rouvrir);
+        });
+        resume.appendChild(rouvrir);
+      }
+
+      bloc.appendChild(resume);
+      return bloc;
+    }
+
+    const inactif = programmeVerrouille || etatCarnet === 'verrouille';
+
+    for (let numero = 1; numero <= total; numero += 1) {
+      const serie = (exercice.series || []).find(function (item) {
+        return item.set_number === numero;
+      }) || null;
+
+      const ligne = document.createElement('div');
+      ligne.className = 'programme-carnet-serie' + (serie ? ' is-done' : '');
+
+      const libelle = document.createElement('span');
+      libelle.className = 'programme-carnet-libelle';
+      libelle.textContent = 'Série ' + numero;
+
+      // Répétitions : fixées par le coach, affichées sans saisie possible.
+      const reps = document.createElement('span');
+      reps.className = 'programme-carnet-reps';
+      reps.textContent = formaterRepetitionsV13(exercice.reps);
+
+      const charge = document.createElement('input');
+      charge.type = 'text';
+      charge.maxLength = 60;
+      charge.placeholder = (exercice.load || 'Charge').trim();
+      charge.setAttribute('aria-label', 'Charge utilisée, série ' + numero);
+      charge.value = serie && serie.load_done ? serie.load_done : '';
+      charge.dataset.serie = String(numero);
+
+      const valider = document.createElement('button');
+      valider.type = 'button';
+      valider.className = 'programme-carnet-check';
+      valider.textContent = '✓';
+      valider.setAttribute('aria-pressed', serie ? 'true' : 'false');
+      valider.setAttribute('aria-label', 'Série ' + numero + ' faite');
+
+      charge.disabled = inactif;
+      valider.disabled = inactif;
+
+      valider.addEventListener('click', function () {
+        const faite = ligne.classList.contains('is-done');
+
+        if (!faite && !charge.value && exercice.load) {
+          charge.value = exercice.load.trim();
+        }
+
+        enregistrerSerieV13(exercice, seance, numero, !faite, charge, ligne, valider);
+      });
+
+      charge.addEventListener('change', function () {
+        if (ligne.classList.contains('is-done')) {
+          enregistrerSerieV13(exercice, seance, numero, true, charge, ligne, valider);
+        }
+      });
+
+      ligne.appendChild(libelle);
+      ligne.appendChild(reps);
+      ligne.appendChild(charge);
+      ligne.appendChild(valider);
+      bloc.appendChild(ligne);
+    }
+
+    if (etatCarnet === 'verrouille') {
+      const note = document.createElement('p');
+      note.className = 'programme-carnet-note';
+      note.textContent = 'Valide l’exercice précédent pour continuer.';
+      bloc.appendChild(note);
+      return bloc;
+    }
+
+    if (!programmeVerrouille) {
+      const actions = document.createElement('div');
+      actions.className = 'programme-carnet-actions';
+
+      const passer = document.createElement('button');
+      passer.type = 'button';
+      passer.className = 'programme-carnet-lien';
+      passer.textContent = 'Passer cet exercice';
+      passer.addEventListener('click', function () {
+        if (passer.dataset.confirmation !== 'oui') {
+          passer.dataset.confirmation = 'oui';
+          passer.textContent = 'Confirmer : passer sans le faire';
+          window.setTimeout(function () {
+            passer.dataset.confirmation = '';
+            passer.textContent = 'Passer cet exercice';
+          }, 4000);
+          return;
+        }
+        changerStatutExerciceV13(exercice, seance, true, passer);
+      });
+
+      const validerExercice = document.createElement('button');
+      validerExercice.type = 'button';
+      validerExercice.className = 'btn btn-primary programme-carnet-valider';
+      validerExercice.textContent = 'Valider l’exercice';
+      validerExercice.addEventListener('click', function () {
+        validerExerciceV13(exercice, seance, bloc, validerExercice);
+      });
+
+      actions.appendChild(passer);
+      actions.appendChild(validerExercice);
+      bloc.appendChild(actions);
+    }
+
+    return bloc;
+  }
+
+  function formaterRepetitionsV13(reps) {
+    const valeur = (reps || '').trim();
+    if (!valeur) return '—';
+    return /^\d+(\s*-\s*\d+)?$/.test(valeur) ? valeur + ' rép.' : valeur;
+  }
+
+  function resumerChargesV13(exercice) {
+    const charges = (exercice.series || [])
+      .map(function (serie) { return (serie.load_done || '').trim(); })
+      .filter(Boolean);
+
+    if (!charges.length) return '';
+
+    const uniques = Array.from(new Set(charges));
+    return ' · ' + (uniques.length === 1 ? uniques[0] : uniques.join(' / '));
+  }
+
+  // « Valider l'exercice » : si aucune série n'est cochée, l'exercice est
+  // considéré fait comme prescrit (toutes les séries, avec les charges
+  // saisies ou prévues). Sinon, on garde exactement les séries cochées.
+  async function validerExerciceV13(exercice, seance, bloc, bouton) {
+    bouton.disabled = true;
+    bouton.textContent = 'Validation…';
+
+    try {
+      if (!(exercice.series || []).length) {
+        const total = Math.max(1, Number(exercice.sets) || 1);
+
+        for (let numero = 1; numero <= total; numero += 1) {
+          const champ = bloc.querySelector('input[data-serie="' + numero + '"]');
+          const charge = (champ && champ.value.trim()) || (exercice.load || '').trim() || null;
+
+          const { error } = await supabase.rpc('member_log_set', {
+            target_exercise_id: exercice.id,
+            target_set_number: numero,
+            is_done: true,
+            reps: null,
+            load_value: charge
+          });
+
+          if (error) throw error;
+
+          exercice.series = (exercice.series || []).concat([{
+            exercise_id: exercice.id,
+            set_number: numero,
+            reps_done: null,
+            load_done: charge
+          }]);
+        }
+      }
+
+      await changerStatutExerciceV13(exercice, seance, true, null);
+    } catch (error) {
+      console.error('[TRIÈDRE] Validation exercice :', error);
+      afficherToast(messageErreurCarnetV13(error), 'erreur');
+      bouton.disabled = false;
+      bouton.textContent = 'Valider l’exercice';
+    }
+  }
+
+  async function changerStatutExerciceV13(exercice, seance, termine, bouton) {
+    if (bouton) bouton.disabled = true;
+
+    const { data, error } = await supabase.rpc('member_set_exercise_status', {
+      target_exercise_id: exercice.id,
+      is_completed: termine
+    });
+
+    if (error) {
+      console.error('[TRIÈDRE] Statut exercice :', error);
+      afficherToast(messageErreurCarnetV13(error), 'erreur');
+      if (bouton) bouton.disabled = false;
+      return;
+    }
+
+    const resultat = Array.isArray(data) ? data[0] : data;
+    exercice.completed_at = termine
+      ? ((resultat && resultat.completed_at) || new Date().toISOString())
+      : null;
+
+    if (resultat && resultat.started_at && !seance.startedAt) {
+      seance.startedAt = resultat.started_at;
+    }
+
+    afficherSeanceProgrammeV10(etatProgrammesV11);
+    rendreIndicateursProgrammesV11();
+
+    if (termine) {
+      const suivant = (seance.exercices || []).find(function (item) {
+        return !item.completed_at;
+      });
+
+      if (suivant) {
+        const cible = document.querySelector(
+          '.programme-exercice[data-exercice-id="' + suivant.id + '"]'
+        );
+        if (cible) cible.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (!seance.completedAt) {
+        afficherToast('Dernier exercice validé 💪 Tu peux terminer la séance.', 'succes');
+        const boutonSeance = document.getElementById('programme-commencer-seance');
+        if (boutonSeance) boutonSeance.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }
+
+  function messageErreurCarnetV13(error) {
+    return error && error.message && error.message.includes('PROGRAM_NOT_ACTIVE')
+      ? 'Ce programme n’est plus en cours : le carnet est verrouillé.'
+      : 'Impossible d’enregistrer pour le moment.';
+  }
+
+  async function enregistrerSerieV13(exercice, seance, numero, faite, charge, ligne, valider) {
+    valider.disabled = true;
+
+    const { data, error } = await supabase.rpc('member_log_set', {
+      target_exercise_id: exercice.id,
+      target_set_number: numero,
+      is_done: faite,
+      reps: null,
+      load_value: charge.value.trim() || null
+    });
+
+    valider.disabled = etatProgrammesV11.programmeTermine;
+
+    if (error) {
+      console.error('[TRIÈDRE] Carnet :', error);
+      afficherToast(messageErreurCarnetV13(error), 'erreur');
+      return;
+    }
+
+    const resultat = Array.isArray(data) ? data[0] : data;
+
+    exercice.series = (exercice.series || []).filter(function (item) {
+      return item.set_number !== numero;
+    });
+
+    if (faite) {
+      exercice.series.push({
+        exercise_id: exercice.id,
+        set_number: numero,
+        reps_done: null,
+        load_done: charge.value.trim() || null
+      });
+    }
+
+    ligne.classList.toggle('is-done', faite);
+    valider.setAttribute('aria-pressed', faite ? 'true' : 'false');
+
+    if (resultat && resultat.started_at && !seance.startedAt) {
+      seance.startedAt = resultat.started_at;
+
+      const bouton = document.getElementById('programme-commencer-seance');
+      if (bouton && !seance.completedAt) bouton.textContent = 'Terminer la séance';
+    }
+
+    mettreAJourProgressionSeanceV13(seance);
+    rendreIndicateursProgrammesV11();
+  }
+
+  function mettreAJourProgressionSeanceV13(seance) {
+    const exercices = document.getElementById('programme-exercices');
+    if (!exercices) return;
+
+    let element = document.getElementById('programme-seance-progression-v13');
+
+    if (!element) {
+      element = document.createElement('p');
+      element.id = 'programme-seance-progression-v13';
+      element.className = 'programme-seance-progression';
+      exercices.parentNode.insertBefore(element, exercices);
+    }
+
+    const prevues = seriesPrevuesSeanceV13(seance);
+    const faites = seriesFaitesSeanceV13(seance);
+    const progression = progressionSeanceV13(seance);
+
+    element.innerHTML = '';
+
+    const texte = document.createElement('span');
+    texte.textContent = faites + ' / ' + prevues + ' séries · ' + progression + ' %';
+
+    const jauge = document.createElement('span');
+    jauge.className = 'programme-seance-jauge';
+    jauge.style.setProperty('--progression', progression + '%');
+
+    element.appendChild(texte);
+    element.appendChild(jauge);
+  }
+
+  // ========================================================================
+  // Ressenti après séance (effort, douleur, commentaire) + partage (Loi 25)
+  // ========================================================================
+
+  const LIBELLES_EFFORT_V13 = {
+    1: 'Très facile', 2: 'Facile', 3: 'Facile',
+    4: 'Modéré', 5: 'Modéré', 6: 'Soutenu',
+    7: 'Difficile', 8: 'Difficile',
+    9: 'Très difficile', 10: 'Effort maximal'
+  };
+
+  function trouverSeanceV13(idSeance) {
+    return (etatProgrammesV11.seances || []).find(function (item) {
+      return item.id === idSeance;
+    }) || null;
+  }
+
+  function rendreRessentiSeanceV13(seance) {
+    const bouton = document.getElementById('programme-commencer-seance');
+    if (!bouton || !bouton.parentNode) return;
+
+    let bloc = document.getElementById('programme-seance-ressenti-v13');
+
+    if (!bloc) {
+      bloc = document.createElement('div');
+      bloc.id = 'programme-seance-ressenti-v13';
+      bloc.className = 'programme-ressenti-resume';
+      bouton.parentNode.insertBefore(bloc, bouton.nextSibling);
+    }
+
+    bloc.innerHTML = '';
+
+    if (!seance || (!seance.completedAt && !seance.ressenti)) {
+      bloc.hidden = true;
+      return;
+    }
+
+    bloc.hidden = false;
+
+    const texte = document.createElement('span');
+    const r = seance.ressenti;
+
+    if (r) {
+      texte.textContent =
+        'Ton ressenti : effort ' + r.effort + '/10 (' + LIBELLES_EFFORT_V13[r.effort] + ')' +
+        (r.pain ? ' · douleur signalée' + (r.pain_area ? ' : ' + r.pain_area : '') : '');
+    } else {
+      texte.textContent = 'Comment s’est passée cette séance ?';
+    }
+
+    const action = document.createElement('button');
+    action.type = 'button';
+    action.className = 'programme-carnet-lien';
+    action.textContent = r ? 'Modifier' : 'Donner mon ressenti';
+    action.addEventListener('click', function () {
+      ouvrirModalRessentiV13(seance.id);
+    });
+
+    bloc.appendChild(texte);
+    bloc.appendChild(action);
+  }
+
+  function ouvrirModalRessentiV13(idSeance) {
+    const seance = trouverSeanceV13(idSeance);
+    if (!seance) return;
+
+    let modal = document.getElementById('programme-ressenti-modal-v13');
+
+    if (!modal) {
+      modal = creerModalRessentiV13();
+      document.body.appendChild(modal);
+    }
+
+    const r = seance.ressenti;
+    modal.dataset.seance = idSeance;
+    modal.dataset.effort = r ? String(r.effort) : '';
+    modal.dataset.douleur = r && r.pain ? 'oui' : 'non';
+
+    modal.querySelector('#programme-ressenti-sous-titre-v13').textContent =
+      seance.titre || 'Séance TRIÈDRE';
+    modal.querySelector('#programme-ressenti-zone-v13').value = (r && r.pain_area) || '';
+    modal.querySelector('#programme-ressenti-commentaire-v13').value = (r && r.comment) || '';
+    modal.querySelector('#programme-ressenti-partage-v13').checked = etatProgrammesV11.partageCoach;
+    modal.querySelector('.programme-poids-erreur').hidden = true;
+
+    synchroniserModalRessentiV13(modal);
+
+    modal.hidden = false;
+    document.body.classList.add('programme-modal-ouvert');
+  }
+
+  function synchroniserModalRessentiV13(modal) {
+    const effort = Number(modal.dataset.effort) || 0;
+
+    modal.querySelectorAll('.programme-ressenti-echelle button').forEach(function (b) {
+      const valeur = Number(b.dataset.valeur);
+      b.setAttribute('aria-pressed', valeur === effort ? 'true' : 'false');
+      b.classList.toggle('is-selected', valeur === effort);
+      b.classList.toggle('is-filled', effort > 0 && valeur <= effort);
+    });
+
+    modal.querySelector('#programme-ressenti-indice-v13').textContent = effort
+      ? effort + '/10 · ' + LIBELLES_EFFORT_V13[effort]
+      : 'De 1 (très facile) à 10 (effort maximal)';
+
+    const douleur = modal.dataset.douleur === 'oui';
+    modal.querySelectorAll('.programme-ressenti-douleur button').forEach(function (b) {
+      const actif = (b.dataset.valeur === 'oui') === douleur;
+      b.setAttribute('aria-pressed', actif ? 'true' : 'false');
+      b.classList.toggle('is-selected', actif);
+    });
+    modal.querySelector('#programme-ressenti-zone-label-v13').hidden = !douleur;
+  }
+
+  function creerModalRessentiV13() {
+    const modal = document.createElement('div');
+    modal.id = 'programme-ressenti-modal-v13';
+    modal.className = 'programme-poids-modal';
+    modal.hidden = true;
+
+    let echelle = '';
+    for (let n = 1; n <= 10; n += 1) {
+      echelle += '<button type="button" data-valeur="' + n + '" aria-pressed="false">' + n + '</button>';
+    }
+
+    modal.innerHTML = `
+      <div class="programme-poids-modal-dialog programme-ressenti-dialog" role="dialog" aria-modal="true" aria-labelledby="programme-ressenti-titre-v13">
+        <button type="button" class="programme-poids-modal-fermer" aria-label="Fermer">×</button>
+        <p class="section-eyebrow">Ressenti</p>
+        <h3 id="programme-ressenti-titre-v13">Comment s’est passée ta séance ?</h3>
+        <p class="programme-poids-modal-intro" id="programme-ressenti-sous-titre-v13"></p>
+
+        <form id="programme-ressenti-form-v13" novalidate>
+          <fieldset class="programme-ressenti-groupe">
+            <legend>Effort ressenti</legend>
+            <div class="programme-ressenti-echelle">${echelle}</div>
+            <p class="programme-ressenti-indice" id="programme-ressenti-indice-v13" aria-live="polite"></p>
+          </fieldset>
+
+          <fieldset class="programme-ressenti-groupe">
+            <legend>Douleur ou gêne pendant la séance ?</legend>
+            <div class="programme-ressenti-douleur">
+              <button type="button" data-valeur="non" aria-pressed="true">Aucune</button>
+              <button type="button" data-valeur="oui" aria-pressed="false">Oui</button>
+            </div>
+            <label id="programme-ressenti-zone-label-v13" class="programme-ressenti-champ" hidden>
+              Où ?
+              <input id="programme-ressenti-zone-v13" type="text" maxlength="80" placeholder="Ex. genou droit, bas du dos…">
+            </label>
+          </fieldset>
+
+          <label class="programme-ressenti-champ">
+            Commentaire (facultatif)
+            <textarea id="programme-ressenti-commentaire-v13" rows="3" maxlength="500" placeholder="Fatigue, sommeil, une remarque pour ton coach…"></textarea>
+          </label>
+
+          <label class="programme-ressenti-partage">
+            <input id="programme-ressenti-partage-v13" type="checkbox">
+            <span>Partager ma douleur et mon commentaire avec mon coach TRIÈDRE, pour qu’il adapte mon programme.</span>
+          </label>
+          <p class="programme-ressenti-note">
+            Ton effort (1 à 10) est toujours visible par ton coach. La douleur et le commentaire peuvent être des renseignements de santé : ils restent privés tant que cette case n’est pas cochée. Tu peux retirer ton accord à tout moment.
+          </p>
+
+          <p class="programme-poids-erreur" hidden></p>
+
+          <div class="programme-ressenti-actions">
+            <button type="button" class="programme-carnet-lien" data-action="plus-tard">Plus tard</button>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    const fermer = function () {
+      modal.hidden = true;
+      document.body.classList.remove('programme-modal-ouvert');
+    };
+
+    modal.querySelector('.programme-poids-modal-fermer').addEventListener('click', fermer);
+    modal.querySelector('[data-action="plus-tard"]').addEventListener('click', fermer);
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) fermer();
+    });
+
+    modal.querySelectorAll('.programme-ressenti-echelle button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        modal.dataset.effort = b.dataset.valeur;
+        modal.querySelector('.programme-poids-erreur').hidden = true;
+        synchroniserModalRessentiV13(modal);
+      });
+    });
+
+    modal.querySelectorAll('.programme-ressenti-douleur button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        modal.dataset.douleur = b.dataset.valeur;
+        synchroniserModalRessentiV13(modal);
+        if (b.dataset.valeur === 'oui') modal.querySelector('#programme-ressenti-zone-v13').focus();
+      });
+    });
+
+    modal.querySelector('#programme-ressenti-form-v13').addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      const erreur = modal.querySelector('.programme-poids-erreur');
+      const bouton = modal.querySelector('button[type="submit"]');
+      const effort = Number(modal.dataset.effort);
+      const douleur = modal.dataset.douleur === 'oui';
+      const zone = modal.querySelector('#programme-ressenti-zone-v13').value.trim();
+      const commentaire = modal.querySelector('#programme-ressenti-commentaire-v13').value.trim();
+      const partage = modal.querySelector('#programme-ressenti-partage-v13').checked;
+
+      if (!effort) {
+        erreur.textContent = 'Choisis ton effort ressenti, de 1 à 10.';
+        erreur.hidden = false;
+        return;
+      }
+
+      bouton.disabled = true;
+      erreur.hidden = true;
+
+      const { error } = await supabase.rpc('member_save_session_feedback', {
+        target_session_id: modal.dataset.seance,
+        effort_value: effort,
+        has_pain: douleur,
+        pain_area_value: douleur ? zone : null,
+        comment_value: commentaire || null,
+        share_with_coach: partage
+      });
+
+      bouton.disabled = false;
+
+      if (error) {
+        console.error('[TRIÈDRE] Ressenti :', error);
+        erreur.textContent = 'Impossible d’enregistrer ton ressenti pour le moment.';
+        erreur.hidden = false;
+        return;
+      }
+
+      etatProgrammesV11.partageCoach = partage;
+
+      const seance = trouverSeanceV13(modal.dataset.seance);
+      if (seance) {
+        seance.ressenti = {
+          session_id: seance.id,
+          effort: effort,
+          pain: douleur,
+          pain_area: douleur ? (zone || null) : null,
+          comment: commentaire || null
+        };
+      }
+
+      fermer();
+      afficherToast('Merci ! Ton ressenti est enregistré.', 'succes');
+
+      if (etatProgrammesV11.seanceSelectionnee &&
+          etatProgrammesV11.seanceSelectionnee.id === modal.dataset.seance) {
+        rendreRessentiSeanceV13(etatProgrammesV11.seanceSelectionnee);
+      }
+    });
+
+    return modal;
+  }
+
   function construirePrescriptionExerciceV11(exercice) {
+    const base = construirePrescriptionDeBaseV11(exercice);
+    const charge = (exercice.load || '').trim();
+
+    if (!charge) {
+      return base;
+    }
+
+    return base === '—' ? charge : base + ' · ' + charge;
+  }
+
+  function construirePrescriptionDeBaseV11(exercice) {
     if (Number(exercice.duration_seconds) > 0) {
       return formaterDureeSecondesV11(exercice.duration_seconds);
     }
@@ -1087,7 +1835,37 @@ document.addEventListener('DOMContentLoaded', function () {
         seance.completedAt =
           (resultat && resultat.completed_at) || new Date().toISOString();
 
-        afficherToast('Séance terminée. Progression enregistrée.', 'succes');
+        const toutesTerminees = (etatProgrammesV11.seances || []).every(
+          function (item) {
+            return Boolean(item.completedAt);
+          }
+        );
+
+        if (toutesTerminees) {
+          // Le serveur vient de passer le programme à « Terminé » :
+          // on recharge pour afficher le bilan (et le programme suivant).
+          afficherToast('Dernière séance terminée. Programme bouclé, bravo ! 🎉', 'succes');
+          const idSeanceTerminee = seance.id;
+          await chargerDonneesProgrammesV11();
+          ouvrirModalRessentiV13(idSeanceTerminee);
+          return;
+        }
+
+        const prevues = seriesPrevuesSeanceV13(seance);
+        const faites = seriesFaitesSeanceV13(seance);
+
+        afficherToast(
+          faites > 0 && faites < prevues
+            ? 'Séance enregistrée : ' + faites + ' / ' + prevues + ' séries. Chaque série compte 💪'
+            : 'Séance terminée. Progression enregistrée.',
+          'succes'
+        );
+
+        if (!seance.ressenti) {
+          window.setTimeout(function () {
+            ouvrirModalRessentiV13(seance.id);
+          }, 400);
+        }
       }
 
       afficherSeanceProgrammeV10(etatProgrammesV11);
@@ -1132,6 +1910,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     conteneur.classList.add('has-programmes');
+
+    const bilan = creerCarteBilanProgrammeV13();
+
+    if (bilan) {
+      conteneur.appendChild(bilan);
+    }
 
     etatProgrammesV11.programmes.forEach(function (affectation) {
       const carte = document.createElement('article');
@@ -1187,6 +1971,89 @@ document.addEventListener('DOMContentLoaded', function () {
       carte.appendChild(details);
       conteneur.appendChild(carte);
     });
+  }
+
+  // Carte affichée en tête de « Mes programmes » quand aucun programme
+  // n'est en cours : bilan du programme terminé et/ou annonce du suivant.
+  function creerCarteBilanProgrammeV13() {
+    const termine = etatProgrammesV11.programmeTermine
+      ? etatProgrammesV11.programmeActif
+      : null;
+    const enCours = !etatProgrammesV11.programmeTermine &&
+      etatProgrammesV11.programmeActif;
+    const prochain = etatProgrammesV11.prochainProgramme;
+
+    if (enCours || (!termine && !prochain)) {
+      return null;
+    }
+
+    const carte = document.createElement('article');
+    carte.className = 'programme-attribue-carte is-active programme-bilan-carte';
+
+    const entete = document.createElement('div');
+    entete.className = 'programme-attribue-entete';
+
+    const titre = document.createElement('strong');
+    const pastille = document.createElement('span');
+    pastille.className = 'programme-attribue-statut';
+
+    const lignes = [];
+
+    if (termine) {
+      const seances = etatProgrammesV11.seances || [];
+      const faites = seances.filter(function (seance) {
+        return Boolean(seance.completedAt);
+      }).length;
+
+      titre.textContent = 'Programme terminé 🎉';
+      pastille.textContent = 'Bravo';
+
+      lignes.push(
+        '« ' + ((termine.programme && termine.programme.name) || 'Programme TRIÈDRE') +
+        ' » : ' + faites + ' séance' + (faites > 1 ? 's' : '') +
+        ' réalisée' + (faites > 1 ? 's' : '') +
+        (seances.length ? ' sur ' + seances.length : '') + '.'
+      );
+    } else {
+      titre.textContent = 'Ton programme arrive';
+      pastille.textContent = 'À venir';
+    }
+
+    if (prochain) {
+      lignes.push(
+        'Ton prochain programme « ' +
+        ((prochain.programme && prochain.programme.name) || 'Programme TRIÈDRE') +
+        ' » démarre le ' + formaterDateLongueV13(prochain.start_date) + '.'
+      );
+    } else {
+      lignes.push('Ton coach TRIÈDRE te prépare la suite.');
+    }
+
+    entete.appendChild(titre);
+    entete.appendChild(pastille);
+    carte.appendChild(entete);
+
+    lignes.forEach(function (texte) {
+      const p = document.createElement('p');
+      p.textContent = texte;
+      carte.appendChild(p);
+    });
+
+    return carte;
+  }
+
+  function formaterDateLongueV13(cle) {
+    if (!cle) return '—';
+
+    const date = new Date(cle + 'T12:00:00');
+
+    return Number.isNaN(date.getTime())
+      ? cle
+      : date.toLocaleDateString('fr-CA', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long'
+        });
   }
 
   function libelleStatutProgrammeV11(statut) {
@@ -1267,7 +2134,8 @@ document.addEventListener('DOMContentLoaded', function () {
     /* 2. SÉRIES TOTALES — SEMAINE ACTUELLE */
     const seriesParJour = Array(7).fill(0);
 
-    seancesTermineesSemaine.forEach(function (seance) {
+    // Séries réellement faites cette semaine (séance terminée ou non).
+    seancesSemaine.forEach(function (seance) {
       const date = normaliserDate(seance.date + 'T12:00:00');
       const indexJour = (date.getDay() + 6) % 7;
       seriesParJour[indexJour] += compterSeriesSeanceV12(seance);
@@ -1291,8 +2159,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const seancesPrecedentesTerminees = seances.filter(function (seance) {
       return (
         seance.date >= debutPrecedentCle &&
-        seance.date <= finPrecedentCle &&
-        Boolean(seance.completedAt)
+        seance.date <= finPrecedentCle
       );
     });
 
@@ -1323,8 +2190,11 @@ document.addEventListener('DOMContentLoaded', function () {
     /* 3. CONSTANCE — SÉANCES ÉCHUES */
     const aujourdHuiCle = cleDate(aujourdHui);
 
+    // Une séance compte dans la constance quand sa date est passée,
+    // ou dès qu'elle est faite. Celle du jour n'est pas « manquée »
+    // tant que la journée n'est pas finie.
     const seancesEchues = seances.filter(function (seance) {
-      return seance.date <= aujourdHuiCle;
+      return seance.date < aujourdHuiCle || Boolean(seance.completedAt);
     });
 
     const seancesEchuesTerminees = seancesEchues.filter(function (seance) {
@@ -1376,22 +2246,56 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  // Séries réellement faites (carnet). Pour une séance terminée sans
+  // aucune série cochée (avant le carnet, ou membre qui ne coche pas),
+  // on garde l'ancien calcul : les séries prévues.
   function compterSeriesSeanceV12(seance) {
+    const faites = seriesFaitesSeanceV13(seance);
+
+    if (faites > 0) {
+      return faites;
+    }
+
+    return seance.completedAt ? seriesPrevuesSeanceV13(seance) : 0;
+  }
+
+  function seriesPrevuesSeanceV13(seance) {
     return (seance.exercices || []).reduce(function (total, exercice) {
       const series = Number(exercice.sets);
-      return total + (Number.isFinite(series) && series > 0 ? series : 0);
+      return total + (Number.isFinite(series) && series > 0 ? series : 1);
     }, 0);
   }
 
+  function seriesFaitesSeanceV13(seance) {
+    return (seance.exercices || []).reduce(function (total, exercice) {
+      return total + (exercice.series || []).length;
+    }, 0);
+  }
+
+  // Progression d'une séance en % (séries cochées / prévues).
+  function progressionSeanceV13(seance) {
+    const prevues = seriesPrevuesSeanceV13(seance);
+    const faites = seriesFaitesSeanceV13(seance);
+
+    if (!prevues || (faites === 0 && seance.completedAt)) {
+      return seance.completedAt ? 100 : 0;
+    }
+
+    return Math.min(100, Math.round((faites / prevues) * 100));
+  }
+
+  // Barres de la semaine : le contour montre la séance prévue, le
+  // remplissage montre la part réellement faite (séries cochées).
   function mettreAJourBarresEntrainementsV12(seancesSemaine) {
     const jours = document.querySelectorAll(
       '#programme-entrainements-graphique .programme-entrainement-jour'
     );
 
     const debutSemaine = obtenirDebutSemaine(new Date());
+    const aujourdHuiCle = cleDate(new Date());
 
     jours.forEach(function (element, index) {
-      element.classList.remove('is-planifie', 'is-started', 'is-completed');
+      element.classList.remove('is-planifie', 'is-started', 'is-completed', 'is-manquee');
 
       const dateJour = ajouterJours(debutSemaine, index);
       const cleJour = cleDate(dateJour);
@@ -1407,21 +2311,28 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!seance) {
         barre.style.height = '14%';
         barre.style.opacity = '.28';
+        barre.style.removeProperty('--progression');
+        element.removeAttribute('title');
         return;
       }
 
+      const progression = progressionSeanceV13(seance);
+
       element.classList.add('is-planifie');
       barre.style.opacity = '1';
+      barre.style.height = '100%';
+      barre.style.setProperty('--progression', progression + '%');
 
-      if (seance.completedAt) {
+      if (progression >= 100) {
         element.classList.add('is-completed');
-        barre.style.height = '100%';
-      } else if (seance.startedAt) {
+      } else if (progression > 0 || seance.startedAt) {
         element.classList.add('is-started');
-        barre.style.height = '72%';
-      } else {
-        barre.style.height = '48%';
+      } else if (cleJour < aujourdHuiCle) {
+        element.classList.add('is-manquee');
       }
+
+      element.title =
+        (seance.titre || 'Séance') + ' : ' + progression + ' % réalisé';
     });
   }
 
@@ -1531,6 +2442,7 @@ document.addEventListener('DOMContentLoaded', function () {
     modal.dataset.dateOriginale = estEdition ? mesureAEditer.date : '';
 
     date.value = estEdition ? mesureAEditer.date : cleDate(new Date());
+    date.max = cleDate(new Date());
     poids.value = estEdition ? String(mesureAEditer.poids) : '';
     erreur.textContent = '';
     erreur.hidden = true;
@@ -1612,6 +2524,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!date.value || !Number.isFinite(valeur) || valeur < 20 || valeur > 350) {
           erreur.textContent = 'Entre une date et un poids valides.';
+          erreur.hidden = false;
+          return;
+        }
+
+        if (date.value > cleDate(new Date())) {
+          erreur.textContent = 'La date de pesée ne peut pas être dans le futur.';
           erreur.hidden = false;
           return;
         }
@@ -4081,7 +4999,8 @@ document.addEventListener('DOMContentLoaded', function () {
         await supabase.auth.signOut({ scope: 'local' }).catch(function () {});
         fermerModal();
         afficherDeconnecte(true);
-        afficherMessage('Ton compte TRIÈDRE a été supprimé.', 'succes');
+        masquerMessage();
+        afficherToast('Ton compte TRIÈDRE a été supprimé.', 'succes');
       } catch (error) {
         console.error('[TRIÈDRE] Suppression du compte :', error);
         erreurSuppressionCompte.textContent = 'Impossible de supprimer ton compte pour le moment.';
@@ -4094,14 +5013,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function activerDeconnexion() {
     btnDeconnexion.addEventListener('click', async function () {
+      // Le panier est enregistré dans le compte, puis retiré de l'appareil.
+      if (window.triedrePanierCompte) await window.triedrePanierCompte.avantDeconnexion();
+
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('[TRIÈDRE] Déconnexion :', error);
-        afficherMessage('Impossible de te déconnecter pour le moment.', 'erreur');
+        afficherToast('Impossible de te déconnecter pour le moment.', 'erreur');
         return;
       }
       afficherDeconnecte(true);
-      afficherMessage('Tu es maintenant déconnecté.', 'succes');
+      masquerMessage();
+      afficherToast('Tu es maintenant déconnecté.', 'succes');
     });
   }
 
@@ -4249,12 +5172,12 @@ document.addEventListener('DOMContentLoaded', function () {
     retirerAccesEspaceStaff();
     if (navigationMembre) navigationMembre.hidden = true;
     fermerMenusNavigationMembre();
-    zoneConnectee.hidden = true;
-    zoneInformations.hidden = true;
-    zonePreferences.hidden = true;
-    zoneAdresses.hidden = true;
-    zoneInformations.hidden = true;
-    zoneReset.hidden = true;
+
+    // Masque TOUTES les zones du compte (programmes, favoris, commandes…),
+    // pas seulement certaines : rien du membre précédent ne doit rester visible.
+    masquerToutesZonesMembre();
+    viderDonneesProgrammesV13();
+
     authZone.hidden = false;
     if (membrePage) membrePage.classList.remove('membre-page-connectee');
 
@@ -4270,6 +5193,32 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  // Efface de la mémoire de la page les programmes, séances et pesées
+  // du membre qui se déconnecte (ordinateur partagé, changement de compte).
+  function viderDonneesProgrammesV13() {
+    etatProgrammesV11.userId = null;
+    etatProgrammesV11.programmes = [];
+    etatProgrammesV11.programmeActif = null;
+    etatProgrammesV11.programmeTermine = false;
+    etatProgrammesV11.prochainProgramme = null;
+    etatProgrammesV11.seances = [];
+    etatProgrammesV11.mesures = [];
+    etatProgrammesV11.seanceSelectionnee = null;
+    etatProgrammesV11.debutSemaine = obtenirDebutSemaine(new Date());
+    etatProgrammesV11.dateSelectionnee = normaliserDate(new Date());
+
+    const modalPoids = document.getElementById('programme-poids-modal-v11');
+    if (modalPoids) modalPoids.hidden = true;
+
+    const modalRessenti = document.getElementById('programme-ressenti-modal-v13');
+    if (modalRessenti) modalRessenti.hidden = true;
+    etatProgrammesV11.partageCoach = false;
+    document.body.classList.remove('programme-modal-ouvert');
+
+    const bulle = document.querySelector('.programme-poids-bulle-v13');
+    if (bulle) bulle.remove();
+  }
+
   function afficherReset() {
     authZone.hidden = true;
     if (navigationMembre) navigationMembre.hidden = true;
@@ -4280,7 +5229,7 @@ document.addEventListener('DOMContentLoaded', function () {
     zoneReset.hidden = false;
     if (membrePage) membrePage.classList.remove('membre-page-connectee');
     resetForm.reset();
-    afficherMessage('Tu peux maintenant choisir un nouveau mot de passe.', 'succes');
+    masquerMessage(); // Le titre « Choisis un nouveau mot de passe. » suffit : pas de bandeau.
     document.getElementById('nouveau-mdp').focus();
   }
 
