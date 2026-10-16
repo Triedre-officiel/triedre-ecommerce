@@ -93,7 +93,7 @@
 
   /* Produits de secours si produits.json est inaccessible (ex. ouverture locale sans serveur) */
   const CATALOGUE_SECOURS = Object.keys(TYPES).map(t => ({
-    id: t, nom: TYPES[t].nom, vuesCommunes: ['produit-' + t + '-face.png'], variantes: [{ couleur: 'Noir', hex: '#0D0D0D' }]
+    id: t, nom: TYPES[t].nom, vuesCommunes: ['produit-' + t + '-face.webp'], variantes: [{ couleur: 'Noir', hex: '#0D0D0D' }]
   }));
 
   /* ---------- 3. Utilitaires ---------- */
@@ -128,6 +128,10 @@
   }
   const versBlob = cv => new Promise((ok, err) =>
     cv.toBlob(b => b ? ok(b) : err(new Error('Conversion PNG impossible')), 'image/png'));
+  /* Visuels exportés en WebP (≈ 30× plus légers que le PNG) ; repli PNG si le navigateur ne sait pas encoder le WebP */
+  const versBlobExport = cv => new Promise((ok, err) =>
+    cv.toBlob(b => b ? ok(b) : err(new Error('Conversion de l’image impossible')), 'image/webp', 0.88));
+  const extension = blob => blob.type === 'image/webp' ? '.webp' : '.png';
   /* Messages et confirmations : fenêtre popup TRIÈDRE (modal.js), repli natif si absente */
   function warn(message, titre = 'STUDIO MOCKUP') {
     if (window.triedreModal && typeof window.triedreModal.alert === 'function') {
@@ -1165,14 +1169,14 @@
     } catch (e) { warn('Échec de l’enregistrement : ' + e.message, 'ERREUR'); }
   };
 
-  const nomFichier = v => 'produit-' + projet.slug + '-' + slug(couleur) + '-' + v + '.png';
+  const nomFichier = (v, ext = '.webp') => 'produit-' + projet.slug + '-' + slug(couleur) + '-' + v + ext;
   async function exporterVue(v) {
     const cv = document.createElement('canvas'), r = cadrage(v, RATIO_EXPORT);
     dimensionner(cv, r, 2400, false);  // jamais plus grand que la photo d'origine
     rendreVue(cv, v, { cadre: r });
-    const blob = await versBlob(cv);
+    const blob = await versBlobExport(cv);
     const a = document.createElement('a'), url = URL.createObjectURL(blob);
-    a.href = url; a.download = nomFichier(v);
+    a.href = url; a.download = nomFichier(v, extension(blob));
     document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 2000);
   }

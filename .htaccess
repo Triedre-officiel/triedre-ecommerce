@@ -46,3 +46,6 @@ RewriteRule ^([^/]+)\.html$ /$1 [R=301,L]
 <FilesMatch "^config(?:\.example|\[[0-9]+\])?\.php$">
     Require all denied
 </FilesMatch>
+
+# Images WebP : type MIME explicite (sécurité si le serveur ne le connaît pas)
+AddType image/webp .webp
