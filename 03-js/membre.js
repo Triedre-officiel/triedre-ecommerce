@@ -5061,11 +5061,27 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
 
+  // Le menu public d'origine (Accueil, La Marque, Univers, Boutique, Espace Membre)
+  // est mémorisé sur la liste elle-même avant d'être remplacé par le menu admin,
+  // pour le remettre quand l'admin se déconnecte ou qu'un autre compte se connecte
+  // sans recharger la page.
+  function restaurerNavigationPublique() {
+    const liste = document.querySelector('.main-nav ul');
+    if (liste && liste.dataset.navOriginale !== undefined) {
+      liste.innerHTML = liste.dataset.navOriginale;
+      delete liste.dataset.navOriginale;
+    }
+  }
+
   function appliquerNavigationAdmin() {
     const liste = document.querySelector('.main-nav ul');
 
     if (!liste) {
       return;
+    }
+
+    if (liste.dataset.navOriginale === undefined) {
+      liste.dataset.navOriginale = liste.innerHTML;
     }
 
     const chemin = window.location.pathname.replace(/\/+$/, '') || '/';
@@ -5118,8 +5134,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const acces = Array.isArray(contexte) ? contexte[0] : contexte;
       const role = acces && acces.role ? acces.role : 'member';
 
+      // Menu admin uniquement pour un admin ; tout autre compte retrouve le menu public.
       if (role === 'admin') {
         appliquerNavigationAdmin();
+      } else {
+        restaurerNavigationPublique();
       }
 
       if (role !== 'coach' && role !== 'admin') {
@@ -5149,6 +5168,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (lien) {
       lien.remove();
     }
+    restaurerNavigationPublique();
   }
 
   function afficherConnecte(user) {
