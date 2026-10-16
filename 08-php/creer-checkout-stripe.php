@@ -14,7 +14,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     repondreErreur('Méthode non autorisée.', 405);
 }
 
+// Toute erreur imprévue (réseau Supabase/Stripe) renvoie un JSON propre
+// au lieu d'une page d'erreur PHP.
+set_exception_handler(function (Throwable $e): void {
+    error_log('[TRIÈDRE] Checkout : ' . $e->getMessage());
+    repondreErreur('Service de paiement temporairement indisponible.', 502);
+});
+
 $config = require __DIR__ . '/config.php';
+
+// URL publique du site (à définir dans config.php : 'site_url' => 'https://www.triedreofficiel.com')
+$siteUrl = rtrim((string)($config['site_url'] ?? 'https://www.triedreofficiel.com'), '/');
 
 $supabaseUrl = rtrim((string)($config['supabase_url'] ?? ''), '/');
 $supabaseSecretKey = (string)($config['supabase_secret_key'] ?? '');
@@ -177,11 +187,11 @@ $parametresStripe = [
     ],
 
     'success_url' =>
-        'http://triedre-ecommerce.test/01-html/commande.html' .
+        $siteUrl . '/commande' .
         '?stripe=success&session_id={CHECKOUT_SESSION_ID}',
 
     'cancel_url' =>
-        'http://triedre-ecommerce.test/01-html/commande.html' .
+        $siteUrl . '/commande' .
         '?stripe=cancelled',
 
     'locale' => 'fr-CA',

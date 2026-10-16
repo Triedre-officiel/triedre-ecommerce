@@ -2,6 +2,16 @@
 // TRIÈDRE — Synchronisation cartes boutique — Catalogue V1 + stock Supabase
 // ==========================================================================
 
+const CHEMIN_IMAGES_PRODUITS = '../05-images/produits/';
+
+function normaliserCouleur(texte) {
+  return String(texte || '')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .trim()
+    .toLowerCase();
+}
+
 function obtenirClientStockSupabase() {
   if (window.triedreStockSupabase) {
     return Promise.resolve(window.triedreStockSupabase);
@@ -59,6 +69,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     document.querySelectorAll('.produit-card a[href*="produit?id="]');
 
   if (cartes.length === 0) return;
+
+  // Styles des pastilles : ajoutés automatiquement sur toute page qui affiche des cartes (accueil, boutique…).
+  if (!document.querySelector('link[href*="produits-disponibilite.css"]')) {
+    const feuille = document.createElement('link');
+    feuille.rel = 'stylesheet';
+    feuille.href = '../02-css/produits-disponibilite.css';
+    document.head.appendChild(feuille);
+  }
 
   try {
     const reponse = await fetch('../04-data/produits.json');
@@ -129,6 +147,63 @@ document.addEventListener('DOMContentLoaded', async function () {
         return total + v.stock;
       }, 0);
 
+      // Couleurs du produit, avec leur disponibilité (au moins une taille en stock).
+      const couleurs = [];
+      variantes.forEach(function (v) {
+        let couleur = couleurs.find(function (c) { return c.nom === v.couleur; });
+        if (!couleur) {
+          couleur = { nom: v.couleur, hex: v.hex, photoFace: v.photoFace, stock: 0 };
+          couleurs.push(couleur);
+        }
+        couleur.stock += v.stock > 0 ? v.stock : 0;
+      });
+
+      const image = lien.querySelector('img');
+      const premiereDisponible = couleurs.find(function (c) { return c.stock > 0; });
+
+      // L'image de la carte montre une couleur réellement disponible.
+      if (image && premiereDisponible && premiereDisponible.photoFace) {
+        image.src = CHEMIN_IMAGES_PRODUITS + premiereDisponible.photoFace;
+      }
+      const imageParDefaut = image ? image.src : '';
+
+      lien.querySelectorAll('.carte-couleurs').forEach(function (el) { el.remove(); });
+
+      if (couleurs.length > 1) {
+        const pastilles = document.createElement('span');
+        pastilles.className = 'carte-couleurs';
+
+        couleurs.forEach(function (couleur) {
+          const pastille = document.createElement('span');
+          const epuisee = couleur.stock === 0;
+
+          pastille.className = 'carte-couleur' + (epuisee ? ' epuise' : '');
+          pastille.style.backgroundColor = couleur.hex;
+          pastille.title = couleur.nom + (epuisee ? ' — épuisé' : '');
+          pastille.setAttribute('role', 'link');
+          pastille.setAttribute('aria-label', pastille.title);
+
+          // Survol : aperçu de la couleur. Clic : fiche ouverte sur cette couleur.
+          pastille.addEventListener('mouseenter', function () {
+            if (image && couleur.photoFace) image.src = CHEMIN_IMAGES_PRODUITS + couleur.photoFace;
+          });
+          pastille.addEventListener('mouseleave', function () {
+            if (image) image.src = imageParDefaut;
+          });
+          pastille.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href =
+              'produit?id=' + encodeURIComponent(produit.id) +
+              '&couleur=' + encodeURIComponent(normaliserCouleur(couleur.nom));
+          });
+
+          pastilles.appendChild(pastille);
+        });
+
+        lien.appendChild(pastilles);
+      }
+
       const messageStock = document.createElement('span');
       messageStock.className = 'stock-limite';
 
@@ -140,8 +215,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         badgeIndisponible.textContent = 'Indisponible';
         lien.appendChild(badgeIndisponible);
       } else if (stockTotal <= 5) {
-        messageStock.textContent =
-          'Plus que ' + stockTotal + ' en stock';
+        // Message clair : le détail par couleur et par taille est sur la fiche produit.
+        messageStock.textContent = 'Stock limité';
         lien.appendChild(messageStock);
       }
     });

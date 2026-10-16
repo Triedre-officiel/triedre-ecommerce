@@ -1,0 +1,477 @@
+/* ==========================================================================
+   TRIÈDRE — Choix du mode de livraison + livraison gratuite
+   (page Commande et page Panier)
+   ========================================================================== */
+
+.livraison-options {
+  margin: var(--space-md, 16px) 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.livraison-options legend {
+  margin-bottom: 10px;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.livraison-options legend small {
+  font-weight: 400;
+  color: var(--color-text-secondary, #8a8a8a);
+}
+
+/* Carte d'option cliquable */
+.livraison-option {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.livraison-option:hover {
+  border-color: rgba(201, 162, 39, 0.6);
+}
+
+.livraison-option.is-active {
+  border-color: var(--color-accent, #C9A227);
+  background: rgba(201, 162, 39, 0.07);
+}
+
+.livraison-option input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--color-accent, #C9A227);
+}
+
+.livraison-option:has(input:focus-visible) {
+  outline: 2px solid var(--color-accent, #C9A227);
+  outline-offset: 2px;
+}
+
+.livraison-option-infos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.livraison-option-nom {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.livraison-option-delai {
+  font-size: 0.82rem;
+  color: var(--color-text-secondary, #8a8a8a);
+}
+
+.livraison-option-prix {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.livraison-option-prix s {
+  margin-right: 6px;
+  color: var(--color-text-secondary, #8a8a8a);
+  font-size: 0.85em;
+}
+
+/* ==========================================================================
+   Livraison gratuite — carte de progression
+   ========================================================================== */
+
+.tr-livgratuite {
+  --or: var(--color-accent, #C9A227);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: start;
+  margin: 2px 0 8px;
+  padding: 16px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(201, 162, 39, 0.10), transparent 55%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.tr-livgratuite-icone {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 162, 39, 0.45);
+  background: rgba(201, 162, 39, 0.10);
+  color: var(--or);
+}
+
+.tr-livgratuite-icone svg,
+.tr-livgratuite-lien svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tr-livgratuite-corps {
+  min-width: 0;
+}
+
+.tr-livgratuite-message {
+  margin: 0 0 12px;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  color: var(--color-text-secondary, #c9c9c9);
+}
+
+.tr-livgratuite-message strong {
+  color: var(--or);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+/* Piste et remplissage animé */
+.tr-livgratuite-piste {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.tr-livgratuite-remplissage {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--progression, 0%);
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8a6d12 0%, var(--or) 55%, #f0cf5a 100%);
+  box-shadow: 0 0 12px rgba(201, 162, 39, 0.55);
+  animation: tr-livgratuite-remplir 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  overflow: hidden;
+}
+
+/* Reflet qui balaie la barre */
+.tr-livgratuite-remplissage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.45) 50%, transparent 80%);
+  transform: translateX(-100%);
+  animation: tr-livgratuite-reflet 2.8s ease-in-out 1s infinite;
+}
+
+@keyframes tr-livgratuite-remplir {
+  from { width: 0; }
+  to { width: var(--progression, 0%); }
+}
+
+@keyframes tr-livgratuite-reflet {
+  0% { transform: translateX(-100%); }
+  60%, 100% { transform: translateX(100%); }
+}
+
+.tr-livgratuite-pied {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary, #8a8a8a);
+}
+
+.tr-livgratuite-pied span:last-child {
+  color: var(--or);
+}
+
+/* Lien « Continuer mes achats » */
+.tr-livgratuite-lien {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 8px 14px;
+  border: 1px solid rgba(201, 162, 39, 0.5);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: var(--font-weight-medium, 500);
+  letter-spacing: 0.02em;
+  color: var(--or);
+  text-decoration: none;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.tr-livgratuite-lien svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.25s ease;
+}
+
+.tr-livgratuite-lien:hover,
+.tr-livgratuite-lien:focus-visible {
+  background: var(--or);
+  border-color: var(--or);
+  color: #111111;
+}
+
+.tr-livgratuite-lien:hover svg,
+.tr-livgratuite-lien:focus-visible svg {
+  transform: translateX(3px);
+}
+
+.tr-livgratuite-lien:focus-visible {
+  outline: 2px solid var(--or);
+  outline-offset: 3px;
+}
+
+/* Seuil atteint */
+.tr-livgratuite.is-atteint {
+  align-items: center;
+  border-color: rgba(201, 162, 39, 0.55);
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(201, 162, 39, 0.18), transparent 60%),
+    rgba(201, 162, 39, 0.05);
+}
+
+.tr-livgratuite.is-atteint .tr-livgratuite-icone {
+  background: var(--or);
+  border-color: var(--or);
+  color: #111111;
+  box-shadow: 0 0 16px rgba(201, 162, 39, 0.45);
+}
+
+.tr-livgratuite.is-atteint .tr-livgratuite-icone svg {
+  stroke-width: 2.4;
+}
+
+.tr-livgratuite.is-atteint .tr-livgratuite-message {
+  margin-bottom: 10px;
+  color: var(--color-text-primary, #ffffff);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+/* ==========================================================================
+   Barre d'étapes de la commande
+   ========================================================================== */
+
+.tr-etapes {
+  --or: var(--color-accent, #C9A227);
+  max-width: 560px;
+  margin: 0 auto var(--space-lg, 32px);
+}
+
+.tr-etapes ol {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tr-etape {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+/* Trait de liaison vers l'étape suivante */
+.tr-etape:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 18px;
+  left: calc(50% + 24px);
+  right: calc(-50% + 24px);
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.tr-etape.is-complete:not(:last-child)::after {
+  background: linear-gradient(90deg, var(--or), rgba(201, 162, 39, 0.55));
+}
+
+.tr-etape-cible {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.tr-etape-cible[aria-disabled="true"] {
+  cursor: default;
+}
+
+.tr-etape-pastille {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: var(--color-bg-primary, #111111);
+  font-size: 0.85rem;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text-secondary, #8a8a8a);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.tr-etape-pastille svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tr-etape-texte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.tr-etape-nom {
+  font-size: 0.85rem;
+  font-weight: var(--font-weight-bold, 700);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary, #8a8a8a);
+  transition: color 0.25s ease;
+}
+
+.tr-etape-indice {
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary, #6f6f6f);
+  opacity: 0.8;
+  transition: color 0.25s ease, opacity 0.25s ease;
+}
+
+/* Étape franchie */
+.tr-etape.is-complete .tr-etape-pastille {
+  border-color: var(--or);
+  background: var(--or);
+  color: #111111;
+}
+
+.tr-etape.is-complete .tr-etape-nom {
+  color: var(--color-text-primary, #ffffff);
+}
+
+.tr-etape.is-complete .tr-etape-cible:hover .tr-etape-pastille,
+.tr-etape.is-complete .tr-etape-cible:focus-visible .tr-etape-pastille {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 4px rgba(201, 162, 39, 0.18), 0 6px 16px rgba(201, 162, 39, 0.35);
+}
+
+.tr-etape.is-complete .tr-etape-cible:hover .tr-etape-nom,
+.tr-etape.is-complete .tr-etape-cible:hover .tr-etape-indice,
+.tr-etape.is-complete .tr-etape-cible:focus-visible .tr-etape-nom {
+  color: var(--or);
+  opacity: 1;
+}
+
+/* Étape en cours */
+.tr-etape.is-active .tr-etape-pastille {
+  border-color: var(--or);
+  color: var(--or);
+  box-shadow: 0 0 0 4px rgba(201, 162, 39, 0.15), 0 0 18px rgba(201, 162, 39, 0.35);
+}
+
+.tr-etape.is-active .tr-etape-nom {
+  color: var(--or);
+}
+
+.tr-etape.is-active .tr-etape-indice {
+  color: var(--or);
+  opacity: 0.75;
+}
+
+/* Étape à venir */
+.tr-etape.is-a-venir .tr-etape-cible {
+  opacity: 0.55;
+}
+
+.tr-etape-cible:focus-visible {
+  outline: none;
+}
+
+.tr-etape-cible:focus-visible .tr-etape-pastille {
+  outline: 2px solid var(--or);
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .tr-livgratuite {
+    gap: 12px;
+    padding: 14px;
+  }
+  .tr-livgratuite-icone {
+    width: 32px;
+    height: 32px;
+  }
+  .tr-etape-nom {
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+  }
+  .tr-etape-indice {
+    display: none;
+  }
+  .tr-etape-pastille {
+    width: 30px;
+    height: 30px;
+  }
+  .tr-etape:not(:last-child)::after {
+    top: 15px;
+    left: calc(50% + 20px);
+    right: calc(-50% + 20px);
+  }
+}
+
+@media (max-width: 480px) {
+  .livraison-option {
+    grid-template-columns: auto 1fr;
+  }
+  .livraison-option-prix {
+    grid-column: 2;
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .livraison-option,
+  .tr-livgratuite-lien,
+  .tr-livgratuite-lien svg,
+  .tr-etape-pastille,
+  .tr-etape-nom,
+  .tr-etape-indice {
+    transition: none;
+  }
+  .tr-livgratuite-remplissage,
+  .tr-livgratuite-remplissage::after {
+    animation: none;
+  }
+}

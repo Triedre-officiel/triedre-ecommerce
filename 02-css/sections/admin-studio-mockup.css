@@ -32,3 +32,113 @@
 
 /* V5.5 — discreet, non-destructive background removal */
 .studio-background-tools{border:1px solid #655336;background:#242424;border-radius:9px;padding:12px;margin:12px 0}.studio-background-tools[hidden]{display:none}.studio-background-title{font-weight:750;color:#e9c67b;display:flex;justify-content:space-between;gap:8px;font-size:.9rem}.studio-background-title span{font-size:.76rem;color:#bdbdbd}.studio-background-compare{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.studio-background-compare>div{min-width:0;text-align:center}.studio-background-compare canvas{display:block;width:100%;height:100px;object-fit:contain;border-radius:5px;border:1px solid #555}.studio-background-compare small{display:block;margin-top:5px;color:#ddd}.studio-background-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.studio-background-actions button{font-size:.77rem;padding:9px 6px}.studio-background-tools label{margin:8px 0!important}.studio-background-tools .studio-hint{font-size:.74rem}.studio-placement-guide{display:none!important}
+
+/* Studio V6 — galerie des vues, emplacements multiples, projets par produit */
+.studio-miniatures{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:12px}
+.studio-miniatures button{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;padding:5px;background:#f5f5f4;border:2px solid transparent;border-radius:8px;cursor:pointer}
+.studio-miniatures button.active{border-color:#c9a227}
+.studio-miniatures button.vide{opacity:.55}
+.studio-miniatures canvas{display:block;width:100%;height:auto;max-height:110px;object-fit:contain}
+.studio-miniatures small{color:#222;font-size:.68rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.studio-guides-toggle{margin:12px 0 0!important;font-weight:500!important;font-size:.84rem!important}
+.studio-panel button:disabled,.studio-panel input:disabled{opacity:.45;cursor:not-allowed}
+.studio-panel #studio-export-all{width:100%;margin-top:0;border:1px solid #9b8356;background:transparent;color:#e6c783;font-weight:700}
+.studio-panel #studio-delete-project{width:100%;margin-top:16px;background:transparent;border:1px solid #7a3b3b;color:#e59a9a}
+.studio-panel code{font-size:.78rem;color:#e6c783;overflow-wrap:anywhere}
+#studio-calibration-champs[hidden]{display:none}
+@media(max-width:620px){.studio-miniatures{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* Studio V6.1 — la photo vierge s'affiche toujours en entier (ratio conservé, jamais rognée) */
+.studio-canvas{position:relative;display:block;padding:0;overflow:hidden}
+.studio-canvas canvas{position:absolute;inset:0;margin:auto;width:auto;height:auto;max-width:100%;max-height:100%}
+@media(min-width:1051px){
+  .studio-preview{height:calc(100vh - 24px);max-height:none}
+  .studio-canvas{flex:1 1 auto;min-height:0;max-height:none}
+  .studio-canvas canvas{max-height:100%}
+  .studio-miniatures canvas{max-height:78px}
+}
+@media(max-width:1050px){.studio-canvas,.studio-canvas canvas{max-height:none}.studio-canvas{height:44vh;min-height:220px}.studio-canvas canvas{max-height:100%}}
+@media(max-width:620px){.studio-canvas{height:38vh}}
+
+/* Studio V6.2 — modes Création / Aperçu (inspiré de Printful) */
+.studio-modes{display:flex;align-items:center;gap:8px;margin:0 0 18px}
+.studio-modes button{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 16px;border:1px solid #45474e;border-radius:10px;background:#1c1e22;color:#d6d7da;font:inherit;font-weight:700;cursor:pointer}
+.studio-modes button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.studio-modes button:hover{border-color:#8a7334;color:#fff}
+.studio-modes button.active{background:rgba(201,162,39,.14);border-color:#c9a227;color:#e6c35a}
+.studio-modes button:focus-visible{outline:2px solid #c9a227;outline-offset:2px}
+.studio-status{margin-left:auto;color:#d7a92e;font-size:.8rem;text-align:right}
+.studio-layout[hidden],.studio-apercu[hidden],.studio-apercu-principale[hidden]{display:none!important}
+.studio-subtitle{margin:14px 0 0;font-size:.84rem;font-weight:600;color:#d6d7da}
+.studio-align{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))}
+.studio-align button,.studio-nudges button{display:inline-flex;align-items:center;justify-content:center}
+.studio-align svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.studio-align button{min-width:0!important;padding:9px 0!important}
+
+.studio-apercu{max-width:980px;margin:0 auto}
+.studio-apercu-principale{display:flex;align-items:center;justify-content:center;height:min(68vh,760px);padding:18px;background:#fff;border-radius:16px}
+.studio-apercu-principale canvas{display:block;width:auto;height:auto;max-width:100%;max-height:100%}
+.studio-apercu-grille{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+.studio-apercu-grille button{display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;padding:8px;background:#f7f7f7;border:2px solid #e2e2e2;border-radius:10px;cursor:pointer}
+.studio-apercu-grille button.active{border-color:#111;box-shadow:0 0 0 1px #c9a227}
+.studio-apercu-grille button:focus-visible{outline:2px solid #c9a227;outline-offset:2px}
+.studio-apercu-grille canvas{display:block;max-width:100%;max-height:100%;width:auto;height:auto}
+.studio-apercu-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.studio-apercu-actions button{min-height:48px;padding:0 18px;border-radius:7px;font:inherit;font-weight:700;cursor:pointer;border:1px solid #9b8356;background:transparent;color:#e6c783}
+.studio-apercu-actions button.studio-primary{background:#c5a45d;border-color:#c5a45d;color:#111}
+.studio-apercu-actions button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:620px){
+  .studio-modes button span{display:none}
+  .studio-modes button{padding:0 14px}
+  .studio-apercu-principale{height:52vh;padding:10px}
+  .studio-apercu-grille{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .studio-apercu-actions{flex-direction:column}
+}
+
+/* Studio V7 — plan de travail plein écran, zoom, aperçu disposition Printful */
+.studio-top{margin-bottom:14px}.studio-top h1{font-size:clamp(1.6rem,3vw,2.4rem)}.studio-top p{margin:4px 0 0;font-size:.9rem}
+@media(min-width:1051px){
+  .studio-preview{height:calc(100vh - 86px)}
+  .studio-tools{max-height:calc(100vh - 86px)}
+}
+.studio-preview-head{flex-wrap:wrap}
+.studio-zoom{display:inline-flex;border:1px solid #45474e;border-radius:8px;overflow:hidden}
+.studio-zoom button{background:transparent;border:0;color:#c9cacd;padding:7px 12px;font:inherit;font-size:.8rem;font-weight:600;cursor:pointer}
+.studio-zoom button+button{border-left:1px solid #45474e}
+.studio-zoom button.active{background:rgba(201,162,39,.16);color:#e6c35a}
+.studio-canvas{background:#fff}
+
+/* Aperçu : vignettes à gauche, grande image à droite, surface blanche */
+.studio-apercu{max-width:none;display:grid;grid-template-columns:minmax(220px,340px) minmax(0,1fr);gap:24px;background:#fff;border-radius:16px;padding:22px;color:#222;height:calc(100vh - 86px);min-height:520px}
+.studio-apercu-grille{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-content:start;overflow-y:auto;margin:0;padding:2px}
+.studio-apercu-grille button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;aspect-ratio:4/5;padding:6px 6px 22px;background:#fff;border:1px solid #e1e1e1;border-radius:8px;cursor:pointer;box-shadow:none}
+.studio-apercu-grille button:hover{border-color:#9a9a9a}
+.studio-apercu-grille button.active{border:2px solid #111;box-shadow:none}
+.studio-apercu-grille button.vide{border:1px dashed #c4c4c4;background:#fafafa}
+.studio-apercu-grille canvas{display:block;width:100%;height:100%;object-fit:contain;max-height:none}
+.studio-apercu-grille small{position:absolute;left:0;right:0;bottom:4px;color:#555;font-size:.7rem;font-weight:600;text-align:center}
+.studio-apercu-plus{font-size:2rem;line-height:1;color:#9a9a9a;font-weight:300}
+.studio-apercu-droite{display:flex;flex-direction:column;min-width:0;min-height:0}
+.studio-apercu-principale{flex:1 1 auto;min-height:0;height:auto;display:flex;align-items:center;justify-content:center;padding:0;background:#fff;border-radius:0}
+.studio-apercu-principale canvas{max-width:100%;max-height:100%;width:auto;height:auto}
+.studio-apercu-pied{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px}
+.studio-apercu-pied span{color:#555;font-size:.85rem;font-weight:600}
+.studio-apercu-actions{margin:0}
+.studio-apercu-actions button{border-color:#c5a45d;color:#7a5f17;background:#fff}
+.studio-apercu-actions button.studio-primary{background:#c5a45d;color:#111}
+@media(max-width:820px){
+  .studio-apercu{grid-template-columns:1fr;height:auto;min-height:0;padding:14px;gap:14px}
+  .studio-apercu-droite{order:-1}
+  .studio-apercu-principale{height:56vh;flex:none}
+  .studio-apercu-grille{grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible}
+  .studio-apercu-pied{flex-direction:column;align-items:stretch}
+  .studio-apercu-actions{flex-direction:column}
+}
+/* V7 — le rendu remplit toujours son cadre (ratio conservé) */
+.studio-canvas canvas,.studio-apercu-principale canvas{position:static;display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain}
+.studio-canvas canvas{position:absolute;inset:0}
+/* V7.1 — conseil de gabarit */
+.studio-conseil{margin:10px 0 0;padding:10px 12px;border:1px solid #b98b43;border-radius:8px;background:#2c261b}
+.studio-conseil[hidden]{display:none}
+.studio-conseil p{margin:0;color:#f1d79b;font-size:.82rem;line-height:1.45}
+.studio-panel .studio-conseil button{width:100%;margin-top:8px;background:#c5a45d;color:#111;border:0;font-weight:700}

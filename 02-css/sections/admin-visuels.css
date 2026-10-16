@@ -5,3 +5,6 @@
 .admin-visuels-tabs .admin-tab:hover{color:var(--color-text-primary);border-color:rgba(201,162,39,.35)}
 .admin-visuels-tabs .admin-tab.is-active{border-color:rgba(201,162,39,.65);background:rgba(201,162,39,.10);color:var(--color-accent)}
 @media(max-width:700px){.admin-visuels-tabs .admin-tab{flex:0 0 auto}}
+/* Studio V6 — état des projets du studio */
+.admin-produit-studio{margin:0;font-size:.82rem;line-height:1.45;color:#a9abb2}
+.admin-produit-studio.is-pret{color:#d9b65b}

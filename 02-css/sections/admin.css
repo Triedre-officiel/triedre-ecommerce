@@ -420,3 +420,8 @@
 @media(max-width:700px){.admin-tab{flex:0 0 auto}}
 
 .admin-tabs .studio-tab-link{display:flex;align-items:center;justify-content:center;text-decoration:none;color:inherit}.admin-tabs .studio-tab-link:hover{color:#d4b86f}
+/* Garde d'accès admin (admin-garde.js) : contenu masqué tant que le rôle n'est pas vérifié */
+.admin-verrou main{visibility:hidden}
+.admin-garde-page{min-height:60vh;display:flex;align-items:center;justify-content:center;padding:48px 16px}
+.admin-garde-refus{max-width:520px;text-align:center}
+.admin-garde-refus .btn{display:inline-block;margin-top:12px}

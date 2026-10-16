@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $config = require __DIR__ . '/config.php';
+require_once __DIR__ . '/livraison-lib.php';
 
 $supabaseUrl = rtrim((string)($config['supabase_url'] ?? ''), '/');
 $supabaseSecretKey = (string)($config['supabase_secret_key'] ?? '');
@@ -295,33 +296,59 @@ unset($ligne);
 // ============================================================================
 // 8. Montants de la commande
 //
-// Le client valide d'abord le tarif Postes Canada affiché dans le checkout.
-// Ce tarif est ensuite enregistré avec la commande et repris par Stripe.
+// Le navigateur envoie le tarif choisi AVEC sa signature serveur (tarifs-postes-canada.php).
+// Le prix ne peut donc pas être modifié côté client. La livraison gratuite est
+// recalculée ici à partir du sous-total réel (prix Supabase).
 // ============================================================================
 
 $livraisonTransmise = is_array($donnees['livraison'] ?? null)
     ? $donnees['livraison']
     : [];
 
-$serviceLivraison = nettoyerTexte(
-    $livraisonTransmise['service'] ?? '',
-    120
-);
-
-$montantLivraisonBrut = $livraisonTransmise['montant'] ?? null;
+$codeLivraison = strtoupper(nettoyerTexte($livraisonTransmise['code'] ?? '', 20));
+$montantOriginalBrut = $livraisonTransmise['montant_original'] ?? null;
+$expirationLivraison = filter_var($livraisonTransmise['expiration'] ?? null, FILTER_VALIDATE_INT);
+$jetonLivraison = nettoyerTexte($livraisonTransmise['jeton'] ?? '', 128);
 
 if (
-    $serviceLivraison === '' ||
-    !is_numeric($montantLivraisonBrut)
+    !isset(TR_LIV_SERVICES[$codeLivraison]) ||
+    !is_numeric($montantOriginalBrut) ||
+    $expirationLivraison === false ||
+    $jetonLivraison === ''
 ) {
     repondreErreur('Le tarif de livraison validé est manquant.', 422);
 }
 
-$livraison = arrondirMontant((float)$montantLivraisonBrut);
+$montantOriginal = arrondirMontant((float)$montantOriginalBrut);
 
-if ($livraison < 0 || $livraison > 500) {
+if ($montantOriginal < 0 || $montantOriginal > 500) {
     repondreErreur('Le tarif de livraison est invalide.', 422);
 }
+
+$empreintePanier = trLivEmpreintePanier($lignesDemandees);
+
+if (!trLivVerifier(
+    $config,
+    $codeLivraison,
+    $montantOriginal,
+    $codePostal,
+    $empreintePanier,
+    (int)$expirationLivraison,
+    $jetonLivraison
+)) {
+    repondreErreur(
+        'Le tarif de livraison a expiré ou ne correspond plus à ton panier. Valide de nouveau ton adresse.',
+        409
+    );
+}
+
+$serviceLivraison = trLivNomService($codeLivraison);
+
+// Livraison standard offerte dès le seuil, calculé sur le sous-total serveur.
+$livraison = (
+    $codeLivraison === TR_LIV_CODE_STANDARD &&
+    $sousTotal + 0.001 >= TR_LIV_SEUIL_GRATUITE
+) ? 0.00 : $montantOriginal;
 
 $taxes = 0.00;
 

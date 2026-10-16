@@ -74,6 +74,24 @@ document.addEventListener('DOMContentLoaded', function () {
     return headers;
   }
 
+  // Ajoute le jeton membre s'il existe une session, sans jamais bloquer un invité.
+  // Utilisé au retour de Stripe, quand la page vient d'être rechargée.
+  // Lit window.triedreSupabase directement : au retour de Stripe, la page s'arrête
+  // avant la déclaration de clientSupabase (voir le return en haut du fichier).
+  async function entetesAvecSessionOptionnelle() {
+    const headers = { 'Accept': 'application/json' };
+    const supabaseClient = window.triedreSupabase || null;
+    if (!supabaseClient) return headers;
+    try {
+      const { data } = await supabaseClient.auth.getSession();
+      const accessToken = data?.session?.access_token;
+      if (accessToken) headers.Authorization = 'Bearer ' + accessToken;
+    } catch (erreur) {
+      console.warn('[TRIÈDRE] Session membre non lue :', erreur);
+    }
+    return headers;
+  }
+
   initialiserCommande();
 
   async function initialiserCommande() {
@@ -192,10 +210,8 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!reponse.ok || resultat.success !== true) {
         throw new Error(resultat.provider?.detail || resultat.error || resultat.message || 'Impossible de calculer la livraison.');
       }
-      const tarifs = extraireTarifsPostesCanada(resultat.canada_post);
-      if (!tarifs.length) throw new Error('Postes Canada n’a retourné aucun tarif de livraison.');
-      tarifs.sort((a, b) => a.montant - b.montant);
-      afficherResumeFinal(client, panier, tarifs[0]);
+      const livraison = lireOptionsLivraison(resultat);
+      afficherResumeFinal(client, panier, livraison);
     } catch (erreur) {
       console.error('[TRIÈDRE] Confirmation adresse membre :', erreur);
       afficherToast(erreur?.message || 'Impossible de valider ton adresse pour le moment.', 'avertissement');
@@ -205,6 +221,42 @@ document.addEventListener('DOMContentLoaded', function () {
         bouton.textContent = 'Confirmer mon adresse';
       }
     }
+  }
+
+  // Adresse d'un invité gardée le temps de la visite (onglet) :
+  // s'il retourne à la boutique compléter son panier, il n'a rien à retaper.
+  const CLE_ADRESSE_INVITE = 'triedre_adresse_invite';
+
+  function memoriserAdresseInvite(client) {
+    if (modeMembre) return;
+    try { sessionStorage.setItem(CLE_ADRESSE_INVITE, JSON.stringify(client)); } catch (e) { /* stockage indisponible */ }
+  }
+
+  function oublierAdresseInvite() {
+    try { sessionStorage.removeItem(CLE_ADRESSE_INVITE); } catch (e) { /* stockage indisponible */ }
+  }
+
+  function preRemplirAdresseInvite() {
+    if (modeMembre) return;
+    let client = null;
+    try { client = JSON.parse(sessionStorage.getItem(CLE_ADRESSE_INVITE) || 'null'); } catch (e) { client = null; }
+    if (!client || typeof client !== 'object') return;
+
+    const pays = document.getElementById('cmd-pays');
+    if (client.pays && Array.from(pays.options).some(o => o.value === client.pays)) {
+      pays.value = client.pays;
+      pays.dispatchEvent(new Event('change'));
+    }
+    const valeurs = {
+      'cmd-nom': client.nom, 'cmd-email': client.email, 'cmd-adresse': client.adresse,
+      'cmd-ville': client.ville, 'cmd-postal': client.code_postal, 'cmd-telephone': client.telephone
+    };
+    for (const [id, valeur] of Object.entries(valeurs)) {
+      const champ = document.getElementById(id);
+      if (champ && valeur) champ.value = valeur;
+    }
+    const region = document.getElementById('cmd-region');
+    if (region && client.region) region.value = client.region;
   }
 
   function preRemplirAdresseMembre() {
@@ -450,6 +502,8 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
 
+    preRemplirAdresseInvite();
+
     function obtenirChampsCommande() {
       return {
         nom: document.getElementById('cmd-nom'),
@@ -542,18 +596,16 @@ document.addEventListener('DOMContentLoaded', function () {
           throw new Error(resultatLivraison.provider?.detail || resultatLivraison.error || resultatLivraison.message || 'Impossible de calculer la livraison.');
         }
 
-        const tarifs = extraireTarifsPostesCanada(resultatLivraison.canada_post);
-        if (!tarifs.length) throw new Error('Postes Canada n’a retourné aucun tarif de livraison.');
-        tarifs.sort(function (a, b) { return a.montant - b.montant; });
+        const livraisonDisponible = lireOptionsLivraison(resultatLivraison);
 
-        tarifLivraisonValide = tarifs[0];
+        tarifLivraisonValide = livraisonDisponible.optionParDefaut;
         empreinteTarifLivraison = empreinteCommande(panier);
         const totalAvecLivraison = Number(totalPanier()) + tarifLivraisonValide.montant;
 
-        if (livraisonValeur) livraisonValeur.textContent = tarifLivraisonValide.service + ' — ' + tarifLivraisonValide.montant.toFixed(2) + ' $';
-        if (totalCommande) totalCommande.textContent = totalAvecLivraison.toFixed(2) + ' $';
+        if (livraisonValeur) livraisonValeur.textContent = tarifLivraisonValide.service + ' — ' + (tarifLivraisonValide.gratuit ? 'Gratuite' : formaterMontant(tarifLivraisonValide.montant));
+        if (totalCommande) totalCommande.textContent = formaterMontant(totalAvecLivraison);
 
-        afficherResumeFinal({
+        const clientCommande = {
           nom: champs.nom.value.trim(),
           email: champs.email.value.trim(),
           telephone: champs.telephone.value.trim(),
@@ -562,7 +614,9 @@ document.addEventListener('DOMContentLoaded', function () {
           ville: champs.ville.value.trim(),
           region: champs.region.value.trim(),
           code_postal: postal.value.trim()
-        }, panier, tarifLivraisonValide);
+        };
+        memoriserAdresseInvite(clientCommande);
+        afficherResumeFinal(clientCommande, panier, livraisonDisponible);
       } catch (erreur) {
         console.error('[TRIÈDRE] Validation adresse / livraison :', erreur);
         tarifLivraisonValide = null;
@@ -599,7 +653,7 @@ document.addEventListener('DOMContentLoaded', function () {
             region: champs.region.value.trim(), code_postal: postal.value.trim()
           },
           panier: panier.map(function (item) { return { sku: item.sku, quantite: Number(item.quantite) }; }),
-          livraison: { service: tarifLivraisonValide.service, montant: tarifLivraisonValide.montant }
+          livraison: donneesLivraisonCommande(tarifLivraisonValide)
         };
 
         const reponseCommande = await fetch('/08-php/creer-commande.php', {
@@ -613,8 +667,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!orderId) throw new Error('La commande a été créée, mais son identifiant est introuvable.');
 
         boutonPaiement.textContent = 'Ouverture du paiement sécurisé...';
+        // Même en-têtes que la création : le jeton membre accompagne la commande jusqu'au paiement.
         const reponseStripe = await fetch('/08-php/creer-checkout-stripe.php', {
-          method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          method: 'POST', headers: await entetesCreationCommande(),
           body: JSON.stringify({ order_id: orderId })
         });
         const resultatStripe = await lireJson(reponseStripe);
@@ -633,32 +688,42 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
 
-  function afficherResumeFinal(client, panier, tarifLivraison) {
+  function afficherResumeFinal(client, panier, livraison) {
     const sousTotal = Number(totalPanier());
-    const totalFinal = sousTotal + Number(tarifLivraison.montant);
+    let optionChoisie = livraison.optionParDefaut;
 
     const articlesHTML = panier.map(function (item) {
-      const sousTotalArticle = (item.prix * item.quantite).toFixed(2);
       return `
         <div class="commande-article-resume">
-          <img src="${item.image}" alt="${item.nom}">
+          <img src="${echapperHTML(item.image)}" alt="${echapperHTML(item.nom)}">
           <div>
-            <h4>${item.nom}</h4>
-            <p>${item.couleur} — ${item.taille} — Qté ${item.quantite}</p>
+            <h4>${echapperHTML(item.nom)}</h4>
+            <p>${echapperHTML(item.couleur)} — ${echapperHTML(item.taille)} — Qté ${Number(item.quantite)}</p>
           </div>
-          <span class="commande-article-prix">${sousTotalArticle} $</span>
+          <span class="commande-article-prix">${formaterMontant(item.prix * item.quantite)}</span>
         </div>
+      `;
+    }).join('');
+
+    const optionsHTML = livraison.options.map(function (option) {
+      const prix = option.gratuit
+        ? `<span class="livraison-option-prix"><strong class="accent">Gratuite</strong></span>`
+        : `<span class="livraison-option-prix"><strong>${formaterMontant(option.montant)}</strong></span>`;
+      return `
+        <label class="livraison-option${option.code === optionChoisie.code ? ' is-active' : ''}">
+          <input type="radio" name="option-livraison" value="${echapperHTML(option.code)}"${option.code === optionChoisie.code ? ' checked' : ''}>
+          <span class="livraison-option-infos">
+            <span class="livraison-option-nom">${echapperHTML(option.service)}</span>
+            <small class="livraison-option-delai">${echapperHTML(texteDelaiLivraison(option))}</small>
+          </span>
+          ${prix}
+        </label>
       `;
     }).join('');
 
     conteneur.innerHTML = `
       <div class="commande-etape-final">
-        <div class="commande-etapes">
-          <span class="is-complete">Panier ✓</span><span>→</span>
-          <span class="is-complete">Adresse ✓</span><span>→</span>
-          <span class="is-active">Résumé</span><span>→</span>
-          <span>Paiement</span>
-        </div>
+        ${etapesCommandeHTML('resume')}
 
         <div class="commande-resume-final">
           <div class="commande-resume-entete">
@@ -677,15 +742,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
           <div class="commande-articles-liste">${articlesHTML}</div>
 
+          <fieldset class="livraison-options">
+            <legend>Mode de livraison <small>· Postes Canada</small></legend>
+            ${barreLivraisonGratuiteHTML(sousTotal, livraison.seuil)}
+            ${optionsHTML}
+          </fieldset>
+
           <div class="commande-ligne-final">
-            <span>Sous-total</span><span>${sousTotal.toFixed(2)} $</span>
+            <span>Sous-total</span><span>${formaterMontant(sousTotal)}</span>
           </div>
           <div class="commande-ligne-final">
-            <span>Livraison — ${echapperHTML(tarifLivraison.service)}</span>
-            <span>${Number(tarifLivraison.montant).toFixed(2)} $</span>
+            <span id="resume-livraison-nom"></span>
+            <span id="resume-livraison-montant"></span>
           </div>
           <div class="panier-total commande-total-final">
-            <span>Total</span><span class="accent">${totalFinal.toFixed(2)} $</span>
+            <span>Total</span><span class="accent" id="resume-total"></span>
           </div>
 
           <button type="button" class="btn btn-primary" id="btn-resume-commande">Passer la commande</button>
@@ -693,8 +764,38 @@ document.addEventListener('DOMContentLoaded', function () {
       </div>
     `;
 
+    function mettreAJourTotaux() {
+      document.getElementById('resume-livraison-nom').textContent = optionChoisie.service;
+      document.getElementById('resume-livraison-montant').innerHTML = optionChoisie.gratuit
+        ? '<strong class="accent">Gratuite</strong>'
+        : formaterMontant(optionChoisie.montant);
+      document.getElementById('resume-total').textContent =
+        formaterMontant(sousTotal + Number(optionChoisie.montant));
+    }
+
+    mettreAJourTotaux();
+
+    conteneur.querySelector('.livraison-options').addEventListener('change', function (e) {
+      if (!e.target.matches('input[name="option-livraison"]')) return;
+      const choix = livraison.options.find(function (o) { return o.code === e.target.value; });
+      if (!choix) return;
+      optionChoisie = choix;
+      conteneur.querySelectorAll('.livraison-option').forEach(function (carte) {
+        carte.classList.toggle('is-active', carte.contains(e.target));
+      });
+      mettreAJourTotaux();
+    });
+
     document.getElementById('modifier-adresse').addEventListener('click', function () {
       afficherPageCommande();
+    });
+
+    conteneur.querySelector('[data-etape="adresse"]')?.addEventListener('click', function () {
+      afficherPageCommande();
+      conteneur.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    conteneur.querySelector('[data-etape="resume"]')?.addEventListener('click', function () {
+      conteneur.querySelector('.commande-resume-final')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     document.getElementById('btn-resume-commande').addEventListener('click', async function () {
@@ -708,10 +809,7 @@ document.addEventListener('DOMContentLoaded', function () {
           panier: panier.map(function (item) {
             return { sku: item.sku, quantite: Number(item.quantite) };
           }),
-          livraison: {
-            service: tarifLivraison.service,
-            montant: tarifLivraison.montant
-          }
+          livraison: donneesLivraisonCommande(optionChoisie)
         };
 
         const reponseCommande = await fetch('/08-php/creer-commande.php', {
@@ -728,9 +826,10 @@ document.addEventListener('DOMContentLoaded', function () {
           resultatCommande.order?.id || resultatCommande.commande?.id;
         if (!orderId) throw new Error('La commande a été créée, mais son identifiant est introuvable.');
 
+        // Même en-têtes que la création : le jeton membre accompagne la commande jusqu'au paiement.
         const reponseStripe = await fetch('/08-php/creer-checkout-stripe.php', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          headers: await entetesCreationCommande(),
           body: JSON.stringify({ order_id: orderId })
         });
         const resultatStripe = await lireJson(reponseStripe);
@@ -891,6 +990,153 @@ document.addEventListener('DOMContentLoaded', function () {
     return 'Entre un numéro de téléphone valide de 10 à 15 chiffres, avec indicatif international si nécessaire.';
   }
 
+  // ==========================================================================
+  // Livraison : options signées par le serveur, livraison gratuite
+  // ==========================================================================
+
+  function formaterMontant(montant) {
+    return Number(montant || 0).toFixed(2).replace('.', ',') + ' $';
+  }
+
+  function lireOptionsLivraison(resultat) {
+    const options = (Array.isArray(resultat.options) ? resultat.options : [])
+      .filter(function (o) {
+        return o && o.code && o.jeton && Number.isFinite(Number(o.montant));
+      })
+      .map(function (o) {
+        return Object.assign({}, o, {
+          service: o.nom || traduireServiceLivraison(o.code),
+          montant: Number(o.montant),
+          montant_original: Number(o.montant_original)
+        });
+      });
+
+    if (!options.length) throw new Error('Aucun tarif de livraison disponible pour cette adresse.');
+
+    const optionParDefaut = options.find(function (o) {
+      return o.code === resultat.option_par_defaut;
+    }) || options[0];
+
+    return {
+      options: options,
+      optionParDefaut: optionParDefaut,
+      seuil: Number(resultat.seuil_livraison_gratuite) || 100
+    };
+  }
+
+  // Seules ces données partent au serveur : il vérifie la signature et recalcule la gratuité.
+  function donneesLivraisonCommande(option) {
+    return {
+      code: option.code,
+      montant_original: option.montant_original,
+      expiration: option.expiration,
+      jeton: option.jeton
+    };
+  }
+
+  function texteDelaiLivraison(option) {
+    if (option.date_estimee) {
+      const date = new Date(option.date_estimee + 'T12:00:00');
+      if (!isNaN(date)) {
+        return 'Livraison estimée le ' + date.toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long' });
+      }
+    }
+    if (option.delai_jours) {
+      return option.delai_jours + ' jour' + (option.delai_jours > 1 ? 's' : '') + ' ouvrable' + (option.delai_jours > 1 ? 's' : '');
+    }
+    return 'Délai confirmé à l’expédition';
+  }
+
+  // Barre d'étapes : les étapes passées et l'étape en cours sont cliquables.
+  function etapesCommandeHTML(etapeActive) {
+    const etapes = [
+      { cle: 'panier', nom: 'Panier', lien: 'panier' },
+      { cle: 'adresse', nom: 'Adresse' },
+      { cle: 'resume', nom: 'Résumé' },
+      { cle: 'paiement', nom: 'Paiement' }
+    ];
+    const indexActif = etapes.findIndex(e => e.cle === etapeActive);
+    const coche = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>';
+
+    const items = etapes.map(function (etape, index) {
+      const etat = index < indexActif ? 'is-complete' : (index === indexActif ? 'is-active' : 'is-a-venir');
+      const pastille = `<span class="tr-etape-pastille">${index < indexActif ? coche : index + 1}</span>`;
+      const indice = index < indexActif ? 'Modifier' : (index === indexActif ? 'En cours' : 'À venir');
+      const texte = `<span class="tr-etape-texte"><span class="tr-etape-nom">${etape.nom}</span><small class="tr-etape-indice">${indice}</small></span>`;
+      const courant = index === indexActif ? ' aria-current="step"' : '';
+
+      let cible;
+      if (index > indexActif) {
+        cible = `<span class="tr-etape-cible" aria-disabled="true">${pastille}${texte}</span>`;
+      } else if (etape.lien) {
+        cible = `<a class="tr-etape-cible" href="${etape.lien}"${courant}>${pastille}${texte}</a>`;
+      } else {
+        cible = `<button type="button" class="tr-etape-cible" data-etape="${etape.cle}"${courant}>${pastille}${texte}</button>`;
+      }
+      return `<li class="tr-etape ${etat}">${cible}</li>`;
+    }).join('');
+
+    return `<nav class="tr-etapes" aria-label="Étapes de la commande"><ol>${items}</ol></nav>`;
+  }
+
+  function barreLivraisonGratuiteHTML(sousTotal, seuil) {
+    const iconeCamion = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h11v9H3z" /><path d="M14 9.5h3.6l3.4 3.4v2.6h-7" /><circle cx="7" cy="17.5" r="1.8" /><circle cx="17" cy="17.5" r="1.8" /></svg>';
+    const iconeCoche = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>';
+
+    if (sousTotal >= seuil) {
+      return `
+        <div class="tr-livgratuite is-atteint" role="status">
+          <span class="tr-livgratuite-icone">${iconeCoche}</span>
+          <div class="tr-livgratuite-corps">
+            <p class="tr-livgratuite-message">La livraison standard t’est offerte.</p>
+            <div class="tr-livgratuite-piste"><span class="tr-livgratuite-remplissage" style="--progression:100%"></span></div>
+          </div>
+        </div>
+      `;
+    }
+
+    const manque = seuil - sousTotal;
+    const progression = Math.max(4, Math.min(100, Math.round((sousTotal / seuil) * 100)));
+    return `
+      <div class="tr-livgratuite">
+        <span class="tr-livgratuite-icone">${iconeCamion}</span>
+        <div class="tr-livgratuite-corps">
+          <p class="tr-livgratuite-message">Plus que <strong>${formaterMontant(manque)}</strong> pour profiter de la livraison standard gratuite.</p>
+          <div class="tr-livgratuite-piste" role="progressbar" aria-label="Progression vers la livraison gratuite" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progression}">
+            <span class="tr-livgratuite-remplissage" style="--progression:${progression}%"></span>
+          </div>
+          <div class="tr-livgratuite-pied">
+            <span>${formaterMontant(sousTotal)}</span>
+            <span>${formaterMontant(seuil)}</span>
+          </div>
+          <a href="boutique" class="tr-livgratuite-lien">
+            Continuer mes achats
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13" /><path d="M13 6l6 6-6 6" /></svg>
+          </a>
+        </div>
+      </div>
+    `;
+  }
+
+  // Noms des services Postes Canada (reçus en anglais) affichés en français.
+  function traduireServiceLivraison(service) {
+    const noms = {
+      'regular parcel': 'Livraison standard',
+      'expedited parcel': 'Livraison accélérée',
+      'xpresspost': 'Livraison express',
+      'priority': 'Livraison prioritaire',
+      'dom.rp': 'Livraison standard',
+      'dom.ep': 'Livraison accélérée',
+      'dom.xp': 'Livraison express',
+      'dom.pc': 'Livraison prioritaire',
+      'colis standard': 'Livraison standard',
+      'colis accélérés': 'Livraison accélérée',
+      'priorité': 'Livraison prioritaire'
+    };
+    const cle = String(service || '').trim().toLowerCase();
+    return noms[cle] || 'Livraison';
+  }
+
   function extraireTarifsPostesCanada(donnees) {
     if (!donnees || typeof donnees !== 'object') return [];
 
@@ -940,7 +1186,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (service && montant !== null) {
         candidats.push({
-          service: String(service),
+          service: traduireServiceLivraison(String(service)),
           montant: montant
         });
       }
@@ -1001,9 +1247,7 @@ document.addEventListener('DOMContentLoaded', function () {
           encodeURIComponent(sessionId),
           {
             method: 'GET',
-            headers: {
-              'Accept': 'application/json'
-            },
+            headers: await entetesAvecSessionOptionnelle(),
             cache: 'no-store'
           }
         );
@@ -1013,6 +1257,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (reponse.ok && resultat.success === true && resultat.paid === true) {
           // Le panier est vidé UNIQUEMENT après confirmation serveur.
           viderPanier();
+          oublierAdresseInvite();
           afficherConfirmationPaiement(resultat.order_number || '');
           return;
         }
@@ -1075,9 +1320,16 @@ document.addEventListener('DOMContentLoaded', function () {
       <div class="commande-confirmation">
         <h2>Vérification du paiement</h2>
         <p>${message}</p>
-        <a href="commande" class="btn btn-primary">Actualiser</a>
+        <button type="button" class="btn btn-primary" id="commande-actualiser-verification">Actualiser</button>
       </div>
     `;
+
+    // Recharge la même URL (avec session_id) pour relancer la vérification,
+    // au lieu de revenir au début du parcours de commande.
+    document.getElementById('commande-actualiser-verification')
+      .addEventListener('click', function () {
+        window.location.reload();
+      });
   }
 
   function attendre(ms) {
