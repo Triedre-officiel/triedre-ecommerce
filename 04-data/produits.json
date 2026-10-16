@@ -10,11 +10,11 @@
       "badge": "",
       "actif": true,
       "vuesCommunes": [
-        "produit-hoodie-face.png",
-        "produit-hoodie-dos.png",
-        "produit-hoodie-gauche.png",
-        "produit-hoodie-droite.png",
-        "produit-hoodie-isometrique.png"
+        "produit-hoodie-face.webp",
+        "produit-hoodie-dos.webp",
+        "produit-hoodie-gauche.webp",
+        "produit-hoodie-droite.webp",
+        "produit-hoodie-isometrique.webp"
       ],
       "avis": [
         {
@@ -41,7 +41,7 @@
           "poids_g": 650,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-hoodie-noir-face.png"
+          "photoFace": "produit-hoodie-noir-face.webp"
         },
         {
           "id": "hoodie-performance-noir-m",
@@ -55,7 +55,7 @@
           "poids_g": 650,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-hoodie-noir-face.png"
+          "photoFace": "produit-hoodie-noir-face.webp"
         },
         {
           "id": "hoodie-performance-noir-l",
@@ -69,7 +69,7 @@
           "poids_g": 650,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-hoodie-noir-face.png"
+          "photoFace": "produit-hoodie-noir-face.webp"
         },
         {
           "id": "hoodie-performance-noir-xl",
@@ -83,7 +83,7 @@
           "poids_g": 650,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-hoodie-noir-face.png"
+          "photoFace": "produit-hoodie-noir-face.webp"
         },
         {
           "id": "hoodie-performance-taupe-s",
@@ -97,7 +97,7 @@
           "poids_g": 650,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-hoodie-taupe-face.png"
+          "photoFace": "produit-hoodie-taupe-face.webp"
         },
         {
           "id": "hoodie-performance-taupe-m",
@@ -111,7 +111,7 @@
           "poids_g": 650,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-hoodie-taupe-face.png"
+          "photoFace": "produit-hoodie-taupe-face.webp"
         },
         {
           "id": "hoodie-performance-taupe-l",
@@ -125,7 +125,7 @@
           "poids_g": 650,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-hoodie-taupe-face.png"
+          "photoFace": "produit-hoodie-taupe-face.webp"
         },
         {
           "id": "hoodie-performance-taupe-xl",
@@ -139,7 +139,7 @@
           "poids_g": 650,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-hoodie-taupe-face.png"
+          "photoFace": "produit-hoodie-taupe-face.webp"
         },
         {
           "id": "hoodie-performance-sauge-s",
@@ -153,7 +153,7 @@
           "poids_g": 650,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-hoodie-sauge-face.png"
+          "photoFace": "produit-hoodie-sauge-face.webp"
         },
         {
           "id": "hoodie-performance-sauge-m",
@@ -167,7 +167,7 @@
           "poids_g": 650,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-hoodie-sauge-face.png"
+          "photoFace": "produit-hoodie-sauge-face.webp"
         },
         {
           "id": "hoodie-performance-sauge-l",
@@ -181,7 +181,7 @@
           "poids_g": 650,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-hoodie-sauge-face.png"
+          "photoFace": "produit-hoodie-sauge-face.webp"
         },
         {
           "id": "hoodie-performance-sauge-xl",
@@ -195,7 +195,7 @@
           "poids_g": 650,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-hoodie-sauge-face.png"
+          "photoFace": "produit-hoodie-sauge-face.webp"
         }
       ]
     },
@@ -207,11 +207,11 @@
       "badge": "",
       "actif": true,
       "vuesCommunes": [
-        "produit-tshirt-face.png",
-        "produit-tshirt-dos.png",
-        "produit-tshirt-gauche.png",
-        "produit-tshirt-droite.png",
-        "produit-tshirt-isometrique.png"
+        "produit-tshirt-face.webp",
+        "produit-tshirt-dos.webp",
+        "produit-tshirt-gauche.webp",
+        "produit-tshirt-droite.webp",
+        "produit-tshirt-isometrique.webp"
       ],
       "avis": [],
       "variantes": [
@@ -227,7 +227,7 @@
           "poids_g": 200,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-tshirt-noir-face.png"
+          "photoFace": "produit-tshirt-noir-face.webp"
         },
         {
           "id": "tshirt-athletic-noir-m",
@@ -241,7 +241,7 @@
           "poids_g": 200,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-tshirt-noir-face.png"
+          "photoFace": "produit-tshirt-noir-face.webp"
         },
         {
           "id": "tshirt-athletic-noir-l",
@@ -255,7 +255,7 @@
           "poids_g": 200,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-tshirt-noir-face.png"
+          "photoFace": "produit-tshirt-noir-face.webp"
         },
         {
           "id": "tshirt-athletic-noir-xl",
@@ -269,7 +269,7 @@
           "poids_g": 200,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-tshirt-noir-face.png"
+          "photoFace": "produit-tshirt-noir-face.webp"
         },
         {
           "id": "tshirt-athletic-taupe-s",
@@ -283,7 +283,7 @@
           "poids_g": 200,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-tshirt-taupe-face.png"
+          "photoFace": "produit-tshirt-taupe-face.webp"
         },
         {
           "id": "tshirt-athletic-taupe-m",
@@ -297,7 +297,7 @@
           "poids_g": 200,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-tshirt-taupe-face.png"
+          "photoFace": "produit-tshirt-taupe-face.webp"
         },
         {
           "id": "tshirt-athletic-taupe-l",
@@ -311,7 +311,7 @@
           "poids_g": 200,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-tshirt-taupe-face.png"
+          "photoFace": "produit-tshirt-taupe-face.webp"
         },
         {
           "id": "tshirt-athletic-taupe-xl",
@@ -325,7 +325,7 @@
           "poids_g": 200,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-tshirt-taupe-face.png"
+          "photoFace": "produit-tshirt-taupe-face.webp"
         },
         {
           "id": "tshirt-athletic-sauge-s",
@@ -339,7 +339,7 @@
           "poids_g": 200,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-tshirt-sauge-face.png"
+          "photoFace": "produit-tshirt-sauge-face.webp"
         },
         {
           "id": "tshirt-athletic-sauge-m",
@@ -353,7 +353,7 @@
           "poids_g": 200,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-tshirt-sauge-face.png"
+          "photoFace": "produit-tshirt-sauge-face.webp"
         },
         {
           "id": "tshirt-athletic-sauge-l",
@@ -367,7 +367,7 @@
           "poids_g": 200,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-tshirt-sauge-face.png"
+          "photoFace": "produit-tshirt-sauge-face.webp"
         },
         {
           "id": "tshirt-athletic-sauge-xl",
@@ -381,7 +381,7 @@
           "poids_g": 200,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-tshirt-sauge-face.png"
+          "photoFace": "produit-tshirt-sauge-face.webp"
         }
       ]
     },
@@ -393,11 +393,11 @@
       "badge": "",
       "actif": true,
       "vuesCommunes": [
-        "produit-casquette-face.png",
-        "produit-casquette-dos.png",
-        "produit-casquette-gauche.png",
-        "produit-casquette-droite.png",
-        "produit-casquette-isometrique.png"
+        "produit-casquette-face.webp",
+        "produit-casquette-dos.webp",
+        "produit-casquette-gauche.webp",
+        "produit-casquette-droite.webp",
+        "produit-casquette-isometrique.webp"
       ],
       "avis": [],
       "variantes": [
@@ -413,7 +413,7 @@
           "poids_g": 110,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-casquette-noir-face.png"
+          "photoFace": "produit-casquette-noir-face.webp"
         },
         {
           "id": "casquette-triedre-taupe-taille-unique",
@@ -427,7 +427,7 @@
           "poids_g": 110,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-casquette-taupe-face.png"
+          "photoFace": "produit-casquette-taupe-face.webp"
         },
         {
           "id": "casquette-triedre-sauge-taille-unique",
@@ -441,7 +441,7 @@
           "poids_g": 110,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-casquette-sauge-face.png"
+          "photoFace": "produit-casquette-sauge-face.webp"
         }
       ]
     },
@@ -453,11 +453,11 @@
       "badge": "",
       "actif": true,
       "vuesCommunes": [
-        "produit-brassiere-face.png",
-        "produit-brassiere-dos.png",
-        "produit-brassiere-gauche.png",
-        "produit-brassiere-droite.png",
-        "produit-brassiere-isometrique.png"
+        "produit-brassiere-face.webp",
+        "produit-brassiere-dos.webp",
+        "produit-brassiere-gauche.webp",
+        "produit-brassiere-droite.webp",
+        "produit-brassiere-isometrique.webp"
       ],
       "avis": [],
       "variantes": [
@@ -473,7 +473,7 @@
           "poids_g": 150,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-brassiere-noir-face.png"
+          "photoFace": "produit-brassiere-noir-face.webp"
         },
         {
           "id": "brassiere-active-noir-m",
@@ -487,7 +487,7 @@
           "poids_g": 150,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-brassiere-noir-face.png"
+          "photoFace": "produit-brassiere-noir-face.webp"
         },
         {
           "id": "brassiere-active-noir-l",
@@ -501,7 +501,7 @@
           "poids_g": 150,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-brassiere-noir-face.png"
+          "photoFace": "produit-brassiere-noir-face.webp"
         },
         {
           "id": "brassiere-active-noir-xl",
@@ -515,7 +515,7 @@
           "poids_g": 150,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-brassiere-noir-face.png"
+          "photoFace": "produit-brassiere-noir-face.webp"
         },
         {
           "id": "brassiere-active-taupe-s",
@@ -529,7 +529,7 @@
           "poids_g": 150,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-brassiere-taupe-face.png"
+          "photoFace": "produit-brassiere-taupe-face.webp"
         },
         {
           "id": "brassiere-active-taupe-m",
@@ -543,7 +543,7 @@
           "poids_g": 150,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-brassiere-taupe-face.png"
+          "photoFace": "produit-brassiere-taupe-face.webp"
         },
         {
           "id": "brassiere-active-taupe-l",
@@ -557,7 +557,7 @@
           "poids_g": 150,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-brassiere-taupe-face.png"
+          "photoFace": "produit-brassiere-taupe-face.webp"
         },
         {
           "id": "brassiere-active-taupe-xl",
@@ -571,7 +571,7 @@
           "poids_g": 150,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-brassiere-taupe-face.png"
+          "photoFace": "produit-brassiere-taupe-face.webp"
         },
         {
           "id": "brassiere-active-sauge-s",
@@ -585,7 +585,7 @@
           "poids_g": 150,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-brassiere-sauge-face.png"
+          "photoFace": "produit-brassiere-sauge-face.webp"
         },
         {
           "id": "brassiere-active-sauge-m",
@@ -599,7 +599,7 @@
           "poids_g": 150,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-brassiere-sauge-face.png"
+          "photoFace": "produit-brassiere-sauge-face.webp"
         },
         {
           "id": "brassiere-active-sauge-l",
@@ -613,7 +613,7 @@
           "poids_g": 150,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-brassiere-sauge-face.png"
+          "photoFace": "produit-brassiere-sauge-face.webp"
         },
         {
           "id": "brassiere-active-sauge-xl",
@@ -627,7 +627,7 @@
           "poids_g": 150,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-brassiere-sauge-face.png"
+          "photoFace": "produit-brassiere-sauge-face.webp"
         }
       ]
     },
@@ -639,11 +639,11 @@
       "badge": "",
       "actif": true,
       "vuesCommunes": [
-        "produit-leggings-face.png",
-        "produit-leggings-dos.png",
-        "produit-leggings-gauche.png",
-        "produit-leggings-droite.png",
-        "produit-leggings-isometrique.png"
+        "produit-leggings-face.webp",
+        "produit-leggings-dos.webp",
+        "produit-leggings-gauche.webp",
+        "produit-leggings-droite.webp",
+        "produit-leggings-isometrique.webp"
       ],
       "avis": [],
       "variantes": [
@@ -659,7 +659,7 @@
           "poids_g": 220,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-leggings-noir-face.png"
+          "photoFace": "produit-leggings-noir-face.webp"
         },
         {
           "id": "leggings-essentiel-noir-m",
@@ -673,7 +673,7 @@
           "poids_g": 220,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-leggings-noir-face.png"
+          "photoFace": "produit-leggings-noir-face.webp"
         },
         {
           "id": "leggings-essentiel-noir-l",
@@ -687,7 +687,7 @@
           "poids_g": 220,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-leggings-noir-face.png"
+          "photoFace": "produit-leggings-noir-face.webp"
         },
         {
           "id": "leggings-essentiel-noir-xl",
@@ -701,7 +701,7 @@
           "poids_g": 220,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-leggings-noir-face.png"
+          "photoFace": "produit-leggings-noir-face.webp"
         },
         {
           "id": "leggings-essentiel-taupe-s",
@@ -715,7 +715,7 @@
           "poids_g": 220,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-leggings-taupe-face.png"
+          "photoFace": "produit-leggings-taupe-face.webp"
         },
         {
           "id": "leggings-essentiel-taupe-m",
@@ -729,7 +729,7 @@
           "poids_g": 220,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-leggings-taupe-face.png"
+          "photoFace": "produit-leggings-taupe-face.webp"
         },
         {
           "id": "leggings-essentiel-taupe-l",
@@ -743,7 +743,7 @@
           "poids_g": 220,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-leggings-taupe-face.png"
+          "photoFace": "produit-leggings-taupe-face.webp"
         },
         {
           "id": "leggings-essentiel-taupe-xl",
@@ -757,7 +757,7 @@
           "poids_g": 220,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-leggings-taupe-face.png"
+          "photoFace": "produit-leggings-taupe-face.webp"
         },
         {
           "id": "leggings-essentiel-sauge-s",
@@ -771,7 +771,7 @@
           "poids_g": 220,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-leggings-sauge-face.png"
+          "photoFace": "produit-leggings-sauge-face.webp"
         },
         {
           "id": "leggings-essentiel-sauge-m",
@@ -785,7 +785,7 @@
           "poids_g": 220,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-leggings-sauge-face.png"
+          "photoFace": "produit-leggings-sauge-face.webp"
         },
         {
           "id": "leggings-essentiel-sauge-l",
@@ -799,7 +799,7 @@
           "poids_g": 220,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-leggings-sauge-face.png"
+          "photoFace": "produit-leggings-sauge-face.webp"
         },
         {
           "id": "leggings-essentiel-sauge-xl",
@@ -813,7 +813,7 @@
           "poids_g": 220,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-leggings-sauge-face.png"
+          "photoFace": "produit-leggings-sauge-face.webp"
         }
       ]
     },
@@ -825,11 +825,11 @@
       "badge": "Nouveau",
       "actif": true,
       "vuesCommunes": [
-        "produit-veste-face.png",
-        "produit-veste-dos.png",
-        "produit-veste-gauche.png",
-        "produit-veste-droite.png",
-        "produit-veste-isometrique.png"
+        "produit-veste-face.webp",
+        "produit-veste-dos.webp",
+        "produit-veste-gauche.webp",
+        "produit-veste-droite.webp",
+        "produit-veste-isometrique.webp"
       ],
       "avis": [],
       "variantes": [
@@ -845,7 +845,7 @@
           "poids_g": 400,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-veste-noir-face.png"
+          "photoFace": "produit-veste-noir-face.webp"
         },
         {
           "id": "veste-legere-noir-m",
@@ -859,7 +859,7 @@
           "poids_g": 400,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-veste-noir-face.png"
+          "photoFace": "produit-veste-noir-face.webp"
         },
         {
           "id": "veste-legere-noir-l",
@@ -873,7 +873,7 @@
           "poids_g": 400,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-veste-noir-face.png"
+          "photoFace": "produit-veste-noir-face.webp"
         },
         {
           "id": "veste-legere-noir-xl",
@@ -887,7 +887,7 @@
           "poids_g": 400,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-veste-noir-face.png"
+          "photoFace": "produit-veste-noir-face.webp"
         },
         {
           "id": "veste-legere-taupe-s",
@@ -901,7 +901,7 @@
           "poids_g": 400,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-veste-taupe-face.png"
+          "photoFace": "produit-veste-taupe-face.webp"
         },
         {
           "id": "veste-legere-taupe-m",
@@ -915,7 +915,7 @@
           "poids_g": 400,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-veste-taupe-face.png"
+          "photoFace": "produit-veste-taupe-face.webp"
         },
         {
           "id": "veste-legere-taupe-l",
@@ -929,7 +929,7 @@
           "poids_g": 400,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-veste-taupe-face.png"
+          "photoFace": "produit-veste-taupe-face.webp"
         },
         {
           "id": "veste-legere-taupe-xl",
@@ -943,7 +943,7 @@
           "poids_g": 400,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-veste-taupe-face.png"
+          "photoFace": "produit-veste-taupe-face.webp"
         },
         {
           "id": "veste-legere-sauge-s",
@@ -957,7 +957,7 @@
           "poids_g": 400,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-veste-sauge-face.png"
+          "photoFace": "produit-veste-sauge-face.webp"
         },
         {
           "id": "veste-legere-sauge-m",
@@ -971,7 +971,7 @@
           "poids_g": 400,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-veste-sauge-face.png"
+          "photoFace": "produit-veste-sauge-face.webp"
         },
         {
           "id": "veste-legere-sauge-l",
@@ -985,7 +985,7 @@
           "poids_g": 400,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-veste-sauge-face.png"
+          "photoFace": "produit-veste-sauge-face.webp"
         },
         {
           "id": "veste-legere-sauge-xl",
@@ -999,7 +999,7 @@
           "poids_g": 400,
           "tax_code": null,
           "actif": true,
-          "photoFace": "produit-veste-sauge-face.png"
+          "photoFace": "produit-veste-sauge-face.webp"
         }
       ]
     }
